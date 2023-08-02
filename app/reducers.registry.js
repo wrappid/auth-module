@@ -1,3 +1,5 @@
-import testReducer from "./reducers/test.reducer";
+import authReducer from "./reducers/authReducer";
 
-export const ReducerRegistry = { "test": testReducer };
+export const ReducerRegistry = {
+  auth: authReducer,
+};

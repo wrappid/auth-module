@@ -1,15 +1,13 @@
-import TestComponent from "./components/TestComponent";
-import TestComponentMobile from "./components/TestComponentMobile";
-import TestComponentWeb from "./components/TestComponentWeb";
+import React from "react";
+import CheckUserExist from "./components/CheckUserExist";
+import LoginWithOtp from "./components/LoginWithOtp";
+import LoginWithPassword from "./components/LoginWithPassword";
+import RegisterOrResetPassword from "./components/RegisterOrResetPassword";
 
 export const ComponentRegistry = {
-  TestComponents      : { comp: TestComponent },
-  TestComponentsMobile: {
-    comp: TestComponentMobile,
-    web : false
-  },
-  TestComponentsWeb: {
-    comp  : TestComponentWeb,
-    mobile: false
-  }
+  checkUserExist: { comp: CheckUserExist },
+  loginWithOtp: { comp: LoginWithOtp },
+  loginWithPassword: { comp: LoginWithPassword },
+  register: { comp: RegisterOrResetPassword },
+  resetPassword: { comp: RegisterOrResetPassword },
 };
