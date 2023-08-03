@@ -30,18 +30,6 @@ import {saveAuthData} from '../actions/authActions';
 class RegisterOrResetPassword extends Component {
   state = {};
 
-  componentDidMount = () => {
-    if (
-      this.props.authNextPage !== urls.REGISTER_ROUTE &&
-      !this.props.navigateToResetPasswordLoading &&
-      !this.props.navigateToResetPasswordSuccess
-    ) {
-      this.props.SendResetPasswordOtp({
-        emailOrPhone: this.props?.navData?.emailOrPhone,
-      });
-    }
-  };
-
   componentDidUpdate = () => {
     if (this.state.submitFlag && this.props.auth.authError) {
       //   swal("Oops!", this.props.auth.authError, "error");
@@ -119,6 +107,9 @@ class RegisterOrResetPassword extends Component {
           formId="loginWithResetPassword"
           mode="edit"
           authenticated={false}
+          initProps={{
+            otp: { to: this.props.navData.emailOrPhone}
+          }}
         />
 
         {this.props.authNextPage === urls.REGISTER_ROUTE && (

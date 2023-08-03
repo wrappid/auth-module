@@ -30,22 +30,6 @@ class LoginWithOtp extends Component {
   state = { otp: false };
 
   componentDidMount = () => {
-    /**
-     * @todo:
-     * otp flag checking is given because react call
-     * componentDidMount 2 times in development mode
-     * https://github.com/erikras/react-redux-universal-hot-example/issues/429#issuecomment-151990676
-     */
-    if (
-      !this.props.navigateToOtpLoading &&
-      !this.props.navigateToOtpSuccess &&
-      !this.state.otp
-    ) {
-      console.log("OTP CALLING");
-      this.setState({ otp: true }, () => {
-        this.props.SendOtp({ emailOrPhone: this.props?.navData?.emailOrPhone });
-      });
-    }
   };
 
   componentDidUpdate = () => {
@@ -108,6 +92,11 @@ class LoginWithOtp extends Component {
           formId={"loginWithOtp"}
           mode={"edit"}
           authenticated={false}
+          initProps={
+            {
+              otp:{to:this.props?.navData?.emailOrPhone}
+            }
+          }
         />
       </AuthContainer>
     );
