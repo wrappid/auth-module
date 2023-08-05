@@ -11,7 +11,6 @@ import {
   maskEmailOrPhone,
   CoreClasses,
   HTTP,
-  urls,
   CoreTypographyBody2,
   CoreDomNavigate
 } from "@wrappid/core";
@@ -25,7 +24,7 @@ import {
   NAVIGATE_TO_OTP_LOGIN_SUCCESS,
 } from "../types/authTypes";
 import { saveAuthData } from "../actions/authActions";
-
+import { urls } from "../urls.registry";
 class LoginWithOtp extends Component {
   state = { otp: false };
 

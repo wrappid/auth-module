@@ -15,7 +15,6 @@ import {
   maskEmailOrPhone,
   CoreClasses,
   HTTP,
-  urls,
   config
 } from "@wrappid/core"
 
@@ -26,6 +25,7 @@ import {
 } from '../types/authTypes';
 import {AuthContainer} from './AuthContainer';
 import {saveAuthData} from '../actions/authActions';
+import { urls } from '../urls.registry';
 
 class RegisterOrResetPassword extends Component {
   state = {};

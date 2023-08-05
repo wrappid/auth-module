@@ -1,4 +1,3 @@
-import { urls } from "@wrappid/core";
 import {
   AUTH_LOADING,
   CHECK_LOGIN_SUCCESS_REGISTERED,
@@ -24,6 +23,8 @@ import {
   CLIENT_INFORMATION_FETCH_SUCCESS,
   CLIENT_INFORMATION_FETCH_ERROR
 } from "../types/authTypes";
+
+import { urls } from "../urls.registry";
 
 const initState = {
   authError: null,

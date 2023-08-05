@@ -10,7 +10,6 @@ import {
   CoreLink,
   maskEmailOrPhone,
   CoreClasses,
-  urls,
   CoreDomNavigate
 } from "@wrappid/core"
 
@@ -18,6 +17,7 @@ import { connect } from "react-redux";
 
 import { AuthContainer } from "./AuthContainer";
 import { clearAuthState, saveAuthData } from "../actions/authActions";
+import { urls } from "../urls.registry";
 
 class LoginWithPassword extends Component {
   state = { reset: false };
