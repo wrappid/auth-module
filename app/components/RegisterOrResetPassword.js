@@ -50,6 +50,31 @@ class RegisterOrResetPassword extends Component {
     });
   };
 
+  showEmailOrPhone=()=>{
+    return( 
+      <CoreTypographyBody2 styleClasses={[
+        CoreClasses.TEXT.TEXT_JUSTIFY
+      ]}>
+        <CoreTypographyBody2 component="span">
+          We have sent you a verification code on 
+        </CoreTypographyBody2>
+        <CoreTypographyBody2 
+          component="span"
+          limitChars={42}
+          hideSeeMore={true}
+          
+        >
+        {" "+ maskEmailOrPhone(this.props.navData.emailOrPhone)}
+        </CoreTypographyBody2>
+        <CoreTypographyBody2 component="span">
+        {`. Please enter the One Time Password (OTP) to verify your ${
+          isNaN(this.props.navData.emailOrPhone) ? ' email.' : ' phone.'
+        }`} 
+        </CoreTypographyBody2>
+      </CoreTypographyBody2>
+    )
+  }
+
   render() {
     // console.log("props : ", this.props);
     // console.log("state : ", this.state);
@@ -72,28 +97,13 @@ class RegisterOrResetPassword extends Component {
         </CoreH1>
 
         {this.props.authNextPage === urls.REGISTER_ROUTE ? (
-          <CoreTypographyBody2>
-            {`We have sent you a verification code on ${maskEmailOrPhone(
-              this.props.navData.emailOrPhone,
-            )}.\nPlease enter the One Time Password (OTP) to verify your ${
-              isNaN(this.props.navData.emailOrPhone) ? ' email.' : ' phone.'
-            }`}
-          </CoreTypographyBody2>
+          this.showEmailOrPhone()
         ) : (
           <>
             <CoreTypographyBody1 styleClasses={[CoreClasses.TEXT.TEXT_CENTER]}>
               Reset Password through OTP
             </CoreTypographyBody1>
-
-            <CoreTypographyBody2>
-              {`We have sent you a verification code on your ${
-                isNaN(this.props.navData.emailOrPhone) ? ' email' : ' phone'
-              } ${maskEmailOrPhone(
-                this.props.navData?.emailOrPhone,
-              )}.\nPlease enter the One Time Password (OTP) to verify your ${
-                isNaN(this.props.navData.emailOrPhone) ? ' email.' : ' phone.'
-              }`}
-            </CoreTypographyBody2>
+            {this.showEmailOrPhone()}
           </>
         )}
 
