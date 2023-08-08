@@ -76,7 +76,7 @@ class LoginWithPassword extends Component {
         <CoreH6
           styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.MARGIN.MB1]}
         >
-          {this.props.name}
+          {this.props.name || "Unknown"}
         </CoreH6>
 
         <CoreTypographyBody2
