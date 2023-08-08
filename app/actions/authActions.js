@@ -3,8 +3,8 @@ import { LOGOUT_SUCCESS, SAVE_NAV_DATA } from "../types/authTypes";
 export const saveData = (body) => {
   return (dispatch) => {
     dispatch({
-      type: SAVE_NAV_DATA,
       payload: body,
+      type   : SAVE_NAV_DATA,
     });
   };
 };
@@ -12,13 +12,13 @@ export const saveData = (body) => {
 export const saveAuthData = (body) => {
   return (dispatch) => {
     dispatch({
-      type: "AUTH_DATA_SAVED",
       data: body,
+      type: "AUTH_DATA_SAVED",
     });
   };
 };
 
-export const clearAuthState = (token) => {
+export const clearAuthState = () => {
   return (dispatch) => {
     dispatch({ type: LOGOUT_SUCCESS });
   };

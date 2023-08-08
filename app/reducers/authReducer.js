@@ -1,4 +1,18 @@
+import { RoutesRegistry } from "../routes.registry";
 import {
+  SIGNUP_ERROR,
+  SIGNUP_SUCCESS,
+  RESET_PASSWORD_LOADING,
+  RESET_PASSWORD_SUCCESS,
+  RESET_PASSWORD_ERROR,
+  CHANGE_PASSWORD_LOADING,
+  CHANGE_PASSWORD_SUCCESS,
+  CHANGE_PASSWORD_ERROR,
+  ADD_USER_LOADING,
+  ADD_USER_SUCCESS,
+  ADD_USER_ERROR,
+  SAVE_DEFAULT,
+  AUTH_DATA_SAVED,
   AUTH_LOADING,
   CHECK_LOGIN_SUCCESS_REGISTERED,
   CHECK_LOGIN_SUCCESS_UNREGISTERED,
@@ -21,65 +35,65 @@ import {
   TOKEN_REFRESH_SUCCESS,
   AUTHENTICATION_ERROR,
   CLIENT_INFORMATION_FETCH_SUCCESS,
-  CLIENT_INFORMATION_FETCH_ERROR
+  CLIENT_INFORMATION_FETCH_ERROR,
+  CHECK_LOGIN_LOADING,
+  CHECK_LOGIN_ERROR
 } from "../types/authTypes";
 
-import { urls } from "../urls.registry";
-
 const initState = {
-  authError: null,
-  authLoading: false,
-  logoutLoading: false,
-
-  clientLoginInformation: null,
-  clientLoginFlag: false,
-
-  registerRequestLoading: false,
-  registerRequestError: false,
-  registerRequestSuccess: false,
-
-  user: null,
-  name: "",
-  photo: null,
   accessToken: null,
-  refreshToken: null,
-  resetPasswordLoading: false,
-  resetPasswordError: false,
-  resetPasswordSuccess: false,
+  authError  : null,
+  authLoading: false,
+
+  authNextPage       : RoutesRegistry.LOGIN_ROUTE,
+  changePasswordError: false,
 
   changePasswordLoading: false,
-  changePasswordError: false,
   changePasswordSuccess: false,
+  checkLoginOrRegister : null,
 
+  checkLoginOrRegisterError  : false,
   checkLoginOrRegisterLoading: false,
+  checkLoginOrRegisterMsg    : null,
+  checkLoginOrRegisterOtp    : false,
   checkLoginOrRegisterSuccess: false,
-  checkLoginOrRegisterError: false,
-  checkLoginOrRegister: null,
-  checkLoginOrRegisterMsg: null,
-  checkLoginOrRegisterOtp: false,
-  checkSignup: false,
+  checkSignup                : false,
+  clientLoginFlag            : false,
+  clientLoginInformation     : null,
 
-  authNextPage: urls.LOGIN_ROUTE,
+  loginPage    : null,
+  logoutLoading: false,
+  name         : "",
 
+  navData                       : {},
+  navigateToOtpError            : false,
+  navigateToOtpLoading          : false,
+  navigateToOtpMsg              : false,
+  navigateToOtpSuccess          : false,
+  navigateToResetPasswordError  : false,
   navigateToResetPasswordLoading: false,
-  navigateToResetPasswordSuccess: false,
-  navigateToResetPasswordError: false,
+
   navigateToResetPasswordMsg: false,
 
-  navigateToOtpLoading: false,
-  navigateToOtpSuccess: false,
-  navigateToOtpError: false,
-  navigateToOtpMsg: false,
+  navigateToResetPasswordSuccess: false,
+  permissions                   : null,
+  photo                         : null,
+  refreshToken                  : null,
 
-  navData: {},
-  loginPage: null,
+  registerRequestError  : false,
+  registerRequestLoading: false,
+  registerRequestSuccess: false,
+  resetPasswordError    : false,
 
+  resetPasswordLoading: false,
+  resetPasswordSuccess: false,
+
+  role                  : null,
+  rolePermissionsError  : false,
   rolePermissionsLoading: false,
+  rolePermissionsMsg    : false,
   rolePermissionsSuccess: false,
-  rolePermissionsError: false,
-  rolePermissionsMsg: false,
-  permissions: null,
-  role: null,
+  user                  : null,
 };
 
 const authReducer = (state = initState, action) => {
@@ -87,9 +101,10 @@ const authReducer = (state = initState, action) => {
     case AUTH_LOADING:
       return {
         ...state,
+        authError  : null,
         authLoading: true,
-        authError: null,
       };
+
     case LOGIN_ERROR:
       return {
         ...state,
@@ -98,258 +113,282 @@ const authReducer = (state = initState, action) => {
           : "Login Failed",
         authLoading: false,
       };
+
     case LOGIN_SUCCESS:
       return {
         ...state,
-        authError: null,
-        authLoading: false,
-        uid: action.payload.id,
-        user: action.payload,
-        accessToken: action.payload.accessToken,
+        accessToken : action.payload.accessToken,
+        authError   : null,
+        authLoading : false,
         refreshToken: action.payload.refreshToken,
+        uid         : action.payload.id,
+        user        : action.payload,
       };
+
     case TOKEN_REFRESH_SUCCESS:
       // //console.log("REDU:", action.payload.accessToken, action.payload.refreshToken );
       return {
         ...state,
-        authError: null,
-        authLoading: false,
         accessToken: action.payload.accessToken,
+        authError  : null,
+        authLoading: false,
       };
+
     case AUTHENTICATION_ERROR:
-      //console.log("HERE");
       return initState;
+
     case LOGOUT_LOADING:
-      //console.log("signout success");
-      // window.location.reload();
       return {
         ...state,
         logoutLoading: true,
       };
+
     case LOGOUT_SUCCESS:
-      //console.log("signout success");
-      // window.location.reload();
       return initState;
+
     case LOGOUT_ERROR:
-      //console.log("signout error");
       return initState;
-    case "SIGNUP_ERROR":
-      //console.log("sign up error");
+
+    case SIGNUP_ERROR:
       return {
         ...state,
         authError: action.error.message,
       };
-    case "SIGNUP_SUCCESS":
-      //console.log("sign up success");
+
+    case SIGNUP_SUCCESS:
       return {
         ...state,
         authError: null,
       };
-    case "RESET_PASSWORD_LOADING":
+
+    case RESET_PASSWORD_LOADING:
       return {
         ...state,
+        resetPasswordError  : false,
         resetPasswordLoading: true,
-        resetPasswordError: false,
         resetPasswordSuccess: false,
       };
-    case "RESET_PASSWORD_SUCCESS":
+
+    case RESET_PASSWORD_SUCCESS:
       alert("Password reset successfuly. Check your mail.");
       return {
         ...state,
+        resetPasswordError  : false,
         resetPasswordLoading: false,
-        resetPasswordError: false,
         resetPasswordSuccess: true,
       };
-    case "RESET_PASSWORD_ERROR":
+
+    case RESET_PASSWORD_ERROR:
       alert("Password reset error...");
       return {
         ...state,
+        resetPasswordError  : true,
         resetPasswordLoading: false,
-        resetPasswordError: true,
         resetPasswordSuccess: false,
       };
-    case "CHANGE_PASSWORD_LOADING":
+
+    case CHANGE_PASSWORD_LOADING:
       return {
         ...state,
+        changePasswordError  : false,
         changePasswordLoading: true,
-        changePasswordError: false,
         changePasswordSuccess: false,
       };
-    case "CHANGE_PASSWORD_SUCCESS":
+
+    case CHANGE_PASSWORD_SUCCESS:
       return {
         ...state,
+        changePasswordError  : false,
         changePasswordLoading: false,
-        changePasswordError: false,
         changePasswordSuccess: true,
       };
-    case "CHANGE_PASSWORD_ERROR":
+
+    case CHANGE_PASSWORD_ERROR:
       return {
         ...state,
+        changePasswordError  : true,
         changePasswordLoading: false,
-        changePasswordError: true,
         changePasswordSuccess: false,
       };
-    case "ADD_USER_LOADING":
+
+    case ADD_USER_LOADING:
       return {
         ...state,
+        signUpError  : false,
         signUpLoading: true,
-        signUpError: false,
-        signUpSuccess: false,
         signUpMessage: null,
-      };
-    case "ADD_USER_SUCCESS":
-      return {
-        ...state,
-        signUpLoading: false,
-        signUpError: false,
-        signUpSuccess: true,
-        signUpMessage: action.message,
-      };
-    case "ADD_USER_ERROR":
-      return {
-        ...state,
-        signUpLoading: false,
-        signUpError: true,
         signUpSuccess: false,
-        signUpMessage: action.message,
       };
-    case "SAVE_DEFAULT":
+
+    case ADD_USER_SUCCESS:
+      return {
+        ...state,
+        signUpError  : false,
+        signUpLoading: false,
+        signUpMessage: action.message,
+        signUpSuccess: true,
+      };
+
+    case ADD_USER_ERROR:
+      return {
+        ...state,
+        signUpError  : true,
+        signUpLoading: false,
+        signUpMessage: action.message,
+        signUpSuccess: false,
+      };
+
+    case SAVE_DEFAULT:
       return {
         ...state,
         defaultData: action.data,
       };
-    case "CHECK_LOGIN_LOADING":
-      return {
-        ...state,
-        checkLoginOrRegisterLoading: true,
-        checkLoginOrRegisterSuccess: false,
-        checkLoginOrRegisterError: false,
-        checkLoginOrRegister: null,
-        checkLoginOrRegisterMsg: null,
-      };
-    case CHECK_LOGIN_SUCCESS_REGISTERED:
-      console.log("AUTH REDUCER", action);
 
+    case CHECK_LOGIN_LOADING:
       return {
         ...state,
-        checkLoginOrRegisterLoading: false,
-        checkLoginOrRegisterSuccess: true,
-        checkLoginOrRegisterError: false,
-        authNextPage: urls.PASSWORD_ROUTE,
-        name: action.payload.data.name,
-        photo: action.payload.data.photoUrl,
-        checkLoginOrRegisterMsg: null,
+        checkLoginOrRegister       : null,
+        checkLoginOrRegisterError  : false,
+        checkLoginOrRegisterLoading: true,
+        checkLoginOrRegisterMsg    : null,
+        checkLoginOrRegisterSuccess: false,
       };
+
+    case CHECK_LOGIN_SUCCESS_REGISTERED:
+      return {
+        ...state,
+        authNextPage               : RoutesRegistry.PASSWORD_ROUTE,
+        checkLoginOrRegisterError  : false,
+        checkLoginOrRegisterLoading: false,
+        checkLoginOrRegisterMsg    : null,
+        checkLoginOrRegisterSuccess: true,
+        name                       : action.payload.data.name,
+        photo                      : action.payload.data.photoUrl,
+      };
+
     case CHECK_LOGIN_SUCCESS_UNREGISTERED:
       return {
         ...state,
+        authNextPage               : RoutesRegistry.REGISTER_ROUTE,
+        checkLoginOrRegisterError  : false,
         checkLoginOrRegisterLoading: false,
+        checkLoginOrRegisterMsg    : action.message,
         checkLoginOrRegisterSuccess: true,
-        checkLoginOrRegisterError: false,
-        checkLoginOrRegisterMsg: action.message,
-        authNextPage: urls.REGISTER_ROUTE,
       };
+
     case NAVIGATE_TO_OTP_LOGIN_LOADING:
       return {
         ...state,
+        navigateToOtpError  : false,
         navigateToOtpLoading: true,
         navigateToOtpSuccess: false,
-        navigateToOtpError: false,
       };
+
     case NAVIGATE_TO_OTP_LOGIN_SUCCESS:
       return {
         ...state,
+        authNextPage        : RoutesRegistry.LOGIN_OTP_ROUTE,
+        navigateToOtpError  : false,
         navigateToOtpLoading: false,
+        navigateToOtpMsg    : action.message,
         navigateToOtpSuccess: true,
-        navigateToOtpError: false,
-        navigateToOtpMsg: action.message,
-        authNextPage: urls.LOGIN_OTP_ROUTE,
       };
+
     case NAVIGATE_TO_RESET_PASSWORD_SUCCESS:
       return {
         ...state,
+        authNextPage                  : RoutesRegistry.RESET_PASSWORD_ROUTE,
+        navigateToResetPasswordError  : false,
         navigateToResetPasswordLoading: false,
+        navigateToResetPasswordMsg    : action.message,
         navigateToResetPasswordSuccess: true,
-        navigateToResetPasswordError: false,
-        navigateToResetPasswordMsg: action.message,
-        authNextPage: urls.RESET_PASSWORD_ROUTE,
       };
+
     case GET_ROLE_PERMISSION_LOADING:
       return {
         ...state,
+        permissions           : null,
+        role                  : null,
+        rolePermissionsError  : false,
         rolePermissionsLoading: true,
+        rolePermissionsMsg    : action.message,
         rolePermissionsSuccess: false,
-        rolePermissionsError: false,
-        rolePermissionsMsg: action.message,
-        permissions: null,
-        role: null,
       };
+
     case GET_ROLE_PERMISSION_SUCCESS:
       return {
         ...state,
+        permissions           : action.payload?.data?.permissions,
+        role                  : action.payload?.data?.role,
+        rolePermissionsError  : false,
         rolePermissionsLoading: false,
+        rolePermissionsMsg    : action.payload.message,
         rolePermissionsSuccess: true,
-        rolePermissionsError: false,
-        rolePermissionsMsg: action.payload.message,
-        permissions: action.payload?.data?.permissions,
-        role: action.payload?.data?.role,
       };
+
     case GET_ROLE_PERMISSION_ERROR:
       return {
         ...state,
+        permissions           : null,
+        role                  : null,
+        rolePermissionsError  : true,
         rolePermissionsLoading: false,
+        rolePermissionsMsg    : action.message,
         rolePermissionsSuccess: false,
-        rolePermissionsError: true,
-        rolePermissionsMsg: action.message,
-        permissions: null,
-        role: null,
       };
-    case "CHECK_LOGIN_ERROR":
+
+    case CHECK_LOGIN_ERROR:
       return {
         ...state,
+        checkLoginOrRegister       : null,
+        checkLoginOrRegisterError  : true,
         checkLoginOrRegisterLoading: false,
+        checkLoginOrRegisterMsg    : action.message,
         checkLoginOrRegisterSuccess: false,
-        checkLoginOrRegisterError: true,
-        checkLoginOrRegister: null,
-        checkLoginOrRegisterMsg: action.message,
       };
+
     case GET_PROFILE_BASIC_SUCCESS:
       return {
         ...state,
         photo: action?.payload?.data?.data?.photoUrl,
       };
+
     case SAVE_NAV_DATA:
       return {
         ...state,
         navData: action.payload,
       };
+
     case SESSION_EXPIRED: {
       return {
         ...state,
-        sessionExpired: true,
-        accessToken: null,
-        refreshToken: null,
-        sessionDetail: null,
-        authNextPage: urls.PASSWORD_ROUTE,
-        loginPage: null,
+        accessToken                : null,
+        authNextPage               : RoutesRegistry.PASSWORD_ROUTE,
         checkLoginOrRegisterSuccess: true,
+        loginPage                  : null,
+        refreshToken               : null,
+        sessionDetail              : null,
+        sessionExpired             : true,
       };
     }
+
     case SAVE_EXPIRED_SESSION: {
       return {
         ...state,
         sessionDetail: action.payload,
-        uid: null,
+        uid          : null,
       };
     }
+
     case SESSION_RECALLED: {
       return {
         ...state,
+        sessionDetail : null,
         sessionExpired: false,
-        sessionDetail: null,
       };
     }
-    case "AUTH_DATA_SAVED":
+
+    case AUTH_DATA_SAVED:
       return {
         ...state,
         ...action.data,
@@ -357,20 +396,21 @@ const authReducer = (state = initState, action) => {
 
     case CLIENT_INFORMATION_FETCH_SUCCESS:
       return {
-          ...state,
-          clientLoginInformation: action.payload,
-          clientLoginFlag: true,
+        ...state,
+        clientLoginFlag       : true,
+        clientLoginInformation: action.payload,
       };
 
     case CLIENT_INFORMATION_FETCH_ERROR:
       return {
         ...state,
+        clientLoginFlag       : false,
         clientLoginInformation: null,
-        clientLoginFlag: false,
       };
 
     default:
       return state;
   }
 };
+
 export default authReducer;

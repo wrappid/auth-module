@@ -1,12 +1,11 @@
-import React, { Component } from "react";
-
-import { connect } from "react-redux";
+import { Component } from "react";
 
 import {
   CoreForm,
   CoreClasses,
   CoreDomNavigate
-} from "@wrappid/core"
+} from "@wrappid/core";
+import { connect } from "react-redux";
 
 import { AuthContainer } from "./AuthContainer";
 
@@ -18,22 +17,19 @@ class CheckUserExist extends Component {
   render() {
     const { checkLoginOrRegisterSuccess, authNextPage } = this.props;
 
-    // const queryParams = new URLSearchParams(window.location.search);
-    // const email = queryParams.get("email");
-
     if (checkLoginOrRegisterSuccess && authNextPage !== "checkUserExist") {
       return <CoreDomNavigate to={"/" + authNextPage} />;
     }
 
     return (
       <AuthContainer>
-          <CoreForm
-            styleClasses={[CoreClasses.LAYOUT.AUTH_FORM_CONTAINER]}
-            // initData={{ emailOrPhone: email }}
-            formId="checkUserExist"
-            mode="edit" // commented since default mode : edit
-            authenticated={false}
-          />
+        <CoreForm
+          styleClasses={[CoreClasses.LAYOUT.AUTH_FORM_CONTAINER]}
+          // initData={{ emailOrPhone: email }}
+          formId="checkUserExist"
+          mode="edit" // commented since default mode : edit
+          authenticated={false}
+        />
       </AuthContainer>
     );
   }
@@ -41,14 +37,14 @@ class CheckUserExist extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    auth: state.auth,
-    authNextPage: state.auth.authNextPage,
+    auth                       : state.auth,
+    authNextPage               : state.auth.authNextPage,
     checkLoginOrRegisterSuccess: state.auth.checkLoginOrRegisterSuccess,
 
     requestUrl: state?.manageAssistant?.requestUrl,
   };
 };
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = () => {
   return {};
 };
 

@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 
 import {
   CoreBox,
@@ -11,15 +11,14 @@ import {
   maskEmailOrPhone,
   CoreClasses,
   CoreDomNavigate
-} from "@wrappid/core"
-
+} from "@wrappid/core";
 import { connect } from "react-redux";
 
 import { AuthContainer } from "./AuthContainer";
 import { clearAuthState, saveAuthData } from "../actions/authActions";
-import { urls } from "../urls.registry";
+import { RoutesRegistry } from "../routes.registry";
 
-class LoginWithPassword extends Component {
+class LoginWithPassword extends React.Component {
   state = { reset: false };
 
   componentDidMount = () => {};
@@ -28,20 +27,18 @@ class LoginWithPassword extends Component {
 
   GoBack = () => {
     this.props.SaveAuthData({
-      authNextPage: "checkUserExist",
-      checkLoginOrRegisterError: false,
-      checkLoginOrRegisterLoading: false,
-      checkLoginOrRegisterMsg: false,
-      checkLoginOrRegisterSuccess: false,
-      navigateToOtpSuccess: false,
+      authNextPage                  : "checkUserExist",
+      checkLoginOrRegisterError     : false,
+      checkLoginOrRegisterLoading   : false,
+      checkLoginOrRegisterMsg       : false,
+      checkLoginOrRegisterSuccess   : false,
+      navigateToOtpSuccess          : false,
       navigateToResetPasswordSuccess: false,
     });
     this.props.ClearAuthState();
   };
 
   render() {
-    // console.log("props : ", this.props);
-    // console.log("state : ", this.state);
     const {
       navigateToResetPasswordSuccess,
       navigateToOtpSuccess,
@@ -53,7 +50,7 @@ class LoginWithPassword extends Component {
       (navigateToResetPasswordSuccess ||
         navigateToOtpSuccess ||
         !checkLoginOrRegisterSuccess) &&
-      authNextPage !== urls.PASSWORD_ROUTE
+      authNextPage !== RoutesRegistry.PASSWORD_ROUTE
     ) {
       return <CoreDomNavigate to={"/" + authNextPage} />;
     }
@@ -61,11 +58,7 @@ class LoginWithPassword extends Component {
     return (
       <AuthContainer>
         <CoreBox
-          styleClasses={[
-            CoreClasses.ALIGNMENT.ALIGN_ITEMS_CENTER,
-            CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER,
-            CoreClasses.MARGIN.MB3,
-          ]}
+          styleClasses={[CoreClasses.ALIGNMENT.ALIGN_ITEMS_CENTER, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER, CoreClasses.MARGIN.MB3]}
         >
           <CoreAvatar
             styleClasses={[CoreClasses.DATA_DISPLAY.AVATAR_LARGE]}
@@ -76,7 +69,7 @@ class LoginWithPassword extends Component {
         <CoreH6
           styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.MARGIN.MB1]}
         >
-          {this.props.name || "Unknown"}
+          {this.props?.name || "Unknown"}
         </CoreH6>
 
         <CoreTypographyBody2
@@ -119,6 +112,7 @@ class LoginWithPassword extends Component {
            * fix required: email or phone getting removed from store auth.navData
            */}
           <CoreLink styleClasses={[CoreClasses.COLOR.TEXT_WHITE]} href="/resetPassword">Reset Password</CoreLink>
+
           <CoreLink styleClasses={[CoreClasses.COLOR.TEXT_WHITE]} href="/enterOtp">Login with OTP</CoreLink>
         </CoreBox>
       </AuthContainer>
@@ -127,17 +121,16 @@ class LoginWithPassword extends Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log(state);
   return {
-    auth: state.auth,
-    authNextPage: state.auth.authNextPage,
-    checkLoginOrRegisterSuccess: state.auth.checkLoginOrRegisterSuccess,
-    curPage: state.auth.curPage,
-    name: state.auth.name,
-    navData: state.auth.navData,
-    navigateToOtpSuccess: state.auth.navigateToOtpSuccess,
+    auth                          : state.auth,
+    authNextPage                  : state.auth.authNextPage,
+    checkLoginOrRegisterSuccess   : state.auth.checkLoginOrRegisterSuccess,
+    curPage                       : state.auth.curPage,
+    name                          : state.auth.name,
+    navData                       : state.auth.navData,
+    navigateToOtpSuccess          : state.auth.navigateToOtpSuccess,
     navigateToResetPasswordSuccess: state.auth.navigateToResetPasswordSuccess,
-    photo: state.auth.photo,
+    photo                         : state.auth.photo,
   };
 };
 

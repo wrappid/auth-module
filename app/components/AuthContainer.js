@@ -1,5 +1,4 @@
-import React, {useContext} from 'react';
-import {useSelector} from 'react-redux';
+import React, { useContext } from "react";
 
 import {
   CoreBox,
@@ -10,10 +9,10 @@ import {
   CoreImage,
   CoreThemeProvider,
   coreUseNavigate
-} from "@wrappid/core"
+} from "@wrappid/core";
+import { useSelector } from "react-redux";
 
-
-import { AUTH_THEME } from './authTheme';
+import { AUTH_THEME } from "../theme/authTheme";
 
 export const AuthContainer = props => {
   const navigate = coreUseNavigate();
@@ -35,46 +34,41 @@ export const AuthContainer = props => {
       ) {
         let path = auth.sessionDetail?.location?.pathname;
 
-        navigate('/', {state: {recalledPath: path}});
+        navigate("/", { state: { recalledPath: path } });
       } else {
-        navigate('/');
+        navigate("/");
       }
     }
   });
   return (
-      <CoreThemeProvider theme={AUTH_THEME}>
-        <CoreImageBackground
-          source={authBackground}
-          resizeMode="cover">
-          <CoreBox styleClasses={[CoreClasses?.AUTH?.WRAPPER]}>
-              <CoreSection
-                elevated={false}
-                styleClasses={[
-                  CoreClasses?.UTILS?.FIT_CONTENT_WIDTH,
-                  CoreClasses?.UTILS?.FIT_CONTENT_HEIGHT,
-                  CoreClasses?.AUTH?.CARD_MIN_WIDTH,
-                  CoreClasses?.AUTH?.CARD_MAX_WIDTH,
-                  CoreClasses?.AUTH?.CARD
-                ]}>
-                <CoreBox
-                  styleClasses={[
-                    CoreClasses?.LAYOUT?.FULL_WIDTH,
-                    CoreClasses?.ALIGNMENT?.ALIGN_ITEMS_CENTER,
-                    CoreClasses?.ALIGNMENT?.JUSTIFY_CONTENT_CENTER,
-                    CoreClasses?.MARGIN?.MB5,
-                  ]}>
-                  {/* <CoreComponent componentName="AppLogo" /> */}
-                  {logo && (
-                    <CoreImage
-                      src={logo}
-                      styleClasses={[CoreClasses?.AUTH?.LOGO]}
-                    />
-                  )}
-                </CoreBox>
-                {props.children}
-              </CoreSection>
-          </CoreBox>
-        </CoreImageBackground>
-      </CoreThemeProvider>
+    <CoreThemeProvider theme={AUTH_THEME}>
+      <CoreImageBackground
+        source={authBackground}
+        resizeMode="cover">
+        <CoreBox styleClasses={[CoreClasses?.AUTH?.WRAPPER]}>
+          <CoreSection
+            elevated={false}
+            styleClasses={[
+              CoreClasses?.UTILS?.FIT_CONTENT_WIDTH,
+              CoreClasses?.UTILS?.FIT_CONTENT_HEIGHT,
+              CoreClasses?.AUTH?.CARD_MIN_WIDTH,
+              CoreClasses?.AUTH?.CARD_MAX_WIDTH,
+              CoreClasses?.AUTH?.CARD
+            ]}>
+            <CoreBox
+              styleClasses={[CoreClasses?.LAYOUT?.FULL_WIDTH, CoreClasses?.ALIGNMENT?.ALIGN_ITEMS_CENTER, CoreClasses?.ALIGNMENT?.JUSTIFY_CONTENT_CENTER, CoreClasses?.MARGIN?.MB5]}>
+              {logo && (
+                <CoreImage
+                  src={logo}
+                  styleClasses={[CoreClasses?.AUTH?.LOGO]}
+                />
+              )}
+            </CoreBox>
+
+            {props.children}
+          </CoreSection>
+        </CoreBox>
+      </CoreImageBackground>
+    </CoreThemeProvider>
   );
 };

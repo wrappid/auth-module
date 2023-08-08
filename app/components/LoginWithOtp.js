@@ -1,6 +1,4 @@
-import React, { Component } from "react";
-
-import { connect } from "react-redux";
+import { Component } from "react";
 
 import {
   CoreH1,
@@ -14,17 +12,17 @@ import {
   CoreTypographyBody2,
   CoreDomNavigate
 } from "@wrappid/core";
-
+import { connect } from "react-redux";
 
 import { AuthContainer } from "./AuthContainer";
+import { saveAuthData } from "../actions/authActions";
+import { RoutesRegistry } from "../routes.registry";
 import {
   NAVIGATE_TO_OTP_LOGIN_API,
   NAVIGATE_TO_OTP_LOGIN_ERROR,
   NAVIGATE_TO_OTP_LOGIN_LOADING,
-  NAVIGATE_TO_OTP_LOGIN_SUCCESS,
+  NAVIGATE_TO_OTP_LOGIN_SUCCESS
 } from "../types/authTypes";
-import { saveAuthData } from "../actions/authActions";
-import { urls } from "../urls.registry";
 class LoginWithOtp extends Component {
   state = { otp: false };
 
@@ -33,7 +31,6 @@ class LoginWithOtp extends Component {
 
   componentDidUpdate = () => {
     if (this.state.submitFlag && this.props.auth.authError) {
-      //   swal("Oops!", this.props.auth.authError, "error");
       this.props.SaveAuthData({ authError: null });
       this.setState({ submitFlag: false });
     }
@@ -41,25 +38,21 @@ class LoginWithOtp extends Component {
 
   GoBack = () => {
     this.props.SaveAuthData({
-      authNextPage: urls.LOGIN_ROUTE,
-      checkLoginOrRegisterError: false,
-      checkLoginOrRegisterLoading: false,
-      checkLoginOrRegisterSuccess: false,
-      navigateToOtpLoading: false,
-      navigateToOtpSuccess: false,
+      authNextPage                  : RoutesRegistry.LOGIN_ROUTE,
+      checkLoginOrRegisterError     : false,
+      checkLoginOrRegisterLoading   : false,
+      checkLoginOrRegisterSuccess   : false,
+      navigateToOtpLoading          : false,
+      navigateToOtpSuccess          : false,
       navigateToResetPasswordSuccess: false,
     });
   };
 
   render() {
-    // console.log("props : ", this.props);
-    // console.log("state : ", this.state);
-
     if (
       !this.props.checkLoginOrRegisterSuccess &&
-      this.props.authNextPage !== urls.LOGIN_OTP_ROUTE
+      this.props.authNextPage !== RoutesRegistry.LOGIN_OTP_ROUTE
     ) {
-      console.log("REDIRECT");
       return <CoreDomNavigate to={"/" + this.props.authNextPage} />;
     }
     return (
@@ -92,9 +85,7 @@ class LoginWithOtp extends Component {
           mode={"edit"}
           authenticated={false}
           initProps={
-            {
-              otp:{to:this.props?.navData?.emailOrPhone}
-            }
+            { otp: { to: this.props?.navData?.emailOrPhone } }
           }
         />
       </AuthContainer>
@@ -103,17 +94,16 @@ class LoginWithOtp extends Component {
 }
 
 const mapStateToProps = (state) => {
-  // console.log(state)
   return {
-    auth: state.auth,
+    auth        : state.auth,
     authNextPage: state.auth.authNextPage,
 
-    checkLoginOrRegisterError: state.auth.checkLoginOrRegisterError,
+    checkLoginOrRegisterError  : state.auth.checkLoginOrRegisterError,
     checkLoginOrRegisterLoading: state.auth.checkLoginOrRegisterLoading,
     checkLoginOrRegisterSuccess: state.auth.checkLoginOrRegisterSuccess,
-    navData: state.auth.navData,
-    navigateToOtpLoading: state.auth.navigateToOtpLoading,
-    navigateToOtpSuccess: state.auth.navigateToOtpSuccess,
+    navData                    : state.auth.navData,
+    navigateToOtpLoading       : state.auth.navigateToOtpLoading,
+    navigateToOtpSuccess       : state.auth.navigateToOtpSuccess,
   };
 };
 
