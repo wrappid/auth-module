@@ -16,7 +16,7 @@ import { connect } from "react-redux";
 
 import { AuthContainer } from "./AuthContainer";
 import { saveAuthData } from "../actions/authActions";
-import { RoutesRegistry } from "../routes.registry";
+import { RouteRegistry } from "../routes.registry";
 import {
   NAVIGATE_TO_OTP_LOGIN_API,
   NAVIGATE_TO_OTP_LOGIN_ERROR,
@@ -38,7 +38,7 @@ class LoginWithOtp extends Component {
 
   GoBack = () => {
     this.props.SaveAuthData({
-      authNextPage                  : RoutesRegistry.LOGIN_ROUTE,
+      authNextPage                  : RouteRegistry.LOGIN_ROUTE,
       checkLoginOrRegisterError     : false,
       checkLoginOrRegisterLoading   : false,
       checkLoginOrRegisterSuccess   : false,
@@ -51,7 +51,7 @@ class LoginWithOtp extends Component {
   render() {
     if (
       !this.props.checkLoginOrRegisterSuccess &&
-      this.props.authNextPage !== RoutesRegistry.LOGIN_OTP_ROUTE
+      this.props.authNextPage !== RouteRegistry.LOGIN_OTP_ROUTE
     ) {
       return <CoreDomNavigate to={"/" + this.props.authNextPage} />;
     }

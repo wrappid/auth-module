@@ -1,1 +1,1 @@
-export const ApisRegistry = {};
+export const ApiRegistry = {};

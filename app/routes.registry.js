@@ -1,4 +1,4 @@
-export const RoutesRegistry = {
+export const RouteRegistry = {
   LOGIN_OTP_ROUTE     : "enterOtp",
   LOGIN_ROUTE         : "checkUserExist",
   LOGOUT              : "logout",

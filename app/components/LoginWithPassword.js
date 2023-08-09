@@ -16,7 +16,7 @@ import { connect } from "react-redux";
 
 import { AuthContainer } from "./AuthContainer";
 import { clearAuthState, saveAuthData } from "../actions/authActions";
-import { RoutesRegistry } from "../routes.registry";
+import { RouteRegistry } from "../routes.registry";
 
 class LoginWithPassword extends React.Component {
   state = { reset: false };
@@ -50,7 +50,7 @@ class LoginWithPassword extends React.Component {
       (navigateToResetPasswordSuccess ||
         navigateToOtpSuccess ||
         !checkLoginOrRegisterSuccess) &&
-      authNextPage !== RoutesRegistry.PASSWORD_ROUTE
+      authNextPage !== RouteRegistry.PASSWORD_ROUTE
     ) {
       return <CoreDomNavigate to={"/" + authNextPage} />;
     }

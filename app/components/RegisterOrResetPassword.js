@@ -19,7 +19,7 @@ import { connect } from "react-redux";
 
 import { AuthContainer } from "./AuthContainer";
 import { saveAuthData } from "../actions/authActions";
-import { RoutesRegistry } from "../routes.registry";
+import { RouteRegistry } from "../routes.registry";
 import {
   CHECK_LOGIN_ERROR,
   NAVIGATE_TO_RESET_PASSWORD_API,
@@ -40,7 +40,7 @@ class RegisterOrResetPassword extends Component {
 
   GoBack = () => {
     this.props.SaveAuthData({
-      authNextPage                  : urls.LOGIN_ROUTE,
+      authNextPage                  : RouteRegistry.LOGIN_ROUTE,
       checkLoginOrRegisterError     : false,
       checkLoginOrRegisterLoading   : false,
       checkLoginOrRegisterMsg       : false,
@@ -78,8 +78,8 @@ class RegisterOrResetPassword extends Component {
   render() {
     if (
       !this.props.checkLoginOrRegisterSuccess &&
-      (this.props.authNextPage !== urls.REGISTER_ROUTE ||
-        this.props.authNextPage !== urls.RESET_PASSWORD_ROUTE)
+      (this.props.authNextPage !== RouteRegistry.REGISTER_ROUTE ||
+        this.props.authNextPage !== RouteRegistry.RESET_PASSWORD_ROUTE)
     ) {
       return <CoreDomNavigate to={"/" + this.props.authNextPage} />;
     }
@@ -92,7 +92,7 @@ class RegisterOrResetPassword extends Component {
           }`}
         </CoreH1>
 
-        {this.props.authNextPage === urls.REGISTER_ROUTE ? (
+        {this.props.authNextPage === RouteRegistry.REGISTER_ROUTE ? (
           this.showEmailOrPhone()
         ) : (
           <>
@@ -117,7 +117,7 @@ class RegisterOrResetPassword extends Component {
           initProps={{ otp: { to: this.props.navData.emailOrPhone } }}
         />
 
-        {this.props.authNextPage === RoutesRegistry.REGISTER_ROUTE && (
+        {this.props.authNextPage === RouteRegistry.REGISTER_ROUTE && (
           <CoreTypographyBody2>
             By signing up you agree to our{" "}
 
