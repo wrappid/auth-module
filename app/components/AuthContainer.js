@@ -19,7 +19,7 @@ export const AuthContainer = props => {
   const auth = useSelector(state => state.auth);
   const requestUrl = useSelector(state => state?.manageAssistant?.requestUrl);
   const resourceContext = useContext(CoreResourceContext);
-  const logo = resourceContext?.appLogo;
+  const logo = resourceContext?.appLogoLight;
   const authBackground = resourceContext?.authBackground;
 
   React.useEffect(() => {
