@@ -1,4 +1,14 @@
 {
     "projectType": "module",
-    "projectID": ""
+    "projectID": "",
+    "projectName": "auth",
+    "remote": true,
+    "repoProvider": "github.com",
+    "repoOwner": "wrappid",
+    "repoURL": "https://github.com/wrappid/auth-module.git",
+    "app": {
+        "renderType": []
+    },
+    "service": {},
+    "modules": {}
 }

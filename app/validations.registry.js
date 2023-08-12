@@ -1,7 +1,7 @@
 import { clearValidatePhoneEmail } from "@wrappid/core";
 import * as yup from "yup";
 
-export const ValidationRegistry = {
+export const ValidationsRegistry = {
   checkEmailorPhone: {
     emailOrPhone: yup
       .string()
