@@ -57,7 +57,10 @@ const getIpSchema = {
   query: yup.object({}).noUnknown().strict(),
 };
 
-
+const postLoginWithUrl = {
+  params: yup.object({}).noUnknown().strict(),
+  query: yup.object({}).noUnknown().strict(),
+}
 
 const refreshTokenSchema = {
   body: yup
@@ -76,5 +79,6 @@ module.exports = {
   postLoginWithOtp,
   postLogoutSchema,
   getIpSchema,
-  refreshTokenSchema
+  refreshTokenSchema,
+  postLoginWithUrl
 };

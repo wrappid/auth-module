@@ -3,6 +3,7 @@ const DeviceDetector = require("node-device-detector");
 const jwt = require("jsonwebtoken");
 const constant = require("../constants/constants");
 
+
 const {
   cacheActions,
   databaseActions,
@@ -81,12 +82,12 @@ const checkLoginOrRegisterUtil = async (req) => {
                   }
                 );
                 let userData = await databaseActions.create("application","Users",
-                  [{
+                  {
                     ...userBody,
                     roleId: rolesData.id,
                     firstLogin: true,
                   },
-                  { transaction: t }]
+                  { transaction: t }
                 );
                 console.log("User Created", userData.id);
 
@@ -201,8 +202,8 @@ const loginHelper = async (req, otherLogin) => {
     let userUpdateOb = {};
 
     // console.log("i am in >>>>>>>>>>>>>>>>>>>>>>>>>>>",userId)
-    let personData = await databaseActions.findOne("application", "Persons.", {
-      attributes: ["id", "userInvitationToken"],
+    let personData = await databaseActions.findOne("application", "Persons", {
+      attributes: ["id", "userInvitationToken"],  
       where: { userId: userId },
     });
     let personId = personData.id;
@@ -346,7 +347,7 @@ const loginHelper = async (req, otherLogin) => {
           let [checkPerson, r] = await databaseActions.update(
             "application",
             "Persons",
-            [
+            
               verificationOb,
               {
                 where: {
@@ -354,7 +355,7 @@ const loginHelper = async (req, otherLogin) => {
                 },
                 transaction: t,
               },
-            ]
+            
           );
           if (checkPerson == 0) {
             throw "DB update error";
@@ -450,27 +451,26 @@ const logoutHelper = async (req, res) => {
   try {
     console.error("user:: ", req.user);
     deviceId = await helper.getDeviceId(req);
-    sessions = await databaseActions.findAll("application", "SessionManager", [
+    sessions = await databaseActions.findAll("application", "SessionManager", 
       {
         where: {
-          userId: req.user.userId,
-        },
-      },
-    ]);
-    for (var s = 0; s < sessions.length; s++) {
-      currSession = sessions[s];
+          userId: 1,//hard data
+        }
+      }
+    );
+    for (let session = 0; session < sessions.length; session++) {
+      currSession = sessions[session];
       if (bcrypt.compareSync(deviceId, currSession.deviceId)) {
         [nrows, rows] = await databaseActions.update(
           "application",
           "SessionManager",
-          [
             { refreshToken: "" },
             {
               where: {
                 id: currSession.id,
               },
-            },
-          ]
+            }
+          
         );
         if (nrows > 0) {
           console.log("Successfully logged out");
@@ -493,7 +493,7 @@ async function checkOtp(userId, otp) {
     where: {
       userId: userId,
       isActive: true,
-    },
+    }
   });
   // console.log("DB OTP:", dbOtp.otp, Number(dbOtp.otp));
   // console.log("REQ OTP:", otp, Number(otp));
@@ -582,16 +582,15 @@ async function createLoginLogs(path, userId, extraInfo = "{}") {
 }
 const getIPHelper = async (req, res) => {
   try {
-    var detector = new DeviceDetector({
+    let detector = new DeviceDetector({
       clientIndexes: true,
       deviceIndexes: true,
       deviceAliasCode: true,
     });
-    var result = detector.detect(req.headers["user-agent"]);
+    let result = detector.detect(req.headers["user-agent"]);
     devId = await helper.getDeviceId(req);
     req.devId = devId;
-    req.result = result;
-    return res.status(200).json({ devId: devId, result: result });
+    return res.status(200).json({ devId: devId });
   } catch (err) {
     console.error("internal error", error);
     return { status: 500, message: "Internal error" };
@@ -608,8 +607,8 @@ const refreshTokenHelper =async (req, res) => {
           console.error("Refresh token expired", err);
           return res.status(401).json({ message: "Refresh token expired" });
         }
-        var userId = user.userId;
-        // var isValidJOI = await authenticateJOI(req,"refreshtokenPOST",["body"])
+        let userId = user.userId;
+        // let isValidJOI = await authenticateJOI(req,"refreshtokenPOST",["body"])
         // if(isValidJOI.validFlag){
         deviceId = await helper.getDeviceId(req);
         sessions = await databaseActions.findAll("application","SessionManager",{
@@ -619,7 +618,7 @@ const refreshTokenHelper =async (req, res) => {
           },
         });
         console.log("Sessions available:", sessions.length);
-        for (var session = 0; session < sessions.length; session++) {
+        for (let session = 0; session < sessions.length; session++) {
           currSession = sessions[session];
           if (bcrypt.compareSync(deviceId, currSession.deviceId)) {
             const token = req.body.refreshToken;
@@ -635,7 +634,7 @@ const refreshTokenHelper =async (req, res) => {
                 .json({ message: "unauthorised access" });
             }
 
-            var userDetails = await databaseActions.findOne("application","Users",{
+            let userDetails = await databaseActions.findOne("application","Users",{
               where: {
                 id: userId,
               },
@@ -676,13 +675,13 @@ const clientLoginInformationHelper = async(req,res) =>{
     let ip = req?.socket?.remoteAddress || req?.ip || "Not found";
   
     // last login info
-    const lastLoginDetails = await db.findOne("application","LoginLogs",[{
+    const lastLoginDetails = await databaseActions.findOne("application","LoginLogs",{
       where: {userId: userID},
       order: [["createdAt", "DESC"]],
-    }]);
+    });
   
     // device info
-    const deviceInfo = await db.findOne("application","SessionManager",{
+    const deviceInfo = await databaseActions.findOne("application","SessionManager",{
       where: {userId: userID},
       order: [['createdAt', 'DESC']]
     });

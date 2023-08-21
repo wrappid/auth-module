@@ -2,7 +2,7 @@ const express = require("express");
 
 const authController = require("../controllers/auth.controller");
 
-const { checkLoginOrRegister,login,postLoginWithOtp,postLogoutSchema,getIpSchema,refreshTokenSchema } = require("../validations/auth.validation");
+const { checkLoginOrRegister,login,postLoginWithOtp,postLogoutSchema,getIpSchema,refreshTokenSchema,postLoginWithUrl } = require("../validations/auth.validation");
 const { CoreMiddlewaresRegistry } = require("@wrappid/service-core");
 
 const authRouter = express.Router();
@@ -27,7 +27,7 @@ authRouter.post(
 
 authRouter.post(
   "/loginWithUrl",
-  CoreMiddlewaresRegistry.validation(),
+  CoreMiddlewaresRegistry.validation(postLoginWithUrl),
   authController.loginWithUrl
 );
 
@@ -59,7 +59,7 @@ authRouter.get(
   authController.clientLoginInformation
 );
 
-
+//
 
 
 module.exports = authRouter;
