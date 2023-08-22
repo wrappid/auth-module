@@ -13,7 +13,8 @@ module.exports.checkLoginOrRegister = async (req, res) => {
   try {
     let data = await authFunctions.checkLoginOrRegisterUtil(req)
     // console.log("API Call sucessfully");
-    res.status(data?.status).json(data)
+    let { status, ...restData } = data;
+    res.status(status).json(restData);
   } catch (error) {
     console.error("checkLoginOrRegister Error:: ", error);
     res.status(500).json({ message: error.message });

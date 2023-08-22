@@ -68,7 +68,6 @@ const checkLoginOrRegisterUtil = async (req) => {
     } else {
       if (ob.valid) {
         let userBody = whereOb;
-        try {
           const result =
             await databaseProvider.application.sequelize.transaction(
               async (t) => {
@@ -128,10 +127,6 @@ const checkLoginOrRegisterUtil = async (req) => {
             );
           console.log("New User created");
           return result;
-        } catch (error) {
-          console.error("internal error", error);
-          return { status: 500, message: "Internal error" };
-        }
       } else {
         console.error("Not a valid mail or phone:", emailOrPhone);
         return { status: 405, message: "Not valid phone or email" };
@@ -139,7 +134,7 @@ const checkLoginOrRegisterUtil = async (req) => {
     }
   } catch (err) {
     console.log("Error in check register", err);
-    return { status: 500, message: err };
+    throw err;
   }
 };
 
