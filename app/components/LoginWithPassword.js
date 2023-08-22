@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 
 import {
   CoreBox,
@@ -10,51 +10,52 @@ import {
   CoreLink,
   maskEmailOrPhone,
   CoreClasses,
-  CoreDomNavigate
+  CoreDomNavigate,
+  CoreRouteRegistryContext
 } from "@wrappid/core";
-import { connect } from "react-redux";
-
 import { AuthContainer } from "./AuthContainer";
 import { clearAuthState, saveAuthData } from "../actions/authActions";
-import { RouteRegistry } from "../routes.registry";
+import { useDispatch, useSelector } from "react-redux";
 
-class LoginWithPassword extends React.Component {
-  state = { reset: false };
+const LoginWithPassword = props => {
+  const dispatch = useDispatch()
+  const auth = useSelector(state => state.auth);
+  const routeRegistry = useContext(CoreRouteRegistryContext)
+  const {
+    navigateToResetPasswordSuccess,
+    navigateToOtpSuccess,
+    checkLoginOrRegisterSuccess,
+    authNextPage,
+    name,
+    navData,
+    photo,
+  }= auth;
 
-  componentDidMount = () => {};
+  const GoBack = () => {
+    dispatch(
+      saveAuthData({
+        authNextPage                  : "checkUserExist",
+        checkLoginOrRegisterError     : false,
+        checkLoginOrRegisterLoading   : false,
+        checkLoginOrRegisterMsg       : false,
+        checkLoginOrRegisterSuccess   : false,
+        navigateToOtpSuccess          : false,
+        navigateToResetPasswordSuccess: false,
+      })
+    );
 
-  componentDidUpdate = () => {};
-
-  GoBack = () => {
-    this.props.SaveAuthData({
-      authNextPage                  : "checkUserExist",
-      checkLoginOrRegisterError     : false,
-      checkLoginOrRegisterLoading   : false,
-      checkLoginOrRegisterMsg       : false,
-      checkLoginOrRegisterSuccess   : false,
-      navigateToOtpSuccess          : false,
-      navigateToResetPasswordSuccess: false,
-    });
-    this.props.ClearAuthState();
+    dispatch(clearAuthState());
   };
-
-  render() {
-    const {
-      navigateToResetPasswordSuccess,
-      navigateToOtpSuccess,
-      checkLoginOrRegisterSuccess,
-      authNextPage,
-    } = this.props;
 
     if (
       (navigateToResetPasswordSuccess ||
         navigateToOtpSuccess ||
         !checkLoginOrRegisterSuccess) &&
-      authNextPage !== RouteRegistry.PASSWORD_ROUTE
+      authNextPage !== routeRegistry?.enterPassword
     ) {
       return <CoreDomNavigate to={"/" + authNextPage} />;
     }
-
+    else
     return (
       <AuthContainer>
         <CoreBox
@@ -62,14 +63,14 @@ class LoginWithPassword extends React.Component {
         >
           <CoreAvatar
             styleClasses={[CoreClasses.DATA_DISPLAY.AVATAR_LARGE]}
-            src={this.props.photo ? this.props.photo : "photo.jpg"}
+            src={photo ? photo : "photo.jpg"}
           />
         </CoreBox>
 
         <CoreH6
           styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.MARGIN.MB1]}
         >
-          {this.props?.name || "Unknown"}
+          {name || "Unknown"}
         </CoreH6>
 
         <CoreTypographyBody2
@@ -78,8 +79,8 @@ class LoginWithPassword extends React.Component {
           styleClasses={[CoreClasses.TEXT.TEXT_CENTER]}
         >
           {maskEmailOrPhone(
-            this.props.navData?.emailOrPhone
-              ? this.props.navData?.emailOrPhone
+            navData?.emailOrPhone
+              ? navData?.emailOrPhone
               : ""
           )}
         </CoreTypographyBody2>
@@ -87,7 +88,7 @@ class LoginWithPassword extends React.Component {
         <CoreBox
           styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.MARGIN.MB1]}
         >
-          <CoreTextButton OnClick={this.GoBack} label="Not you" />
+          <CoreTextButton OnClick={GoBack} label="Not you" />
         </CoreBox>
 
         <CoreForm
@@ -111,38 +112,17 @@ class LoginWithPassword extends React.Component {
            * we need send otp to the provided email or phone
            * fix required: email or phone getting removed from store auth.navData
            */}
-          <CoreLink styleClasses={[CoreClasses.COLOR.TEXT_WHITE]} href="/resetPassword">Reset Password</CoreLink>
+          <CoreLink styleClasses={[CoreClasses.COLOR.TEXT_WHITE]} href={"/"+routeRegistry?.resetPassword}>
+            Reset Password
+          </CoreLink>
 
-          <CoreLink styleClasses={[CoreClasses.COLOR.TEXT_WHITE]} href="/enterOtp">Login with OTP</CoreLink>
+          <CoreLink styleClasses={[CoreClasses.COLOR.TEXT_WHITE]} href={"/"+routeRegistry?.enterOtp}>
+            Login with OTP
+          </CoreLink>
         </CoreBox>
       </AuthContainer>
-    );
-  }
+    )
 }
 
-const mapStateToProps = (state) => {
-  return {
-    auth                          : state.auth,
-    authNextPage                  : state.auth.authNextPage,
-    checkLoginOrRegisterSuccess   : state.auth.checkLoginOrRegisterSuccess,
-    curPage                       : state.auth.curPage,
-    name                          : state.auth.name,
-    navData                       : state.auth.navData,
-    navigateToOtpSuccess          : state.auth.navigateToOtpSuccess,
-    navigateToResetPasswordSuccess: state.auth.navigateToResetPasswordSuccess,
-    photo                         : state.auth.photo,
-  };
-};
+export default LoginWithPassword
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    ClearAuthState: (data) => {
-      dispatch(clearAuthState(data));
-    },
-    SaveAuthData: (data) => {
-      dispatch(saveAuthData(data));
-    },
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(LoginWithPassword);

@@ -1,5 +1,4 @@
-import { Component } from "react";
-
+import React, {useContext} from 'react'
 import {
   CoreDomNavigate,
   CoreH1,
@@ -9,48 +8,38 @@ import {
   CoreTextButton,
   CoreBox,
   CoreLink,
-  apiRequestAction,
   maskEmailOrPhone,
   CoreClasses,
-  HTTP
+  CoreRouteRegistryContext
 } from "@wrappid/core";
 import { getConfigurationObject } from "@wrappid/styles";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { AuthContainer } from "./AuthContainer";
 import { saveAuthData } from "../actions/authActions";
-import { RouteRegistry } from "../routes.registry";
-import {
-  CHECK_LOGIN_ERROR,
-  NAVIGATE_TO_RESET_PASSWORD_API,
-  NAVIGATE_TO_RESET_PASSWORD_SUCCESS
-} from "../types/authTypes";
 
 const appConfig = getConfigurationObject();
 
-class RegisterOrResetPassword extends Component {
-  state = {};
+const  RegisterOrResetPassword = props => {
+  const dispatch = useDispatch()
+  const auth = useSelector(state => state.auth);
+  const routeRegistry = useContext(CoreRouteRegistryContext)
 
-  componentDidUpdate = () => {
-    if (this.state.submitFlag && this.props.auth.authError) {
-      this.props.SaveAuthData({ authError: null });
-      this.setState({ submitFlag: false });
-    }
-  };
+  const { checkLoginOrRegisterSuccess, authNextPage, navData } = auth;
 
-  GoBack = () => {
-    this.props.SaveAuthData({
-      authNextPage                  : RouteRegistry.LOGIN_ROUTE,
+  const GoBack = () => {
+    dispatch(saveAuthData({
+      authNextPage                  : routeRegistry.checkuserexist,
       checkLoginOrRegisterError     : false,
       checkLoginOrRegisterLoading   : false,
       checkLoginOrRegisterMsg       : false,
       checkLoginOrRegisterSuccess   : false,
       navigateToOtpSuccess          : false,
       navigateToResetPasswordSuccess: false,
-    });
+    }))
   };
 
-  showEmailOrPhone = ()=>{
+  const showEmailOrPhone = ()=>{
     return( 
       <CoreTypographyBody2 styleClasses={[CoreClasses.TEXT.TEXT_JUSTIFY]}>
         <CoreTypographyBody2 component="span">
@@ -63,50 +52,49 @@ class RegisterOrResetPassword extends Component {
           hideSeeMore={true}
           
         >
-          {" " + maskEmailOrPhone(this.props.navData.emailOrPhone)}
+          {" " + maskEmailOrPhone(navData?.emailOrPhone)}
         </CoreTypographyBody2>
 
         <CoreTypographyBody2 component="span">
           {`. Please enter the One Time Password (OTP) to verify your ${
-            isNaN(this.props.navData.emailOrPhone) ? " email." : " phone."
+            isNaN(navData?.emailOrPhone) ? " email." : " phone."
           }`} 
         </CoreTypographyBody2>
       </CoreTypographyBody2>
     );
   };
 
-  render() {
     if (
-      !this.props.checkLoginOrRegisterSuccess &&
-      (this.props.authNextPage !== RouteRegistry.REGISTER_ROUTE ||
-        this.props.authNextPage !== RouteRegistry.RESET_PASSWORD_ROUTE)
+      !checkLoginOrRegisterSuccess &&
+      (authNextPage !== routeRegistry.register ||
+        authNextPage !== routeRegistry.resetpassword)
     ) {
-      return <CoreDomNavigate to={"/" + this.props.authNextPage} />;
+      return <CoreDomNavigate to={"/" + authNextPage} />;
     }
-
+    else
     return (
       <AuthContainer>
         <CoreH1 variant="h5" styleClasses={[CoreClasses.TEXT.TEXT_CENTER]}>
           {`Verify your${
-            isNaN(this.props.navData.emailOrPhone) ? " email" : " phone"
+            isNaN(navData?.emailOrPhone) ? " email" : " phone"
           }`}
         </CoreH1>
 
-        {this.props.authNextPage === RouteRegistry.REGISTER_ROUTE ? (
-          this.showEmailOrPhone()
+        {authNextPage === routeRegistry.REGISTER_ROUTE ? (
+          showEmailOrPhone()
         ) : (
           <>
             <CoreTypographyBody1 styleClasses={[CoreClasses.TEXT.TEXT_CENTER]}>
               Reset Password through OTP
             </CoreTypographyBody1>
 
-            {this.showEmailOrPhone()}
+            {showEmailOrPhone()}
           </>
         )}
 
         <CoreBox
           styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.MARGIN.MB1]}>
-          <CoreTextButton OnClick={this.GoBack} label="Not You" />
+          <CoreTextButton OnClick={GoBack} label="Not You" />
         </CoreBox>
 
         <CoreForm
@@ -114,10 +102,10 @@ class RegisterOrResetPassword extends Component {
           formId="loginWithResetPassword"
           mode="edit"
           authenticated={false}
-          initProps={{ otp: { to: this.props.navData.emailOrPhone } }}
+          initProps={{ otp: { to: navData?.emailOrPhone } }}
         />
 
-        {this.props.authNextPage === RouteRegistry.REGISTER_ROUTE && (
+        {authNextPage === routeRegistry?.register && (
           <CoreTypographyBody2>
             By signing up you agree to our{" "}
 
@@ -146,43 +134,6 @@ class RegisterOrResetPassword extends Component {
         )}
       </AuthContainer>
     );
-  }
 }
 
-const mapStateToProps = state => {
-  return {
-    auth        : state.auth,
-    authNextPage: state.auth.authNextPage,
-
-    checkLoginOrRegisterError  : state.auth.checkLoginOrRegisterError,
-    checkLoginOrRegisterLoading: state.auth.checkLoginOrRegisterLoading,
-    checkLoginOrRegisterMsg    : state.auth.checkLoginOrRegisterMsg,
-    checkLoginOrRegisterSuccess: state.auth.checkLoginOrRegisterSuccess,
-    navData                    : state.auth.navData,
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    SaveAuthData: data => {
-      dispatch(saveAuthData(data));
-    },
-    SendResetPasswordOtp: data => {
-      dispatch(
-        apiRequestAction(
-          HTTP.POST,
-          NAVIGATE_TO_RESET_PASSWORD_API,
-          true,
-          data,
-          NAVIGATE_TO_RESET_PASSWORD_SUCCESS,
-          CHECK_LOGIN_ERROR
-        )
-      );
-    },
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(RegisterOrResetPassword);
+export default RegisterOrResetPassword
