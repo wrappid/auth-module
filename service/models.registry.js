@@ -1,4 +1,3 @@
-const TestDatas = require("./models/TestDatas.model");
 const FileHandlers = require("./models/FileHandlers.model");
 const Coupons = require("./models/Coupons.model");
 const Departments = require("./models/Departments.model");
@@ -24,10 +23,6 @@ const Otps = require("./models/Otp.model");
 
 
 const modelsRegistry = {
-    "TestDatas": {
-        database: "application",
-        model   : TestDatas
-    },
     "FileHandlers": {
         database: "application",
         model   : FileHandlers
