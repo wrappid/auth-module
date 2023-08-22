@@ -5,12 +5,21 @@ const constant = require("../constants/constants");
 
 
 const {
-  cacheActions,
+  configProvider,
   databaseActions,
   databaseProvider,
 } = require("@wrappid/service-core");
 
+const {
+  accessTokenSecret,
+  refreshAccessTokenSecret,
+  expTime,
+  expTimeRefreshToken
+} = configProvider.jwt;
+
 const helper = require("./auth.helper");
+
+
 
 /**
  *
@@ -69,65 +78,65 @@ const checkLoginOrRegisterUtil = async (req) => {
     } else {
       if (ob.valid) {
         let userBody = whereOb;
-          const result =
-            await databaseProvider.application.sequelize.transaction(
-              async (t) => {
-                //Changed
-                let rolesData = await databaseActions.findOne(
-                  "application",
-                  "Roles",
-                  {
-                    where: { role: "doctor" },
-                  }
-                );
-                let userData = await databaseActions.create("application","Users",
-                  {
-                    ...userBody,
-                    roleId: rolesData.id,
-                    firstLogin: true,
-                  },
-                  { transaction: t }
-                );
-                console.log("User Created", userData.id);
+        const result =
+          await databaseProvider.application.sequelize.transaction(
+            async (t) => {
+              //Changed
+              let rolesData = await databaseActions.findOne(
+                "application",
+                "Roles",
+                {
+                  where: { role: "doctor" },
+                }
+              );
+              let userData = await databaseActions.create("application", "Users",
+                {
+                  ...userBody,
+                  roleId: rolesData.id,
+                  firstLogin: true,
+                },
+                { transaction: t }
+              );
+              console.log("User Created", userData.id);
 
-                let personData = await databaseActions.create(
-                  "application",
-                  "Persons",
-                  {
-                    ...userBody,
-                    profileId: Date.now(),
-                    userId: userData.id,
-                    /**
-                     * @todo
-                     * added for phase 0.5
-                     */
-                    isVerified: true,
-                  },
-                  { transaction: t }
-                );
-                console.log("Person Created", personData.id);
+              let personData = await databaseActions.create(
+                "application",
+                "Persons",
+                {
+                  ...userBody,
+                  profileId: Date.now(),
+                  userId: userData.id,
+                  /**
+                   * @todo
+                   * added for phase 0.5
+                   */
+                  isVerified: true,
+                },
+                { transaction: t }
+              );
+              console.log("Person Created", personData.id);
 
-                let person = await databaseActions.create(
-                  "application",
-                  "PersonContacts",
-                  {
-                    data: emailOrPhone,
-                    type:
-                      ob.type === constant.communication.EMAIL
-                        ? constant.contact.EMAIL
-                        : constant.contact.PHONE,
-                    personId: personData.id,
-                    _status: constant.entityStatus.ACTIVE,
-                  },
-                  { transaction: t }
-                );
-                console.log("Person contact Created", person.id);
+              let person = await databaseActions.create(
+                "application",
+                "PersonContacts",
+                {
+                  data: emailOrPhone,
+                  type:
+                    ob.type === constant.communication.EMAIL
+                      ? constant.contact.EMAIL
+                      : constant.contact.PHONE,
+                  personId: personData.id,
+                  _status: constant.entityStatus.ACTIVE,
+                },
+                { transaction: t }
+              );
+              console.log("Person contact Created", person.id);
 
-                return { status: 201, message: "New User created" };
-              }
-            );
-          console.log("New User created");
-          return result;
+              return { status: 201, message: "New User created" };
+            }
+          );
+        console.log("New User created");
+        return result;
       } else {
         console.error("Not a valid mail or phone:", emailOrPhone);
         return { status: 405, message: "Not valid phone or email" };
@@ -198,7 +207,7 @@ const loginHelper = async (req, otherLogin) => {
 
     // console.log("i am in >>>>>>>>>>>>>>>>>>>>>>>>>>>",userId)
     let personData = await databaseActions.findOne("application", "Persons", {
-      attributes: ["id", "userInvitationToken"],  
+      attributes: ["id", "userInvitationToken"],
       where: { userId: userId },
     });
     let personId = personData.id;
@@ -342,15 +351,15 @@ const loginHelper = async (req, otherLogin) => {
           let [checkPerson, r] = await databaseActions.update(
             "application",
             "Persons",
-            
-              verificationOb,
-              {
-                where: {
-                  userId: userId,
-                },
-                transaction: t,
+
+            verificationOb,
+            {
+              where: {
+                userId: userId,
               },
-            
+              transaction: t,
+            },
+
           );
           if (checkPerson == 0) {
             throw "DB update error";
@@ -446,7 +455,7 @@ const logoutHelper = async (req, res) => {
   try {
     console.error("user:: ", req.user);
     deviceId = await helper.getDeviceId(req);
-    sessions = await databaseActions.findAll("application", "SessionManager", 
+    sessions = await databaseActions.findAll("application", "SessionManager",
       {
         where: {
           userId: 1,//hard data
@@ -459,13 +468,13 @@ const logoutHelper = async (req, res) => {
         [nrows, rows] = await databaseActions.update(
           "application",
           "SessionManager",
-            { refreshToken: "" },
-            {
-              where: {
-                id: currSession.id,
-              },
-            }
-          
+          { refreshToken: "" },
+          {
+            where: {
+              id: currSession.id,
+            },
+          }
+
         );
         if (nrows > 0) {
           console.log("Successfully logged out");
@@ -592,7 +601,7 @@ const getIPHelper = async (req, res) => {
   }
 };
 
-const refreshTokenHelper =async (req, res) => {
+const refreshTokenHelper = async (req, res) => {
   try {
     jwt.verify(
       req.body.refreshToken,
@@ -606,7 +615,7 @@ const refreshTokenHelper =async (req, res) => {
         // let isValidJOI = await authenticateJOI(req,"refreshtokenPOST",["body"])
         // if(isValidJOI.validFlag){
         deviceId = await helper.getDeviceId(req);
-        sessions = await databaseActions.findAll("application","SessionManager",{
+        sessions = await databaseActions.findAll("application", "SessionManager", {
           where: {
             userId: userId,
             // deviceId: deviceId
@@ -629,7 +638,7 @@ const refreshTokenHelper =async (req, res) => {
                 .json({ message: "unauthorised access" });
             }
 
-            let userDetails = await databaseActions.findOne("application","Users",{
+            let userDetails = await databaseActions.findOne("application", "Users", {
               where: {
                 id: userId,
               },
@@ -662,22 +671,22 @@ const refreshTokenHelper =async (req, res) => {
   }
 }
 
-const clientLoginInformationHelper = async(req,res) =>{
+const clientLoginInformationHelper = async (req, res) => {
   try {
     let userID = req.user.userId;
-  
+
     // ip
     let ip = req?.socket?.remoteAddress || req?.ip || "Not found";
-  
+
     // last login info
-    const lastLoginDetails = await databaseActions.findOne("application","LoginLogs",{
-      where: {userId: userID},
+    const lastLoginDetails = await databaseActions.findOne("application", "LoginLogs", {
+      where: { userId: userID },
       order: [["createdAt", "DESC"]],
     });
-  
+
     // device info
-    const deviceInfo = await databaseActions.findOne("application","SessionManager",{
-      where: {userId: userID},
+    const deviceInfo = await databaseActions.findOne("application", "SessionManager", {
+      where: { userId: userID },
       order: [['createdAt', 'DESC']]
     });
     const detector = new DeviceDetector({
@@ -688,7 +697,7 @@ const clientLoginInformationHelper = async(req,res) =>{
     const userAgent = req.headers['user-agent'];
     const result = detector.detect(userAgent);
     // console.log('result parse', result);
-  
+
     return res.status(200).json({ deviceInfo, ip, lastLoginDetails, result, userAgent });
   } catch (err) {
     console.log(err);
