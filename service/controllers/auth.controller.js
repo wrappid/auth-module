@@ -23,7 +23,7 @@ module.exports.checkLoginOrRegister = async (req, res) => {
 
 module.exports.login = async (req, res) => {
   try {
-    let data = await authFunctions.loginHelper(req, db)
+    let data = await authFunctions.loginHelper(req)
     res.status(data?.status).json(data)
   } catch (error) {
     console.error("login Error:: ", error);
@@ -65,8 +65,7 @@ module.exports.getIP = async (req, res) => {
   try {
     let data = await authFunctions.getIPHelper(req,res);
      devId = req.devId ;
-     result = req.result;
-    res.status(data?.status).json({ devId: devId, result: result })
+    res.status(data?.status).json({ devId: devId })
   } catch (error) {
     console.error("getIP Error:: ", error);
     res.status(500).json({ message: error.message });
