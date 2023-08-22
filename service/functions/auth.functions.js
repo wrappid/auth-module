@@ -3,7 +3,6 @@ const DeviceDetector = require("node-device-detector");
 const jwt = require("jsonwebtoken");
 const constant = require("../constants/constants");
 
-
 const {
   configProvider,
   databaseActions,
@@ -14,12 +13,10 @@ const {
   accessTokenSecret,
   refreshAccessTokenSecret,
   expTime,
-  expTimeRefreshToken
+  expTimeRefreshToken,
 } = configProvider.jwt;
 
-const helper = require("./auth.helper");
-
-
+const helperFunctions = require("./auth.helper.functions");
 
 /**
  *
@@ -29,7 +26,7 @@ const checkLoginOrRegisterUtil = async (req) => {
   try {
     // let iWsValidJOI = await authenticateJOI(req,"checkLoginOrRegisterPOST",["body","query"])
     let emailOrPhone = req.body.emailOrPhone;
-    let ob = helper.clearValidatePhoneEmail(emailOrPhone);
+    let ob = helperFunctions.clearValidatePhoneEmail(emailOrPhone);
     let whereOb = {};
     if (ob.type === constant.communication.EMAIL)
       whereOb = { email: emailOrPhone };
@@ -78,63 +75,64 @@ const checkLoginOrRegisterUtil = async (req) => {
     } else {
       if (ob.valid) {
         let userBody = whereOb;
-        const result =
-          await databaseProvider.application.sequelize.transaction(
-            async (t) => {
-              //Changed
-              let rolesData = await databaseActions.findOne(
-                "application",
-                "Roles",
-                {
-                  where: { role: "doctor" },
-                }
-              );
-              let userData = await databaseActions.create("application", "Users",
-                {
-                  ...userBody,
-                  roleId: rolesData.id,
-                  firstLogin: true,
-                },
-                { transaction: t }
-              );
-              console.log("User Created", userData.id);
+        const result = await databaseProvider.application.sequelize.transaction(
+          async (t) => {
+            //Changed
+            let rolesData = await databaseActions.findOne(
+              "application",
+              "Roles",
+              {
+                where: { role: "doctor" },
+              }
+            );
+            let userData = await databaseActions.create(
+              "application",
+              "Users",
+              {
+                ...userBody,
+                roleId: rolesData.id,
+                firstLogin: true,
+              },
+              { transaction: t }
+            );
+            console.log("User Created", userData.id);
 
-              let personData = await databaseActions.create(
-                "application",
-                "Persons",
-                {
-                  ...userBody,
-                  profileId: Date.now(),
-                  userId: userData.id,
-                  /**
-                   * @todo
-                   * added for phase 0.5
-                   */
-                  isVerified: true,
-                },
-                { transaction: t }
-              );
-              console.log("Person Created", personData.id);
+            let personData = await databaseActions.create(
+              "application",
+              "Persons",
+              {
+                ...userBody,
+                profileId: Date.now(),
+                userId: userData.id,
+                /**
+                 * @todo
+                 * added for phase 0.5
+                 */
+                isVerified: true,
+              },
+              { transaction: t }
+            );
+            console.log("Person Created", personData.id);
 
-              let person = await databaseActions.create(
-                "application",
-                "PersonContacts",
-                {
-                  data: emailOrPhone,
-                  type:
-                    ob.type === constant.communication.EMAIL
-                      ? constant.contact.EMAIL
-                      : constant.contact.PHONE,
-                  personId: personData.id,
-                  _status: constant.entityStatus.ACTIVE,
-                },
-                { transaction: t }
-              );
-              console.log("Person contact Created", person.id);
+            let person = await databaseActions.create(
+              "application",
+              "PersonContacts",
+              {
+                data: emailOrPhone,
+                type:
+                  ob.type === constant.communication.EMAIL
+                    ? constant.contact.EMAIL
+                    : constant.contact.PHONE,
+                personId: personData.id,
+                _status: constant.entityStatus.ACTIVE,
+              },
+              { transaction: t }
+            );
+            console.log("Person contact Created", person.id);
 
-              return { status: 201, message: "New User created" };
-            }
-          );
+            return { status: 201, message: "New User created" };
+          }
+        );
         console.log("New User created");
         return result;
       } else {
@@ -149,133 +147,134 @@ const checkLoginOrRegisterUtil = async (req) => {
 };
 
 const loginHelper = async (req, otherLogin) => {
-  let otpLogin = false;
-  let urlLogin = false;
-  // let isValidJOI = await authenticateJOI(req,"loginPOST",["body"])
-  let emailOrPhone = req.body.emailOrPhone;
-  let ob = helper.clearValidatePhoneEmail(req.body.emailOrPhone);
-  let whereOb = {};
-  let resetPassword = false;
-  let updatePassword = false;
-  let verificationOb = {};
+  try {
+    let otpLogin = false;
+    let urlLogin = false;
+    // let isValidJOI = await authenticateJOI(req,"loginPOST",["body"])
+    let emailOrPhone = req.body.emailOrPhone;
+    let ob = helperFunctions.clearValidatePhoneEmail(req.body.emailOrPhone);
+    let whereOb = {};
+    let resetPassword = false;
+    let updatePassword = false;
+    let verificationOb = {};
 
-  if (otherLogin?.otpLogin) {
-    otpLogin = true;
-  } else if (otherLogin?.urlLogin) {
-    urlLogin = true;
-  }
-  if (ob.type == constant.communication.EMAIL) {
-    whereOb = { email: emailOrPhone };
-    verificationOb = { emailVerified: true };
-  } else if (ob.type == constant.communication.SMS) {
-    verificationOb = { phoneVerified: true };
-
-    whereOb = { phone: emailOrPhone };
-  } else {
-    console.log("Not a valid email or phone");
-    return { status: 500, message: "Not a valid email or phone" };
-  }
-
-  //check if it is a reset password request
-  if (req.query.reset) {
-    console.log("Login with password reset mode");
-    if (req.query.reset === "true") {
-      resetPassword = true;
-    } else {
-      console.log("*********************************");
-      console.log("RESET NOT IN CORRECT FORMAT");
-      console.log("*********************************");
-      return { status: 401, message: "Reset not in correct format" };
+    if (otherLogin?.otpLogin) {
+      otpLogin = true;
+    } else if (otherLogin?.urlLogin) {
+      urlLogin = true;
     }
-  }
+    if (ob.type == constant.communication.EMAIL) {
+      whereOb = { email: emailOrPhone };
+      verificationOb = { emailVerified: true };
+    } else if (ob.type == constant.communication.SMS) {
+      verificationOb = { phoneVerified: true };
 
-  let userDetails = await databaseActions.findOne("application", "Users", {
-    where: whereOb,
-  });
+      whereOb = { phone: emailOrPhone };
+    } else {
+      console.log("Not a valid email or phone");
+      return { status: 500, message: "Not a valid email or phone" };
+    }
 
-  if (!userDetails) {
-    console.log("User does not exist");
-    return { status: 400, message: "User does not exist" };
-  } else if (!userDetails.isActive) {
-    console.error("User not active");
-    return { status: 401, message: "User not active...Contact admin" };
-  } else {
-    let userId = userDetails.id;
-    let mail = userDetails.email;
-    let phone = userDetails.phone;
-    let userUpdateOb = {};
-
-    // console.log("i am in >>>>>>>>>>>>>>>>>>>>>>>>>>>",userId)
-    let personData = await databaseActions.findOne("application", "Persons", {
-      attributes: ["id", "userInvitationToken"],
-      where: { userId: userId },
-    });
-    let personId = personData.id;
-    console.log("Person details fetched");
-
-    if (otpLogin) {
-      let otpCheck = await checkOtp(userId, req.body.otp);
-      if (!otpCheck) {
-        console.log("OTP match fail");
-        return { status: 500, message: "OTP does not match" };
+    //check if it is a reset password request
+    if (req.query.reset) {
+      console.log("Login with password reset mode");
+      if (req.query.reset === "true") {
+        resetPassword = true;
       } else {
-        console.log("OTP match passed");
-        if (resetPassword) {
-          let passwordValid = resetPasswordCheck(
-            req.body.password,
-            userDetails
-          );
-          if (passwordValid?.success) {
-            updatePassword = true;
-            userUpdateOb["password"] = passwordValid.password;
-          } else {
-            return {
-              status: 500,
-              message: passwordValid.message,
-            };
+        console.log("*********************************");
+        console.log("RESET NOT IN CORRECT FORMAT");
+        console.log("*********************************");
+        return { status: 401, message: "Reset not in correct format" };
+      }
+    }
+
+    let userDetails = await databaseActions.findOne("application", "Users", {
+      where: whereOb,
+    });
+
+    if (!userDetails) {
+      console.log("User does not exist");
+      return { status: 400, message: "User does not exist" };
+    } else if (!userDetails.isActive) {
+      console.error("User not active");
+      return { status: 401, message: "User not active...Contact admin" };
+    } else {
+      let userId = userDetails.id;
+      let mail = userDetails.email;
+      let phone = userDetails.phone;
+      let userUpdateOb = {};
+
+      // console.log("i am in >>>>>>>>>>>>>>>>>>>>>>>>>>>",userId)
+      let personData = await databaseActions.findOne("application", "Persons", {
+        attributes: ["id", "userInvitationToken"],
+        where: { userId: userId },
+      });
+      let personId = personData.id;
+      console.log("Person details fetched");
+
+      if (otpLogin) {
+        let otpCheck = await checkOtp(userId, req.body.otp);
+        if (!otpCheck) {
+          console.log("OTP match fail");
+          return { status: 500, message: "OTP does not match" };
+        } else {
+          console.log("OTP match passed");
+          if (resetPassword) {
+            let passwordValid = resetPasswordCheck(
+              req.body.password,
+              userDetails
+            );
+            if (passwordValid?.success) {
+              updatePassword = true;
+              userUpdateOb["password"] = passwordValid.password;
+            } else {
+              return {
+                status: 500,
+                message: passwordValid.message,
+              };
+            }
           }
         }
+      } else if (urlLogin) {
+        let check = checkUrlLoginValidation(req, personData);
+        if (check) {
+          console.log("Validation done");
+        } else {
+          console.log("Validation failed");
+          return { status: 401, message: "Invalid url token" };
+        }
+      } else if (!checkPassword(req.body.password, userDetails.password)) {
+        console.error("Invalid password");
+        return { status: 401, message: "Invalid password" };
       }
-    } else if (urlLogin) {
-      let check = checkUrlLoginValidation(req, personData);
-      if (check) {
-        console.log("Validation done");
-      } else {
-        console.log("Validation failed");
-        return { status: 401, message: "Invalid url token" };
-      }
-    } else if (!checkPassword(req.body.password, userDetails.password)) {
-      console.error("Invalid password");
-      return { status: 401, message: "Invalid password" };
-    }
 
-    deviceId = await helper.getDeviceId(req);
-    console.log("Device id fetched");
+      deviceId = await helperFunctions.getDeviceId(req);
+      console.log("Device id fetched");
 
-    let { refreshToken, accessToken } = genarateAccessToken(
-      userId,
-      mail,
-      phone,
-      personData,
-      userDetails
-    );
-    console.log("Tokens generate done");
+      let { refreshToken, accessToken } = genarateAccessToken(
+        userId,
+        mail,
+        phone,
+        personData,
+        userDetails
+      );
+      console.log("Tokens generate done");
 
-    let sessions = await databaseActions.findAll(
-      "application",
-      "SessionManager",
-      {
-        where: {
-          userId: userId,
-        },
-      }
-    );
+      let sessions = await databaseActions.findAll(
+        "application",
+        "SessionManager",
+        {
+          where: {
+            userId: userId,
+          },
+        }
+      );
 
-    console.log("All sessions fetchd:", sessions.length);
+      console.log("All sessions fetchd:", sessions.length);
 
-    found = false;
-    try {
-      const result = await databaseActions.sequelize.transaction(async (t) => {
+      found = false;
+
+      const result = await databaseProvider.application.sequelize.transaction(async (t) => {
         //check first time login
         if (userDetails.firstLogin) {
           console.log("First time login detected");
@@ -286,15 +285,14 @@ const loginHelper = async (req, otherLogin) => {
           let [checkUser, r] = await databaseActions.update(
             "application",
             "Users",
-            [
-              {
-                userUpdateOb,
-                where: {
-                  id: userId,
-                },
-                transaction: t,
+
+            {
+              userUpdateOb,
+              where: {
+                id: userId,
               },
-            ]
+              transaction: t,
+            }
           );
           if (checkUser == 0) {
             throw "DB update error";
@@ -310,18 +308,17 @@ const loginHelper = async (req, otherLogin) => {
           let [checkContacts, r] = await databaseActions.update(
             "application",
             "PersonContacts",
-            [
-              {
-                verified: true,
+
+            {
+              verified: true,
+            },
+            {
+              where: {
+                personId: personId,
+                data: emailOrPhone,
               },
-              {
-                where: {
-                  personId: personId,
-                  data: emailOrPhone,
-                },
-                transaction: t,
-              },
-            ]
+              transaction: t,
+            }
           );
 
           if (checkContacts == 0) {
@@ -358,8 +355,7 @@ const loginHelper = async (req, otherLogin) => {
                 userId: userId,
               },
               transaction: t,
-            },
-
+            }
           );
           if (checkPerson == 0) {
             throw "DB update error";
@@ -379,15 +375,14 @@ const loginHelper = async (req, otherLogin) => {
             let [nrows, rows] = await databaseActions.update(
               "application",
               "SessionManager",
-              [
-                { refreshToken: refreshToken },
-                {
-                  where: {
-                    id: currSession.id,
-                  },
-                  transaction: t,
+
+              { refreshToken: refreshToken },
+              {
+                where: {
+                  id: currSession.id,
                 },
-              ]
+                transaction: t,
+              }
             );
 
             if (nrows > 0) {
@@ -412,16 +407,15 @@ const loginHelper = async (req, otherLogin) => {
           let newSession = await databaseActions.create(
             "application",
             "SessionManager",
-            [
-              {
-                refreshToken: refreshToken,
-                userId: userId,
-                deviceId: bcrypt.hashSync(deviceId, 9),
-              },
-              {
-                transaction: t,
-              },
-            ]
+
+            {
+              refreshToken: refreshToken,
+              userId: userId,
+              deviceId: bcrypt.hashSync(deviceId, 9),
+            },
+            {
+              transaction: t,
+            }
           );
           console.log(
             "Login Success with New Device, session id: ",
@@ -441,27 +435,22 @@ const loginHelper = async (req, otherLogin) => {
       });
 
       return result;
-    } catch (err) {
-      console.log("Error in login", err);
-      return {
-        status: 500,
-        message: err.message || "Databse error",
-      };
     }
+  } catch (err) {
+    console.log("Error in login", err);
+    throw err;
   }
 };
 
 const logoutHelper = async (req, res) => {
   try {
     console.error("user:: ", req.user);
-    deviceId = await helper.getDeviceId(req);
-    sessions = await databaseActions.findAll("application", "SessionManager",
-      {
-        where: {
-          userId: 1,//hard data
-        }
-      }
-    );
+    deviceId = await helperFunctions.getDeviceId(req);
+    sessions = await databaseActions.findAll("application", "SessionManager", {
+      where: {
+        userId: 1, //hard data
+      },
+    });
     for (let session = 0; session < sessions.length; session++) {
       currSession = sessions[session];
       if (bcrypt.compareSync(deviceId, currSession.deviceId)) {
@@ -474,7 +463,6 @@ const logoutHelper = async (req, res) => {
               id: currSession.id,
             },
           }
-
         );
         if (nrows > 0) {
           console.log("Successfully logged out");
@@ -488,7 +476,7 @@ const logoutHelper = async (req, res) => {
     }
   } catch (err) {
     console.error("Database error in logout", err);
-    res.status(500).json({ message: "Database error" });
+    throw err;
   }
 };
 
@@ -497,7 +485,7 @@ async function checkOtp(userId, otp) {
     where: {
       userId: userId,
       isActive: true,
-    }
+    },
   });
   // console.log("DB OTP:", dbOtp.otp, Number(dbOtp.otp));
   // console.log("REQ OTP:", otp, Number(otp));
@@ -592,12 +580,13 @@ const getIPHelper = async (req, res) => {
       deviceAliasCode: true,
     });
     let result = detector.detect(req.headers["user-agent"]);
-    devId = await helper.getDeviceId(req);
+    devId = await helperFunctions.getDeviceId(req);
     req.devId = devId;
     return res.status(200).json({ devId: devId });
   } catch (err) {
-    console.error("internal error", error);
-    return { status: 500, message: "Internal error" };
+    console.error("internal error", err);
+    throw err;
+
   }
 };
 
@@ -614,13 +603,17 @@ const refreshTokenHelper = async (req, res) => {
         let userId = user.userId;
         // let isValidJOI = await authenticateJOI(req,"refreshtokenPOST",["body"])
         // if(isValidJOI.validFlag){
-        deviceId = await helper.getDeviceId(req);
-        sessions = await databaseActions.findAll("application", "SessionManager", {
-          where: {
-            userId: userId,
-            // deviceId: deviceId
-          },
-        });
+        deviceId = await helperFunctions.getDeviceId(req);
+        sessions = await databaseActions.findAll(
+          "application",
+          "SessionManager",
+          {
+            where: {
+              userId: userId,
+              // deviceId: deviceId
+            },
+          }
+        );
         console.log("Sessions available:", sessions.length);
         for (let session = 0; session < sessions.length; session++) {
           currSession = sessions[session];
@@ -633,16 +626,18 @@ const refreshTokenHelper = async (req, res) => {
             }
             if (refreshToken != token) {
               console.error("Wrong refresh token");
-              return res
-                .status(401)
-                .json({ message: "unauthorised access" });
+              return res.status(401).json({ message: "unauthorised access" });
             }
 
-            let userDetails = await databaseActions.findOne("application", "Users", {
-              where: {
-                id: userId,
-              },
-            });
+            let userDetails = await databaseActions.findOne(
+              "application",
+              "Users",
+              {
+                where: {
+                  id: userId,
+                },
+              }
+            );
             const accessToken = jwt.sign(
               {
                 userId: userDetails.id,
@@ -667,9 +662,9 @@ const refreshTokenHelper = async (req, res) => {
     );
   } catch (err) {
     console.error("Database error in refresh token", err);
-    res.status(500).json({ message: "Database error" });
+    throw err;
   }
-}
+};
 
 const clientLoginInformationHelper = async (req, res) => {
   try {
@@ -679,32 +674,41 @@ const clientLoginInformationHelper = async (req, res) => {
     let ip = req?.socket?.remoteAddress || req?.ip || "Not found";
 
     // last login info
-    const lastLoginDetails = await databaseActions.findOne("application", "LoginLogs", {
-      where: { userId: userID },
-      order: [["createdAt", "DESC"]],
-    });
+    const lastLoginDetails = await databaseActions.findOne(
+      "application",
+      "LoginLogs",
+      {
+        where: { userId: userID },
+        order: [["createdAt", "DESC"]],
+      }
+    );
 
     // device info
-    const deviceInfo = await databaseActions.findOne("application", "SessionManager", {
-      where: { userId: userID },
-      order: [['createdAt', 'DESC']]
-    });
+    const deviceInfo = await databaseActions.findOne(
+      "application",
+      "SessionManager",
+      {
+        where: { userId: userID },
+        order: [["createdAt", "DESC"]],
+      }
+    );
     const detector = new DeviceDetector({
       clientIndexes: true,
       deviceIndexes: true,
       deviceAliasCode: false,
     });
-    const userAgent = req.headers['user-agent'];
+    const userAgent = req.headers["user-agent"];
     const result = detector.detect(userAgent);
     // console.log('result parse', result);
 
-    return res.status(200).json({ deviceInfo, ip, lastLoginDetails, result, userAgent });
+    return res
+      .status(200)
+      .json({ deviceInfo, ip, lastLoginDetails, result, userAgent });
   } catch (err) {
-    console.log(err);
-    return res.status(500).json({ message: err });
+    console.log("Error : ", err);
+    throw err;
   }
-}
-
+};
 
 module.exports = {
   checkLoginOrRegisterUtil,
@@ -712,5 +716,5 @@ module.exports = {
   logoutHelper,
   getIPHelper,
   refreshTokenHelper,
-  clientLoginInformationHelper
+  clientLoginInformationHelper,
 };
