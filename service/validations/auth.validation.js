@@ -5,7 +5,7 @@ const emailOrPhone = yup
 
 const Type = yup
 .string()
-.matches("mail" | "whatsapp" | "phone");
+.matches("mail");
 
 const otp = yup.string().min(000000).max(999999);
 
