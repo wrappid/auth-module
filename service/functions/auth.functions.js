@@ -1,9 +1,9 @@
 const bcrypt = require("bcrypt");
 const DeviceDetector = require("node-device-detector");
 const jwt = require("jsonwebtoken");
-const constant = require("../constants/constants");
 
 const {
+  constant,
   configProvider,
   databaseActions,
   databaseProvider,
@@ -274,165 +274,167 @@ const loginHelper = async (req, otherLogin) => {
 
       found = false;
 
-      const result = await databaseProvider.application.sequelize.transaction(async (t) => {
-        //check first time login
-        if (userDetails.firstLogin) {
-          console.log("First time login detected");
-          userUpdateOb["firstLogin"] = false;
-        }
-
-        if (userDetails.firstLogin || updatePassword) {
-          let [checkUser, r] = await databaseActions.update(
-            "application",
-            "Users",
-
-            {
-              userUpdateOb,
-              where: {
-                id: userId,
-              },
-              transaction: t,
-            }
-          );
-          if (checkUser == 0) {
-            throw "DB update error";
-          } else {
-            console.log("First time login updated");
-          }
-        }
-
-        //for otplogin update personcontact verfication status
-        if (otpLogin || urlLogin) {
-          console.log("PersonContacts updating due to otplogin or urllogin");
-
-          let [checkContacts, r] = await databaseActions.update(
-            "application",
-            "PersonContacts",
-
-            {
-              verified: true,
-            },
-            {
-              where: {
-                personId: personId,
-                data: emailOrPhone,
-              },
-              transaction: t,
-            }
-          );
-
-          if (checkContacts == 0) {
-            console.error(
-              "Person contact update not made, user id:",
-              userId,
-              ", contact:",
-              emailOrPhone
-            );
-            throw "DB update error";
-          } else {
-            console.log("PersonContacts updated");
-          }
-        }
-
-        //user emailphone verified status change
-        if (
-          userDetails.firstLogin ||
-          (verificationOb.emailVerified && !personData.emailVerified) ||
-          (verificationOb.phoneVerified && !personData.phoneVerified)
-        ) {
-          console.log("Persons table updating:", verificationOb);
-          if (urlLogin) {
-            verificationOb["userInvitationToken"] = null;
+      const result = await databaseProvider.application.sequelize.transaction(
+        async (t) => {
+          //check first time login
+          if (userDetails.firstLogin) {
+            console.log("First time login detected");
+            userUpdateOb["firstLogin"] = false;
           }
 
-          let [checkPerson, r] = await databaseActions.update(
-            "application",
-            "Persons",
-
-            verificationOb,
-            {
-              where: {
-                userId: userId,
-              },
-              transaction: t,
-            }
-          );
-          if (checkPerson == 0) {
-            throw "DB update error";
-          } else {
-            console.log("Persons table updated");
-          }
-        }
-
-        for (let session = 0; session < sessions.length; session++) {
-          currSession = sessions[session];
-          if (bcrypt.compareSync(deviceId, currSession.deviceId)) {
-            console.log("*****************************");
-            console.log("session found", currSession.id);
-            console.log("*****************************");
-            found = true;
-
-            let [nrows, rows] = await databaseActions.update(
+          if (userDetails.firstLogin || updatePassword) {
+            let [checkUser, r] = await databaseActions.update(
               "application",
-              "SessionManager",
+              "Users",
 
-              { refreshToken: refreshToken },
+              {
+                userUpdateOb,
+                where: {
+                  id: userId,
+                },
+                transaction: t,
+              }
+            );
+            if (checkUser == 0) {
+              throw "DB update error";
+            } else {
+              console.log("First time login updated");
+            }
+          }
+
+          //for otplogin update personcontact verfication status
+          if (otpLogin || urlLogin) {
+            console.log("PersonContacts updating due to otplogin or urllogin");
+
+            let [checkContacts, r] = await databaseActions.update(
+              "application",
+              "PersonContacts",
+
+              {
+                verified: true,
+              },
               {
                 where: {
-                  id: currSession.id,
+                  personId: personId,
+                  data: emailOrPhone,
                 },
                 transaction: t,
               }
             );
 
-            if (nrows > 0) {
-              console.log("Login Success");
-              createLoginLogs(req.originalUrl, userId, req.body?.devInfo);
-              return {
-                status: 200,
-                message: "Successfully login",
-                id: userId,
-                accessToken: accessToken,
-                refreshToken: refreshToken,
-                sessionId: currSession.id,
-              };
+            if (checkContacts == 0) {
+              console.error(
+                "Person contact update not made, user id:",
+                userId,
+                ", contact:",
+                emailOrPhone
+              );
+              throw "DB update error";
             } else {
-              console.error("Can not save refresh token", nrows);
-              return { status: 500, message: "Database error" };
+              console.log("PersonContacts updated");
             }
           }
-        }
 
-        if (!found) {
-          let newSession = await databaseActions.create(
-            "application",
-            "SessionManager",
-
-            {
-              refreshToken: refreshToken,
-              userId: userId,
-              deviceId: bcrypt.hashSync(deviceId, 9),
-            },
-            {
-              transaction: t,
+          //user emailphone verified status change
+          if (
+            userDetails.firstLogin ||
+            (verificationOb.emailVerified && !personData.emailVerified) ||
+            (verificationOb.phoneVerified && !personData.phoneVerified)
+          ) {
+            console.log("Persons table updating:", verificationOb);
+            if (urlLogin) {
+              verificationOb["userInvitationToken"] = null;
             }
-          );
-          console.log(
-            "Login Success with New Device, session id: ",
-            newSession.id
-          );
-          createLoginLogs(req.originalUrl, userId, req.body?.devInfo);
 
-          return {
-            status: 200,
-            message: "Successfully login with New Device",
-            id: userId,
-            accessToken: accessToken,
-            refreshToken: refreshToken,
-            sessionId: newSession.id,
-          };
+            let [checkPerson, r] = await databaseActions.update(
+              "application",
+              "Persons",
+
+              verificationOb,
+              {
+                where: {
+                  userId: userId,
+                },
+                transaction: t,
+              }
+            );
+            if (checkPerson == 0) {
+              throw "DB update error";
+            } else {
+              console.log("Persons table updated");
+            }
+          }
+
+          for (let session = 0; session < sessions.length; session++) {
+            currSession = sessions[session];
+            if (bcrypt.compareSync(deviceId, currSession.deviceId)) {
+              console.log("*****************************");
+              console.log("session found", currSession.id);
+              console.log("*****************************");
+              found = true;
+
+              let [nrows, rows] = await databaseActions.update(
+                "application",
+                "SessionManager",
+
+                { refreshToken: refreshToken },
+                {
+                  where: {
+                    id: currSession.id,
+                  },
+                  transaction: t,
+                }
+              );
+
+              if (nrows > 0) {
+                console.log("Login Success");
+                createLoginLogs(req.originalUrl, userId, req.body?.devInfo);
+                return {
+                  status: 200,
+                  message: "Successfully login",
+                  id: userId,
+                  accessToken: accessToken,
+                  refreshToken: refreshToken,
+                  sessionId: currSession.id,
+                };
+              } else {
+                console.error("Can not save refresh token", nrows);
+                return { status: 500, message: "Database error" };
+              }
+            }
+          }
+
+          if (!found) {
+            let newSession = await databaseActions.create(
+              "application",
+              "SessionManager",
+
+              {
+                refreshToken: refreshToken,
+                userId: userId,
+                deviceId: bcrypt.hashSync(deviceId, 9),
+              },
+              {
+                transaction: t,
+              }
+            );
+            console.log(
+              "Login Success with New Device, session id: ",
+              newSession.id
+            );
+            createLoginLogs(req.originalUrl, userId, req.body?.devInfo);
+
+            return {
+              status: 200,
+              message: "Successfully login with New Device",
+              id: userId,
+              accessToken: accessToken,
+              refreshToken: refreshToken,
+              sessionId: newSession.id,
+            };
+          }
         }
-      });
+      );
 
       return result;
     }
@@ -586,7 +588,6 @@ const getIPHelper = async (req, res) => {
   } catch (err) {
     console.error("internal error", err);
     throw err;
-
   }
 };
 
@@ -710,6 +711,19 @@ const clientLoginInformationHelper = async (req, res) => {
   }
 };
 
+/**
+ *
+ * @returns
+ */
+
+const sendMail = async () => {
+  try {
+    return { status: 201, message: "API Call Succesfully!!" };
+  } catch (err) {
+    throw err;
+  }
+};
+
 module.exports = {
   checkLoginOrRegisterUtil,
   loginHelper,
@@ -717,4 +731,5 @@ module.exports = {
   getIPHelper,
   refreshTokenHelper,
   clientLoginInformationHelper,
+  sendMail,
 };

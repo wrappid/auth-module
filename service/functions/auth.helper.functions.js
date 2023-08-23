@@ -1,6 +1,9 @@
 const constant = require("../constants/constants");
 const DeviceDetector = require("node-device-detector");
 
+
+
+
 function clearValidatePhoneEmail(text) {
   let t = text;
   if (t[0] == "'") {

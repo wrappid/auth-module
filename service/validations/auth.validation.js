@@ -3,7 +3,11 @@ const emailOrPhone = yup
   .string()
   .matches(/^([0-9]{10}|[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+)$/);
 
-  const otp = yup.string().min(000000).max(999999);
+const Type = yup
+.string()
+.matches("mail" | "whatsapp" | "phone");
+
+const otp = yup.string().min(000000).max(999999);
 
 const checkLoginOrRegister = {
   body: yup
@@ -45,9 +49,21 @@ const postLoginWithOtp = {
   query: yup.object({ reset: yup.string().notRequired() }).noUnknown().strict(),
 };
 
-
 const postLogoutSchema = {
   body: yup.object({}).noUnknown().strict(),
+  query: yup.object({}).noUnknown().strict(),
+};
+
+const sentOtp = {
+  body: yup
+    .object({
+      emailOrPhone: emailOrPhone.required("Please enter emailOrPhone!!"),
+      // Type: yup.string().required("Please enter Type!!"),
+      Type: Type.required("Please enter Type!!"),
+      TemplateID: yup.mixed(),
+    })
+    .noUnknown()
+    .strict(),
   query: yup.object({}).noUnknown().strict(),
 };
 
@@ -64,7 +80,7 @@ const getIpSchema = {
 const postLoginWithUrl = {
   params: yup.object({}).noUnknown().strict(),
   query: yup.object({}).noUnknown().strict(),
-}
+};
 
 const refreshTokenSchema = {
   body: yup
@@ -76,7 +92,14 @@ const refreshTokenSchema = {
   query: yup.object({}).noUnknown().strict(),
 };
 
+const validateEmail = yup
+  .string()
+  .matches(/^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/, "Invalid email");
 
+const validatePhone = yup
+  .string()
+  .matches(/^[0-9]{10}$/, "Phone number must contains 10 digits")
+  .required();
 module.exports = {
   checkLoginOrRegister,
   login,
@@ -85,5 +108,8 @@ module.exports = {
   getIpSchema,
   refreshTokenSchema,
   postLoginWithUrl,
-  getClientLoginInfo
+  getClientLoginInfo,
+  sentOtp,
+  validateEmail,
+  validatePhone,
 };

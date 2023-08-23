@@ -97,3 +97,19 @@ module.exports.clientLoginInformation = async (req, res) => {
 };
 
 
+module.exports.sentOtp = async (req, res) => {
+  try {
+    
+    let data = await authFunctions.sendMail();
+    res.status(data?.status).json({message: data});
+
+    } catch (error) {
+    console.error("refreshToken Error:: ", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+
+
+

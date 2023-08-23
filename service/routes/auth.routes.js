@@ -1,9 +1,10 @@
+const { CoreMiddlewaresRegistry } = require("@wrappid/service-core");
 const express = require("express");
 
 const authController = require("../controllers/auth.controller");
-
-const { checkLoginOrRegister,login,postLoginWithOtp,postLogoutSchema,getIpSchema,refreshTokenSchema,postLoginWithUrl,getClientLoginInfo } = require("../validations/auth.validation");
-const { CoreMiddlewaresRegistry } = require("@wrappid/service-core");
+const {
+  checkLoginOrRegister, login, postLoginWithOtp, postLogoutSchema, getIpSchema, refreshTokenSchema, postLoginWithUrl, getClientLoginInfo,sentOtp 
+} = require("../validations/auth.validation");
 
 const authRouter = express.Router();
 
@@ -37,13 +38,11 @@ authRouter.post(
   authController.logout
 );
 
-
 authRouter.get(
   "/getIP",
   CoreMiddlewaresRegistry.validation(getIpSchema),
   authController.getIP
 );
-
 
 authRouter.post(
   "/refreshToken",
@@ -51,14 +50,13 @@ authRouter.post(
   authController.refreshToken
 );
 
-
-
 authRouter.get(
   "/clientLoginInformation",
   CoreMiddlewaresRegistry.validation(getClientLoginInfo),
   authController.clientLoginInformation
 );
 
-
+authRouter.post("/sentOtp", CoreMiddlewaresRegistry.validation(sentOtp),
+  authController.sentOtp);
 
 module.exports = authRouter;
