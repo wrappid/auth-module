@@ -19,6 +19,10 @@ const Users = require("./models/Users.model");
 const UserSettings = require("./models/UserSettings.model");
 const UserTokens = require("./models/UserTokens.model");
 const Otps = require("./models/Otp.model");
+const CommunicationTemplates = require("./models/communicationTemplates.model");
+const WhatsAppComms = require("./models/WhatsAppComms.model");
+const SmsComms = require("./models/SmsComms.model");
+const MailComms = require("./models/MailComms.model");
 
 
 
@@ -107,7 +111,22 @@ const modelsRegistry = {
         database: "application",
         model   : Otps
     },
-
+    "CommunicationTemplates": {
+        database: "application",
+        model   : CommunicationTemplates
+    },
+    "WhatsAppComms": {
+        database: "application",
+        model   : WhatsAppComms
+    },
+    "SmsComms": {
+        database: "application",
+        model   : SmsComms
+    },
+    "MailComms": {
+        database: "application",
+        model   : MailComms
+    },
 };
 
 exports.modelsRegistry = modelsRegistry;

@@ -16,7 +16,16 @@ const {
   expTimeRefreshToken,
 } = configProvider.jwt;
 
-const helperFunctions = require("./auth.helper.functions");
+const {
+  clearValidatePhoneEmail,
+  getDeviceId,
+  getIP,
+  communicate,
+  COMMUNICATION_EMAIL,
+  COMMUNICATION_SMS,
+  COMMUNICATION_WHATSAPP,
+  COMMUNICATION_PUSH_NOTIFICATION,
+} = require("./auth.helper.functions");
 
 /**
  *
@@ -26,7 +35,7 @@ const checkLoginOrRegisterUtil = async (req) => {
   try {
     // let iWsValidJOI = await authenticateJOI(req,"checkLoginOrRegisterPOST",["body","query"])
     let emailOrPhone = req.body.emailOrPhone;
-    let ob = helperFunctions.clearValidatePhoneEmail(emailOrPhone);
+    let ob = clearValidatePhoneEmail(emailOrPhone);
     let whereOb = {};
     if (ob.type === constant.communication.EMAIL)
       whereOb = { email: emailOrPhone };
@@ -152,7 +161,7 @@ const loginHelper = async (req, otherLogin) => {
     let urlLogin = false;
     // let isValidJOI = await authenticateJOI(req,"loginPOST",["body"])
     let emailOrPhone = req.body.emailOrPhone;
-    let ob = helperFunctions.clearValidatePhoneEmail(req.body.emailOrPhone);
+    let ob = clearValidatePhoneEmail(req.body.emailOrPhone);
     let whereOb = {};
     let resetPassword = false;
     let updatePassword = false;
@@ -248,7 +257,7 @@ const loginHelper = async (req, otherLogin) => {
         return { status: 401, message: "Invalid password" };
       }
 
-      deviceId = await helperFunctions.getDeviceId(req);
+      deviceId = await getDeviceId(req);
       console.log("Device id fetched");
 
       let { refreshToken, accessToken } = genarateAccessToken(
@@ -447,7 +456,7 @@ const loginHelper = async (req, otherLogin) => {
 const logoutHelper = async (req, res) => {
   try {
     console.error("user:: ", req.user);
-    deviceId = await helperFunctions.getDeviceId(req);
+    deviceId = await getDeviceId(req);
     sessions = await databaseActions.findAll("application", "SessionManager", {
       where: {
         userId: 1, //hard data
@@ -582,7 +591,7 @@ const getIPHelper = async (req, res) => {
       deviceAliasCode: true,
     });
     let result = detector.detect(req.headers["user-agent"]);
-    devId = await helperFunctions.getDeviceId(req);
+    devId = await getDeviceId(req);
     req.devId = devId;
     return res.status(200).json({ devId: devId });
   } catch (err) {
@@ -604,7 +613,7 @@ const refreshTokenHelper = async (req, res) => {
         let userId = user.userId;
         // let isValidJOI = await authenticateJOI(req,"refreshtokenPOST",["body"])
         // if(isValidJOI.validFlag){
-        deviceId = await helperFunctions.getDeviceId(req);
+        deviceId = await getDeviceId(req);
         sessions = await databaseActions.findAll(
           "application",
           "SessionManager",
@@ -716,13 +725,90 @@ const clientLoginInformationHelper = async (req, res) => {
  * @returns
  */
 
-const sendMail = async () => {
+
+const sendMail = async (req, res) => {
   try {
-    return { status: 201, message: "API Call Succesfully!!" };
+    var result = await databaseProvider.application.sequelize.transaction(async (t) => {
+    let userId = req?.user?.userId;
+    let emailOrPhone = req.body.emailOrPhone;
+    var comData = { id: userId };
+    let commType = req.body.Type;
+
+    var ob = clearValidatePhoneEmail(emailOrPhone)
+        var type = null ;
+        var template = null;
+        
+    const personcontact = await databaseActions.findOne(
+      "application",
+      "PersonContacts",
+      {
+        where: { data: emailOrPhone ,
+          type : ob.type
+        },
+      }
+    );
+    if(personcontact==null){
+      throw "Email or phone not exist"
+    }
+    // console.log(personcontact.personId);
+    // const person = await databaseActions.findOne("application", "Persons", {
+      //   where: { id: personcontact.personId },
+      // });
+      
+    
+    switch (ob.type) {
+      case COMMUNICATION_EMAIL:
+        console.log("Type MAIL");
+        comData[constant.contact.EMAIL] = req.body.emailOrPhone;
+        type = COMMUNICATION_EMAIL;
+        template = constant.communication.SENT_OTP_MAIL_EN;
+        break;
+      case COMMUNICATION_SMS:
+        console.log("Type SMS");
+        comData[constant.contact.PHONE] = req.body.emailOrPhone;
+        type = COMMUNICATION_SMS;
+        template = constant.communication.SENT_OTP_SMS_EN;
+        break;
+      default:
+        console.error("Communication type not implemented", req.body);
+        throw "Communication type not implemented";
+    }
+    if(!userId){
+      let user = await databaseActions.findOne("application", "Users",{
+        where: type === COMMUNICATION_EMAIL? {
+          email: req.body.emailOrPhone
+        }
+        : {
+          phone: req.body.emailOrPhone
+        }
+      })
+      userId = user?.id
+      comData.id = user?.id
+    }
+
+    console.log("Template", template);
+    var comRes = await communicate(
+      comData,
+      type,
+      template,
+      (otpFlag = true),
+      (transaction = t)
+    );
+    console.log("otpRes", comRes);
+        if (!comRes.success) {
+          console.log("OTP sent error");
+          throw "OTP SENT ERROR";
+        }
+        console.log("OTP sent successfully");
+        res.status(200).json({ message: comRes });
+      });
   } catch (err) {
+    console.log(err);
     throw err;
   }
 };
+
+
 
 module.exports = {
   checkLoginOrRegisterUtil,

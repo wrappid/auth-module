@@ -99,8 +99,7 @@ module.exports.clientLoginInformation = async (req, res) => {
 
 module.exports.sentOtp = async (req, res) => {
   try {
-    
-    let data = await authFunctions.sendMail();
+    let data = await authFunctions.sendMail(req, res);
     res.status(data?.status).json({message: data});
 
     } catch (error) {
