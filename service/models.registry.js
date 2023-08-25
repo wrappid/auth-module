@@ -1,4 +1,3 @@
-const FileHandlers = require("./models/FileHandlers.model");
 const Coupons = require("./models/Coupons.model");
 const Departments = require("./models/Departments.model");
 const LoginLogs = require("./models/LoginLogs.model");
@@ -27,10 +26,6 @@ const MailComms = require("./models/MailComms.model");
 
 
 const modelsRegistry = {
-    "FileHandlers": {
-        database: "application",
-        model   : FileHandlers
-    },
     "Coupons": {
         database: "application",
         model   : Coupons

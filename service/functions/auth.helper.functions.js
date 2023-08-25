@@ -1,6 +1,6 @@
 const {
   configProvider,
-  constant,
+  coreConstant,
   databaseActions,
   databaseProvider,
 } = require("@wrappid/service-core");
@@ -8,10 +8,10 @@ const DeviceDetector = require("node-device-detector");
 const otpGenerator = require("otp-generator");
 const otpLength = configProvider.databases[0]["otpLength"];
 
-const COMMUNICATION_EMAIL = constant.communication.EMAIL;
-const COMMUNICATION_SMS = constant.communication.SMS;
-const COMMUNICATION_WHATSAPP = constant.communication.WHATSAPP;
-const COMMUNICATION_PUSH_NOTIFICATION = constant.communication.NOTIFICATION;
+const COMMUNICATION_EMAIL = coreConstant.commType.EMAIL;
+const COMMUNICATION_SMS = coreConstant.commType.SMS;
+const COMMUNICATION_WHATSAPP = coreConstant.commType.WHATSAPP;
+const COMMUNICATION_PUSH_NOTIFICATION = coreConstant.commType.NOTIFICATION;
 
 function clearValidatePhoneEmail(text) {
   let t = text;

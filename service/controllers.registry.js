@@ -1,11 +1,7 @@
-const testController = require("./controllers/test.controller");
+const authController = require("./controllers/auth.controller")
 
 const ControllerssRegistry = {
-    "testGetAllFunc": testController.testGetAllFunc,
-    "testGetFunc": testController.testGetFunc,
-    "testPostFunc": testController.testPostFunc,
-    "testPutFunc": testController.testPutFunc,
-    "testPatchFunc": testController.testPatchFunc,
+    checkLoginOrRegister: authController.checkLoginOrRegister
 };
 
 module.exports = ControllerssRegistry;
