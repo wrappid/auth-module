@@ -3,7 +3,7 @@ const DeviceDetector = require("node-device-detector");
 const jwt = require("jsonwebtoken");
 
 const {
-  constant,
+  coreConstant,
   configProvider,
   databaseActions,
   databaseProvider,
@@ -37,9 +37,9 @@ const checkLoginOrRegisterUtil = async (req) => {
     let emailOrPhone = req.body.emailOrPhone;
     let ob = clearValidatePhoneEmail(emailOrPhone);
     let whereOb = {};
-    if (ob.type === constant.communication.EMAIL)
+    if (ob.type === coreConstant.communication.EMAIL)
       whereOb = { email: emailOrPhone };
-    else if (ob.type === constant.communication.SMS)
+    else if (ob.type === coreConstant.communication.SMS)
       whereOb = { phone: emailOrPhone };
     else {
       console.log("Not a valid email or phone");
@@ -129,11 +129,11 @@ const checkLoginOrRegisterUtil = async (req) => {
               {
                 data: emailOrPhone,
                 type:
-                  ob.type === constant.communication.EMAIL
-                    ? constant.contact.EMAIL
-                    : constant.contact.PHONE,
+                  ob.type === coreConstant.communication.EMAIL
+                    ? coreConstant.contact.EMAIL
+                    : coreConstant.contact.PHONE,
                 personId: personData.id,
-                _status: constant.entityStatus.ACTIVE,
+                _status: coreConstant.entityStatus.ACTIVE,
               },
               { transaction: t }
             );
@@ -172,10 +172,10 @@ const loginHelper = async (req, otherLogin) => {
     } else if (otherLogin?.urlLogin) {
       urlLogin = true;
     }
-    if (ob.type == constant.communication.EMAIL) {
+    if (ob.type == coreConstant.communication.EMAIL) {
       whereOb = { email: emailOrPhone };
       verificationOb = { emailVerified: true };
-    } else if (ob.type == constant.communication.SMS) {
+    } else if (ob.type == coreConstant.communication.SMS) {
       verificationOb = { phoneVerified: true };
 
       whereOb = { phone: emailOrPhone };
@@ -593,7 +593,7 @@ const getIPHelper = async (req, res) => {
     let result = detector.detect(req.headers["user-agent"]);
     devId = await getDeviceId(req);
     req.devId = devId;
-    return res.status(200).json({ devId: devId });
+    return ({status:200 , devId: devId });
   } catch (err) {
     console.error("internal error", err);
     throw err;
@@ -759,15 +759,15 @@ const sendMail = async (req, res) => {
     switch (ob.type) {
       case COMMUNICATION_EMAIL:
         console.log("Type MAIL");
-        comData[constant.contact.EMAIL] = req.body.emailOrPhone;
+        comData[coreConstant.contact.EMAIL] = req.body.emailOrPhone;
         type = COMMUNICATION_EMAIL;
-        template = constant.communication.SENT_OTP_MAIL_EN;
+        template = coreConstant.communication.SENT_OTP_MAIL_EN;
         break;
       case COMMUNICATION_SMS:
         console.log("Type SMS");
-        comData[constant.contact.PHONE] = req.body.emailOrPhone;
+        comData[coreConstant.contact.PHONE] = req.body.emailOrPhone;
         type = COMMUNICATION_SMS;
-        template = constant.communication.SENT_OTP_SMS_EN;
+        template = coreConstant.communication.SENT_OTP_SMS_EN;
         break;
       default:
         console.error("Communication type not implemented", req.body);

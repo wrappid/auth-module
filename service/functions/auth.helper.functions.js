@@ -24,13 +24,13 @@ function clearValidatePhoneEmail(text) {
   );
 
   if (f) {
-    return { valid: f, type: constant.communication.EMAIL };
+    return { valid: f, type: coreConstant.communication.EMAIL };
   } else if (!f) {
     f = String(t).match(
       /((\+*)((0[ -]*)*|((91 )*))((\d{12})+|(\d{10})+))|\d{5}([- ]*)\d{6}/
     );
     if (f) {
-      return { valid: f, type: constant.communication.SMS };
+      return { valid: f, type: coreConstant.communication.SMS };
     } else {
       return { valid: f, type: "" };
     }
@@ -96,7 +96,7 @@ async function communicate(
       "CommunicationTemplates",
       templateId
     );
-    if (templateOb._status !== constant.entityStatus.APPROVED) {
+    if (templateOb._status !== coreConstant.entityStatus.APPROVED) {
       templateOb = null;
     }
   } else if (templateName) {
@@ -106,7 +106,7 @@ async function communicate(
       {
         where: {
           name: templateName,
-          _status: constant.entityStatus.APPROVED,
+          _status: coreConstant.entityStatus.APPROVED,
         },
       }
     );
@@ -153,7 +153,7 @@ async function communicate(
       ...dataOb,
       templateId: templateOb.id,
       status: "pending",
-      _status: constant.entityStatus.NEW,
+      _status: coreConstant.entityStatus.NEW,
       createdBy: requesterId,
     };
     var newCom = null;
