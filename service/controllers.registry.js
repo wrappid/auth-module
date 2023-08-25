@@ -1,7 +1,7 @@
 const authController = require("./controllers/auth.controller")
 
-const ControllerssRegistry = {
+const controllersRegistry = {
     checkLoginOrRegister: authController.checkLoginOrRegister
 };
 
-module.exports = ControllerssRegistry;
+module.exports = controllersRegistry;
