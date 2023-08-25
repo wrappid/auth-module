@@ -16,7 +16,7 @@ authRouter.post(
 
 authRouter.post(
   "/login",
-  CoreMiddlewaresRegistry.validation(login),
+  ,CoreMiddlewaresRegistry.validation(login),
   authController.login
 );
 
