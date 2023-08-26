@@ -37,10 +37,8 @@ const checkLoginOrRegisterUtil = async (req) => {
     let emailOrPhone = req.body.emailOrPhone;
     let ob = clearValidatePhoneEmail(emailOrPhone);
     let whereOb = {};
-    if (ob.type === coreConstant.communication.EMAIL)
-      whereOb = { email: emailOrPhone };
-    else if (ob.type === coreConstant.communication.SMS)
-      whereOb = { phone: emailOrPhone };
+    if (ob.type === COMMUNICATION_EMAIL) whereOb = { email: emailOrPhone };
+    else if (ob.type === COMMUNICATION_SMS) whereOb = { phone: emailOrPhone };
     else {
       console.log("Not a valid email or phone");
       return { staus: 500, message: "Not a valid email or phone" };
@@ -172,10 +170,10 @@ const loginHelper = async (req, otherLogin) => {
     } else if (otherLogin?.urlLogin) {
       urlLogin = true;
     }
-    if (ob.type == coreConstant.communication.EMAIL) {
+    if (ob.type == COMMUNICATION_EMAIL) {
       whereOb = { email: emailOrPhone };
       verificationOb = { emailVerified: true };
-    } else if (ob.type == coreConstant.communication.SMS) {
+    } else if (ob.type == COMMUNICATION_SMS) {
       verificationOb = { phoneVerified: true };
 
       whereOb = { phone: emailOrPhone };
@@ -593,7 +591,7 @@ const getIPHelper = async (req, res) => {
     let result = detector.detect(req.headers["user-agent"]);
     devId = await getDeviceId(req);
     req.devId = devId;
-    return ({status:200 , devId: devId });
+    return { status: 200, devId: devId };
   } catch (err) {
     console.error("internal error", err);
     throw err;
@@ -725,90 +723,88 @@ const clientLoginInformationHelper = async (req, res) => {
  * @returns
  */
 
-
 const sendMail = async (req, res) => {
   try {
-    var result = await databaseProvider.application.sequelize.transaction(async (t) => {
-    let userId = req?.user?.userId;
-    let emailOrPhone = req.body.emailOrPhone;
-    var comData = { id: userId };
-    let commType = req.body.Type;
+    let result = await databaseProvider.application.sequelize.transaction(
+      async (t) => {
+        let userId = req?.user?.userId;
+        let emailOrPhone = req.body.emailOrPhone;
+        let comData = { id: userId };
+        let commType = req.body.Type;
 
-    var ob = clearValidatePhoneEmail(emailOrPhone)
-        var type = null ;
-        var template = null;
-        
-    const personcontact = await databaseActions.findOne(
-      "application",
-      "PersonContacts",
-      {
-        where: { data: emailOrPhone ,
-          type : ob.type
-        },
-      }
-    );
-    if(personcontact==null){
-      throw "Email or phone not exist"
-    }
-    // console.log(personcontact.personId);
-    // const person = await databaseActions.findOne("application", "Persons", {
-      //   where: { id: personcontact.personId },
-      // });
-      
-    
-    switch (ob.type) {
-      case COMMUNICATION_EMAIL:
-        console.log("Type MAIL");
-        comData[coreConstant.contact.EMAIL] = req.body.emailOrPhone;
-        type = COMMUNICATION_EMAIL;
-        template = coreConstant.communication.SENT_OTP_MAIL_EN;
-        break;
-      case COMMUNICATION_SMS:
-        console.log("Type SMS");
-        comData[coreConstant.contact.PHONE] = req.body.emailOrPhone;
-        type = COMMUNICATION_SMS;
-        template = coreConstant.communication.SENT_OTP_SMS_EN;
-        break;
-      default:
-        console.error("Communication type not implemented", req.body);
-        throw "Communication type not implemented";
-    }
-    if(!userId){
-      let user = await databaseActions.findOne("application", "Users",{
-        where: type === COMMUNICATION_EMAIL? {
-          email: req.body.emailOrPhone
-        }
-        : {
-          phone: req.body.emailOrPhone
-        }
-      })
-      userId = user?.id
-      comData.id = user?.id
-    }
+        let ob = clearValidatePhoneEmail(emailOrPhone);
+        let type = null;
+        let template = null;
 
-    console.log("Template", template);
-    var comRes = await communicate(
-      comData,
-      type,
-      template,
-      (otpFlag = true),
-      (transaction = t)
-    );
-    console.log("otpRes", comRes);
+        const personcontact = await databaseActions.findOne(
+          "application",
+          "PersonContacts",
+          {
+            where: { data: emailOrPhone, type: ob.type },
+          }
+        );
+        if (personcontact == null) {
+          throw "Email or phone not exist";
+        }
+        // console.log(personcontact.personId);
+        // const person = await databaseActions.findOne("application", "Persons", {
+        //   where: { id: personcontact.personId },
+        // });
+
+        switch (ob.type) {
+          case COMMUNICATION_EMAIL:
+            console.log("Type MAIL");
+            comData[coreConstant.contact.EMAIL] = req.body.emailOrPhone;
+            type = COMMUNICATION_EMAIL;
+            template = coreConstant.communication.SENT_OTP_MAIL_EN;
+            break;
+          case COMMUNICATION_SMS:
+            console.log("Type SMS");
+            comData[coreConstant.contact.PHONE] = req.body.emailOrPhone;
+            type = COMMUNICATION_SMS;
+            template = coreConstant.communication.SENT_OTP_SMS_EN;
+            break;
+          default:
+            console.error("Communication type not implemented", req.body);
+            throw "Communication type not implemented";
+        }
+        if (!userId) {
+          let user = await databaseActions.findOne("application", "Users", {
+            where:
+              type === COMMUNICATION_EMAIL
+                ? {
+                    email: req.body.emailOrPhone,
+                  }
+                : {
+                    phone: req.body.emailOrPhone,
+                  },
+          });
+          userId = user?.id;
+          comData.id = user?.id;
+        }
+
+        console.log("Template", template);
+        let comRes = await communicate(
+          comData,
+          type,
+          template,
+          (otpFlag = true),
+          (transaction = t)
+        );
+        console.log("otpRes", comRes);
         if (!comRes.success) {
           console.log("OTP sent error");
           throw "OTP SENT ERROR";
         }
         console.log("OTP sent successfully");
         res.status(200).json({ message: comRes });
-      });
+      }
+    );
   } catch (err) {
     console.log(err);
     throw err;
   }
 };
-
-
 
 module.exports = {
   checkLoginOrRegisterUtil,
