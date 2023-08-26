@@ -1,3 +1,3 @@
-const taskRegistry = { };
+const tasksRegistry = { };
 
 exports.tasksRegistry = tasksRegistry;
