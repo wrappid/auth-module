@@ -1,3 +1,3 @@
 const validationsRegistry = {};
 
-module.exports = validationsRegistry;
+exports.validationsRegistry = validationsRegistry;

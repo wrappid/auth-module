@@ -1,3 +1,3 @@
 const taskRegistry = { };
 
-module.exports = taskRegistry;
+exports.tasksRegistry = tasksRegistry;

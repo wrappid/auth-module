@@ -8,4 +8,4 @@ const functionsRegistry = {
     "refreshTokenHelper": authFunctions.refreshTokenHelper  
 };
 
-module.exports = functionsRegistry;
+exports.functionsRegistry = functionsRegistry;
