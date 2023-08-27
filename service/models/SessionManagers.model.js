@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const sessionManager = sequelize.define("SessionManager", {
+  const SessionManagers = sequelize.define("SessionManagers", {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -34,28 +34,28 @@ module.exports = (sequelize, DataTypes) => {
     },
   });
 
-  sessionManager.associate = (models) => {
-    sessionManager.belongsTo(models.Users, {
+  SessionManagers.associate = (models) => {
+    SessionManagers.belongsTo(models.Users, {
       foreignKey: "createdBy",
       as: "Owner",
       sourceKey: "id",
     });
-    sessionManager.belongsTo(models.Users, {
+    SessionManagers.belongsTo(models.Users, {
       foreignKey: "updatedBy",
       as: "Updater",
       sourceKey: "id",
     });
-    sessionManager.belongsTo(models.Users, {
+    SessionManagers.belongsTo(models.Users, {
       foreignKey: "userId",
       as: "User",
       sourceKey: "id",
     });
-    sessionManager.belongsTo(models.Users, {
+    SessionManagers.belongsTo(models.Users, {
       foreignKey: "deletedBy",
       as: "Destroyer",
       sourceKey: "id",
     });
   };
 
-  return sessionManager;
+  return SessionManagers;
 };

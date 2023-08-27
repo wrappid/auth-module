@@ -94,7 +94,7 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "smsCommId",
       sourceKey: "id",
     });
-    CommunicationTemplates.hasMany(models.WhatsAppComm, {
+    CommunicationTemplates.hasMany(models.WhatsAppComms, {
       foreignKey: "smsCommId",
       sourceKey: "id",
     });

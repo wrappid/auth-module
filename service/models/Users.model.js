@@ -51,7 +51,7 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "roleId",
       sourceKey: "id",
     });
-    users.hasMany(models.UserPermissions, {
+    /* users.hasMany(models.UserPermissions, {
       foreignKey: "userId",
       sourceKey: "id",
     });
@@ -59,7 +59,7 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "userId",
       sourceKey: "id",
     });
-    users.hasMany(models.SessionManager, {
+    users.hasMany(models.SessionManagers, {
       foreignKey: "userId",
       sourceKey: "id",
     });
@@ -86,11 +86,11 @@ module.exports = (sequelize, DataTypes) => {
     users.hasMany(models.UserTokens, {
       foreignKey: "userId",
       sourceKey: "id",
-    });
-    users.hasOne(models.Applications, {
+    }); */
+    /* users.hasOne(models.Applications, {
       foreignKey: "employeeId",
       sourceKey: "id",
-    });
+    }); */
     users.belongsTo(models.Users, {
       foreignKey: "deletedBy",
       as: "Destroyer",

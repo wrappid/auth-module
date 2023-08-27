@@ -120,7 +120,7 @@ module.exports = (sequelize, DataTypes) => {
       sourceKey: "id",
       as: "RelatedPersons",
     });
-    person.hasOne(models.DoctorDetails, {
+    /* person.hasOne(models.DoctorDetails, {
       foreignKey: "doctorId",
       sourceKey: "id",
     });
@@ -149,7 +149,7 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "patientId",
       sourceKey: "id",
       as: "PatientAppointments",
-    });
+    }); */
     person.belongsTo(models.Users, {
       foreignKey: "deletedBy",
       as: "Destroyer",
