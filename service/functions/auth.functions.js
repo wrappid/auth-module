@@ -269,7 +269,7 @@ const loginHelper = async (req, otherLogin) => {
 
       let sessions = await databaseActions.findAll(
         "application",
-        "SessionManager",
+        "SessionManagers",
         {
           where: {
             userId: userId,
@@ -382,7 +382,7 @@ const loginHelper = async (req, otherLogin) => {
 
               let [nrows, rows] = await databaseActions.update(
                 "application",
-                "SessionManager",
+                "SessionManagers",
 
                 { refreshToken: refreshToken },
                 {
@@ -414,7 +414,7 @@ const loginHelper = async (req, otherLogin) => {
           if (!found) {
             let newSession = await databaseActions.create(
               "application",
-              "SessionManager",
+              "SessionManagers",
 
               {
                 refreshToken: refreshToken,
@@ -455,7 +455,7 @@ const logoutHelper = async (req, res) => {
   try {
     console.error("user:: ", req.user);
     deviceId = await getDeviceId(req);
-    sessions = await databaseActions.findAll("application", "SessionManager", {
+    sessions = await databaseActions.findAll("application", "SessionManagers", {
       where: {
         userId: 1, //hard data
       },
@@ -465,7 +465,7 @@ const logoutHelper = async (req, res) => {
       if (bcrypt.compareSync(deviceId, currSession.deviceId)) {
         [nrows, rows] = await databaseActions.update(
           "application",
-          "SessionManager",
+          "SessionManagers",
           { refreshToken: "" },
           {
             where: {
@@ -614,7 +614,7 @@ const refreshTokenHelper = async (req, res) => {
         deviceId = await getDeviceId(req);
         sessions = await databaseActions.findAll(
           "application",
-          "SessionManager",
+          "SessionManagers",
           {
             where: {
               userId: userId,
@@ -694,7 +694,7 @@ const clientLoginInformationHelper = async (req, res) => {
     // device info
     const deviceInfo = await databaseActions.findOne(
       "application",
-      "SessionManager",
+      "SessionManagers",
       {
         where: { userId: userID },
         order: [["createdAt", "DESC"]],
