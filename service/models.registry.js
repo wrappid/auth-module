@@ -9,7 +9,7 @@ const Persons = require("./models/Persons.model");
 const Relations = require("./models/Relations.model");
 const RolePermissions = require("./models/RolePermissions.model");
 const Roles = require("./models/Roles.model");
-const SessionManager = require("./models/SessionManager.model");
+const SessionManagers = require("./models/SessionManagers.model");
 const SettingMeta = require("./models/SettingMeta.model");
 const UserCoupons = require("./models/UserCoupons.model");
 const UserPayments = require("./models/UserPayments.model");
@@ -70,9 +70,9 @@ const modelsRegistry = {
         database: "application",
         model   : Roles
     },
-    "SessionManager": {
+    "SessionManagers": {
         database: "application",
-        model   : SessionManager
+        model   : SessionManagers
     },
     "SettingMeta": {
         database: "application",
