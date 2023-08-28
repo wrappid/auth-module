@@ -80,7 +80,7 @@ const  RegisterOrResetPassword = props => {
           }`}
         </CoreH1>
 
-        {authNextPage === routeRegistry.REGISTER_ROUTE ? (
+        {authNextPage === routeRegistry.register ? (
           showEmailOrPhone()
         ) : (
           <>

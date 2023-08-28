@@ -40,7 +40,7 @@ const LoginWithOtp = props => {
 
   if (
         !checkLoginOrRegisterSuccess &&
-        authNextPage !== routeRegistry?.checkUserExists
+        authNextPage !== routeRegistry?.checkuserexists
       ) {
         return <CoreDomNavigate to={"/" + authNextPage} />;
     }

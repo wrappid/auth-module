@@ -10,9 +10,11 @@ import { useSelector } from "react-redux";
 
 const  CheckUserExist = props => {
   const auth = useSelector(state => state.auth);
+  const routeRegistry = useContext(CoreRouteRegistryContext)
+
   const { checkLoginOrRegisterSuccess, authNextPage } = auth;
   
-  if (checkLoginOrRegisterSuccess && authNextPage !== "checkUserExist") {
+  if (checkLoginOrRegisterSuccess && authNextPage !== routeRegistry?.checkuserexists) {
     return <CoreDomNavigate to={"/" + authNextPage} />;
   }
   else

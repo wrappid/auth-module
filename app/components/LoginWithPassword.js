@@ -51,7 +51,7 @@ const LoginWithPassword = props => {
       (navigateToResetPasswordSuccess ||
         navigateToOtpSuccess ||
         !checkLoginOrRegisterSuccess) &&
-      authNextPage !== routeRegistry?.enterPassword
+      authNextPage !== routeRegistry?.enterpassword
     ) {
       return <CoreDomNavigate to={"/" + authNextPage} />;
     }
@@ -112,11 +112,11 @@ const LoginWithPassword = props => {
            * we need send otp to the provided email or phone
            * fix required: email or phone getting removed from store auth.navData
            */}
-          <CoreLink styleClasses={[CoreClasses.COLOR.TEXT_WHITE]} href={"/"+routeRegistry?.resetPassword}>
+          <CoreLink styleClasses={[CoreClasses.COLOR.TEXT_WHITE]} href={"/"+routeRegistry?.resetpassword}>
             Reset Password
           </CoreLink>
 
-          <CoreLink styleClasses={[CoreClasses.COLOR.TEXT_WHITE]} href={"/"+routeRegistry?.enterOtp}>
+          <CoreLink styleClasses={[CoreClasses.COLOR.TEXT_WHITE]} href={"/"+routeRegistry?.enterotp}>
             Login with OTP
           </CoreLink>
         </CoreBox>
