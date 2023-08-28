@@ -1,10 +1,12 @@
 const bcrypt = require("bcrypt");
 const DeviceDetector = require("node-device-detector");
 const jwt = require("jsonwebtoken");
+const otpGenerator = require("otp-generator");
 
 const {
-  coreConstant,
+  communicate,
   configProvider,
+  coreConstant,
   databaseActions,
   databaseProvider,
 } = require("@wrappid/service-core");
@@ -19,7 +21,6 @@ const {
 const {
   clearValidatePhoneEmail,
   getDeviceId,
-  communicate,
   COMMUNICATION_EMAIL,
   COMMUNICATION_SMS,
 } = require("./auth.helper.functions");
@@ -305,7 +306,7 @@ const loginHelper = async (req, otherLogin) => {
             }
           }
 
-          //for otplogin update personcontact verfication status
+          //for otplogin update personContact verfication status
           if (otpLogin || urlLogin) {
             console.log("PersonContacts updating due to otplogin or urllogin");
 
@@ -433,7 +434,7 @@ const loginHelper = async (req, otherLogin) => {
               newSession.id
             );
             createLoginLogs(req.originalUrl, userId, req.body?.devInfo);
-            
+
             // get person id
             let person = await databaseActions.findOne("application", "Persons", {
               where: {
@@ -730,85 +731,80 @@ const clientLoginInformationHelper = async (req, res) => {
 };
 
 /**
- *
- * @returns
+ * 
+ * @param {*} req 
+ * @param {*} res 
  */
-
-const sendMail = async (req, res) => {
+const sentOtp = async (req, res) => {
   try {
     let result = await databaseProvider.application.sequelize.transaction(
       async (t) => {
+        let commData = {};
         let userId = req?.user?.userId;
         let emailOrPhone = req.body.emailOrPhone;
-        let comData = { id: userId };
-        let commType = req.body.Type;
-
-        let ob = clearValidatePhoneEmail(emailOrPhone);
-        let type = null;
-        let template = null;
-
-        const personcontact = await databaseActions.findOne(
-          "application",
-          "PersonContacts",
-          {
-            where: { data: emailOrPhone, type: ob.type },
-          }
-        );
-        if (personcontact == null) {
-          throw "Email or phone not exist";
+        let commType = req.body.type;
+        if (!commType) {
+          let { type } = clearValidatePhoneEmail(emailOrPhone);
+          commType = type;
         }
-        // console.log(personcontact.personId);
-        // const person = await databaseActions.findOne("application", "Persons", {
-        //   where: { id: personcontact.personId },
-        // });
-
-        switch (ob.type) {
-          case COMMUNICATION_EMAIL:
-            console.log("Type MAIL");
-            comData[coreConstant.contact.EMAIL] = req.body.emailOrPhone;
-            type = COMMUNICATION_EMAIL;
-            template = coreConstant.communication.SENT_OTP_MAIL_EN;
-            break;
-          case COMMUNICATION_SMS:
-            console.log("Type SMS");
-            comData[coreConstant.contact.PHONE] = req.body.emailOrPhone;
-            type = COMMUNICATION_SMS;
-            template = coreConstant.communication.SENT_OTP_SMS_EN;
-            break;
-          default:
-            console.error("Communication type not implemented", req.body);
-            throw "Communication type not implemented";
-        }
+        let templateID = req.body.templateID;
         if (!userId) {
           let user = await databaseActions.findOne("application", "Users", {
             where:
-              type === COMMUNICATION_EMAIL
+              commType === COMMUNICATION_EMAIL
                 ? {
-                    email: req.body.emailOrPhone,
-                  }
+                  email: req.body.emailOrPhone,
+                }
                 : {
-                    phone: req.body.emailOrPhone,
-                  },
+                  phone: req.body.emailOrPhone,
+                },
           });
           userId = user?.id;
-          comData.id = user?.id;
+          commData.id = user?.id;
         }
 
-        console.log("Template", template);
-        let comRes = await communicate(
-          comData,
-          type,
-          template,
-          (otpFlag = true),
-          (transaction = t)
+        const personContact = await databaseActions.findOne(
+          "application",
+          "PersonContacts",
+          {
+            where: { data: emailOrPhone, type: commType },
+          }
         );
-        console.log("otpRes", comRes);
-        if (!comRes.success) {
-          console.log("OTP sent error");
-          throw "OTP SENT ERROR";
+        if (personContact == null) {
+          throw new Error("Email or phone not exist");
         }
-        console.log("OTP sent successfully");
-        res.status(200).json({ message: comRes });
+
+        if (!templateID) {
+          templateID = commType === coreConstant.commType.EMAIL ? coreConstant.communication.SENT_OTP_MAIL_EN : coreConstant.communication.SENT_OTP_SMS_EN;
+        }
+
+        let genetatedOTP = otpGenerator.generate(configProvider.wrappid.otpLength, {
+          specialChars: false,
+          lowerCaseAlphabets: false,
+          upperCaseAlphabets: false,
+        });
+
+        if (genetatedOTP) {
+          commData.otp = genetatedOTP;
+        }
+
+        let commResult = await communicate({
+          commType,
+          commRecipients: {
+            to: [emailOrPhone]
+          },
+          commData,
+          commTemplateID: templateID,
+          directFlag: true,
+          errorFlag: true
+        });
+
+        if (commResult) {
+          console.error(`OTP ${commType} sent successfully.`);
+          return { status: 200, message: `OTP ${commType} sent successfully.` };
+        } else {
+          throw new Error(`OTP ${commType} sent failed.`);
+        }
       }
     );
   } catch (err) {
@@ -824,5 +820,5 @@ module.exports = {
   getIPHelper,
   refreshTokenHelper,
   clientLoginInformationHelper,
-  sendMail,
+  sentOtp,
 };

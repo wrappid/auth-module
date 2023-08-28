@@ -1,11 +1,8 @@
 const yup = require("yup");
+
 const emailOrPhone = yup
   .string()
   .matches(/^([0-9]{10}|[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+)$/);
-
-const Type = yup
-.string()
-.matches("mail");
 
 const otp = yup.string().min(000000).max(999999);
 
@@ -59,12 +56,11 @@ const sentOtp = {
     .object({
       emailOrPhone: emailOrPhone.required("Please enter emailOrPhone!!"),
       // Type: yup.string().required("Please enter Type!!"),
-      Type: Type.required("Please enter Type!!"),
-      TemplateID: yup.mixed(),
+      type: yup.string().notRequired(),
+      templateID: yup.string().notRequired(),
     })
     .noUnknown()
     .strict(),
-  query: yup.object({}).noUnknown().strict(),
 };
 
 const getClientLoginInfo = {
