@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   CoreForm,
   CoreClasses,
-  CoreDomNavigate
+  CoreDomNavigate,
+  CoreRouteRegistryContext
 } from "@wrappid/core";
 
 import { AuthContainer } from "./AuthContainer";
