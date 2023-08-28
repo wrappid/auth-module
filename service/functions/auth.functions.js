@@ -433,11 +433,19 @@ const loginHelper = async (req, otherLogin) => {
               newSession.id
             );
             createLoginLogs(req.originalUrl, userId, req.body?.devInfo);
+            
+            // get person id
+            let person = await databaseActions.findOne("application", "Persons", {
+              where: {
+                "userId": userId
+              }
+            });
 
             return {
               status: 200,
               message: "Successfully login with New Device",
               id: userId,
+              personId: person.id,
               accessToken: accessToken,
               refreshToken: refreshToken,
               sessionId: newSession.id,
