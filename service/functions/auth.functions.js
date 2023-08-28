@@ -19,12 +19,9 @@ const {
 const {
   clearValidatePhoneEmail,
   getDeviceId,
-  getIP,
   communicate,
   COMMUNICATION_EMAIL,
   COMMUNICATION_SMS,
-  COMMUNICATION_WHATSAPP,
-  COMMUNICATION_PUSH_NOTIFICATION,
 } = require("./auth.helper.functions");
 
 /**
@@ -157,7 +154,6 @@ const loginHelper = async (req, otherLogin) => {
   try {
     let otpLogin = false;
     let urlLogin = false;
-    // let isValidJOI = await authenticateJOI(req,"loginPOST",["body"])
     let emailOrPhone = req.body.emailOrPhone;
     let ob = clearValidatePhoneEmail(req.body.emailOrPhone);
     let whereOb = {};
@@ -395,11 +391,18 @@ const loginHelper = async (req, otherLogin) => {
 
               if (nrows > 0) {
                 console.log("Login Success");
+                // get person id
+                let person = await databaseActions.findOne("application", "Persons", {
+                  where: {
+                    "userId": userId
+                  }
+                });
                 createLoginLogs(req.originalUrl, userId, req.body?.devInfo);
                 return {
                   status: 200,
                   message: "Successfully login",
                   id: userId,
+                  personId: person.id,
                   accessToken: accessToken,
                   refreshToken: refreshToken,
                   sessionId: currSession.id,
