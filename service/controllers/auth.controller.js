@@ -100,8 +100,7 @@ module.exports.clientLoginInformation = async (req, res) => {
 module.exports.sentOtp = async (req, res) => {
   try {
     let data = await authFunctions.sentOtp(req, res);
-    res.status(data?.status).json({ message: data });
-
+    res.status(data?.status).json({ message: data?.message });
   } catch (error) {
     console.error("refreshToken Error:: ", error);
     res.status(500).json({ message: error.message });

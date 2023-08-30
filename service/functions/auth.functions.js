@@ -737,78 +737,76 @@ const clientLoginInformationHelper = async (req, res) => {
  */
 const sentOtp = async (req, res) => {
   try {
-    let result = await databaseProvider.application.sequelize.transaction(
-      async (t) => {
-        let commData = {};
-        let userId = req?.user?.userId;
-        let emailOrPhone = req.body.emailOrPhone;
-        let commType = req.body.type;
-        if (!commType) {
-          let { type } = clearValidatePhoneEmail(emailOrPhone);
-          commType = type;
-        }
-        let templateID = req.body.templateID;
-        if (!userId) {
-          let user = await databaseActions.findOne("application", "Users", {
-            where:
-              commType === COMMUNICATION_EMAIL
-                ? {
-                  email: req.body.emailOrPhone,
-                }
-                : {
-                  phone: req.body.emailOrPhone,
-                },
-          });
-          userId = user?.id;
-          commData.id = user?.id;
-        }
 
-        const personContact = await databaseActions.findOne(
-          "application",
-          "PersonContacts",
-          {
-            where: { data: emailOrPhone, type: commType },
-          }
-        );
-        if (personContact == null) {
-          throw new Error("Email or phone not exist");
-        }
+    let commData = {};
+    let userId = req?.user?.userId;
+    let emailOrPhone = req.body.emailOrPhone;
+    let commType = req.body.type;
+    if (!commType) {
+      let { type } = clearValidatePhoneEmail(emailOrPhone);
+      commType = type;
+    }
+    let templateID = req.body.templateID;
+    if (!userId) {
+      let user = await databaseActions.findOne("application", "Users", {
+        where:
+          commType === COMMUNICATION_EMAIL
+            ? {
+              email: req.body.emailOrPhone,
+            }
+            : {
+              phone: req.body.emailOrPhone,
+            },
+      });
+      userId = user?.id;
+      commData.id = user?.id;
+    }
 
-        if (!templateID) {
-          templateID = commType === coreConstant.commType.EMAIL ? coreConstant.communication.SENT_OTP_MAIL_EN : coreConstant.communication.SENT_OTP_SMS_EN;
-        }
-
-        let genetatedOTP = otpGenerator.generate(configProvider.wrappid.otpLength, {
-          specialChars: false,
-          lowerCaseAlphabets: false,
-          upperCaseAlphabets: false,
-        });
-
-        if (genetatedOTP) {
-          commData.otp = genetatedOTP;
-        }
-
-        let commResult = await communicate({
-          commType,
-          commRecipients: {
-            to: [emailOrPhone]
-          },
-          commData,
-          commTemplateID: templateID,
-          directFlag: true,
-          errorFlag: true
-        });
-
-        if (commResult) {
-          console.error(`OTP ${commType} sent successfully.`);
-          return { status: 200, message: `OTP ${commType} sent successfully.` };
-        } else {
-          throw new Error(`OTP ${commType} sent failed.`);
-        }
+    let contactType = commType === coreConstant.commType.SMS ? coreConstant.contact.PHONE : commType;
+    const personContact = await databaseActions.findOne(
+      "application",
+      "PersonContacts",
+      {
+        where: { data: emailOrPhone, type: contactType },
       }
     );
+    if (personContact == null) {
+      throw new Error("Email or phone not exist");
+    }
+
+    if (!templateID) {
+      templateID = commType === coreConstant.commType.EMAIL ? coreConstant.communication.SENT_OTP_MAIL_EN : coreConstant.communication.SENT_OTP_SMS_EN;
+    }
+
+    let genetatedOTP = otpGenerator.generate(configProvider.wrappid.otpLength, {
+      specialChars: false,
+      lowerCaseAlphabets: false,
+      upperCaseAlphabets: false,
+    });
+
+    if (genetatedOTP) {
+      commData.otp = genetatedOTP;
+    }
+
+    let commResult = await communicate({
+      commType,
+      commRecipients: {
+        to: [emailOrPhone]
+      },
+      commData,
+      commTemplateID: templateID,
+      directFlag: true,
+      errorFlag: true
+    });
+
+    if (commResult) {
+      console.log(`OTP ${commType} sent successfully.`);
+      return { status: 200, message: `OTP ${commType} sent successfully.` };
+    } else {
+      throw new Error(`OTP ${commType} sent failed.`);
+    }
   } catch (err) {
-    console.log(err);
+    console.error(err);
     throw err;
   }
 };
