@@ -29,17 +29,17 @@ const LoginWithPassword = props => {
     name,
     navData,
     photo,
-  }= auth;
+  } = auth;
 
   const GoBack = () => {
     dispatch(
       saveAuthData({
-        authNextPage                  : "checkUserExist",
-        checkLoginOrRegisterError     : false,
-        checkLoginOrRegisterLoading   : false,
-        checkLoginOrRegisterMsg       : false,
-        checkLoginOrRegisterSuccess   : false,
-        navigateToOtpSuccess          : false,
+        authNextPage: "checkUserExist",
+        checkLoginOrRegisterError: false,
+        checkLoginOrRegisterLoading: false,
+        checkLoginOrRegisterMsg: false,
+        checkLoginOrRegisterSuccess: false,
+        navigateToOtpSuccess: false,
         navigateToResetPasswordSuccess: false,
       })
     );
@@ -47,15 +47,15 @@ const LoginWithPassword = props => {
     dispatch(clearAuthState());
   };
 
-    if (
-      (navigateToResetPasswordSuccess ||
-        navigateToOtpSuccess ||
-        !checkLoginOrRegisterSuccess) &&
-      authNextPage !== routeRegistry?.enterpassword
-    ) {
-      return <CoreDomNavigate to={"/" + authNextPage} />;
-    }
-    else
+  if (
+    (navigateToResetPasswordSuccess ||
+      navigateToOtpSuccess ||
+      !checkLoginOrRegisterSuccess) &&
+    authNextPage !== routeRegistry?.enterpassword
+  ) {
+    return <CoreDomNavigate to={"/" + authNextPage} />;
+  }
+  else
     return (
       <AuthContainer>
         <CoreBox
@@ -70,7 +70,7 @@ const LoginWithPassword = props => {
         <CoreH6
           styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.MARGIN.MB1]}
         >
-          {name || "Unknown"}
+          {name && name?.trim() !== "" ? name : "Unknown User"}
         </CoreH6>
 
         <CoreTypographyBody2
@@ -112,11 +112,11 @@ const LoginWithPassword = props => {
            * we need send otp to the provided email or phone
            * fix required: email or phone getting removed from store auth.navData
            */}
-          <CoreLink styleClasses={[CoreClasses.COLOR.TEXT_WHITE]} href={"/"+routeRegistry?.resetpassword}>
+          <CoreLink styleClasses={[CoreClasses.COLOR.TEXT_WHITE]} href={"/" + routeRegistry?.resetpassword}>
             Reset Password
           </CoreLink>
 
-          <CoreLink styleClasses={[CoreClasses.COLOR.TEXT_WHITE]} href={"/"+routeRegistry?.enterotp}>
+          <CoreLink styleClasses={[CoreClasses.COLOR.TEXT_WHITE]} href={"/" + routeRegistry?.enterotp}>
             Login with OTP
           </CoreLink>
         </CoreBox>
