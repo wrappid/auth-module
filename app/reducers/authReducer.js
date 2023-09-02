@@ -37,7 +37,8 @@ import {
   CLIENT_INFORMATION_FETCH_SUCCESS,
   CLIENT_INFORMATION_FETCH_ERROR,
   CHECK_LOGIN_LOADING,
-  CHECK_LOGIN_ERROR
+  CHECK_LOGIN_ERROR,
+  RESET_CHANGE_PASSWORD_STATUS
 } from "../types/authTypes";
 
 const initState = {
@@ -207,6 +208,14 @@ const authReducer = (state = initState, action) => {
       return {
         ...state,
         changePasswordError  : true,
+        changePasswordLoading: false,
+        changePasswordSuccess: false,
+      };
+
+    case RESET_CHANGE_PASSWORD_STATUS:
+      return {
+        ...state,
+        changePasswordError  : false,
         changePasswordLoading: false,
         changePasswordSuccess: false,
       };
