@@ -5,8 +5,9 @@ export const FunctionsRegistry = {
   },
 
   SanAddEmailOrPhoneRemoveConfirmPassword: (formData, apiMeta, state) => {
-    formData["emailOrPhone"] = state?.auth?.navData?.emailOrPhone;
-    delete formData.confirmPassword;
-    return { values: formData };
+    let newData = {...formData}
+    newData["emailOrPhone"] = state?.auth?.navData?.emailOrPhone;
+    delete newData.confirmPassword;
+    return { values: newData };
   },
 };
