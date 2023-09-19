@@ -811,6 +811,48 @@ const sentOtp = async (req, res) => {
   }
 };
 
+const postChangePasswordFunc = async (req, res) => {
+  try {
+    let { password, newPassword, confirmPassword } = req.body;
+
+    let user = await databaseActions.findOne("application", "Users",{
+      where: {
+        id: req.user.userId
+      }
+    });
+    let oldPassExist = checkPassword(password, user.password);
+
+    if (password === newPassword) {
+      throw new Error("Password can't be same.");
+    }
+
+    if (oldPassExist && newPassword === confirmPassword) {
+      // 
+      let result = await databaseActions.update("application","Users",{
+        password: bcrypt.hashSync(newPassword, 9)
+      }, {
+        where: {
+          id: req.user.userId
+        }
+      });
+
+      if (result) {
+        return {status:200, message: "Password changed successfully." }
+        // res.status(200).json({message: "Password changed successfully."})
+      } else {
+        throw new Error("Something went wrong.")
+      }
+    } else {
+      throw new Error("Old password is wrong.")
+    }
+  } catch (err) {
+    console.log(err);
+    return {status: 500,  message: err?.message || "Something went wrong."};
+    // res.status(500).json({ message: err?.message || "Something went wrong." });
+  }
+};
+
+
 module.exports = {
   checkLoginOrRegisterUtil,
   loginHelper,
@@ -819,4 +861,5 @@ module.exports = {
   refreshTokenHelper,
   clientLoginInformationHelper,
   sentOtp,
+  postChangePasswordFunc
 };

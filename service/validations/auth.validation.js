@@ -78,6 +78,11 @@ const postLoginWithUrl = {
   query: yup.object({}).noUnknown().strict(),
 };
 
+const postChangePassword ={
+  params: yup.object({}).noUnknown().strict(),
+  query: yup.object({}).noUnknown().strict(),
+};
+
 const refreshTokenSchema = {
   body: yup
     .object({
@@ -108,4 +113,5 @@ module.exports = {
   sentOtp,
   validateEmail,
   validatePhone,
+  postChangePassword
 };

@@ -10,6 +10,7 @@ const {
   postLoginWithUrl,
   getClientLoginInfo,
   sentOtp,
+  postChangePassword
 } = require("./validations/auth.validation");
 
 const controllersRegistry = {
@@ -40,6 +41,7 @@ const controllersRegistry = {
     CoreMiddlewaresRegistry.validation(sentOtp),
     authController.sentOtp,
   ],
+  postChangePassword : [CoreMiddlewaresRegistry.validation(postChangePassword),authController.postChangePassword,]
 };
 
 exports.controllersRegistry = controllersRegistry;

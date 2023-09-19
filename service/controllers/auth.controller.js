@@ -108,6 +108,14 @@ module.exports.sentOtp = async (req, res) => {
 };
 
 
-
+module.exports.postChangePassword = async (req, res) => {
+  try {
+    let data = await authFunctions.postChangePasswordFunc(req, res);
+    res.status(data?.status).json({ message: data?.message });
+  } catch (error) {
+    console.error("Error:: ", error);
+    res.status(500).json({ message: error.message });
+  }
+};
 
 
