@@ -4,7 +4,7 @@ import {
   CoreForm,
   CoreBox,
   CoreTextButton,
-  maskEmailOrPhone,
+  stringUtils,
   CoreClasses,
   CoreTypographyBody2,
   CoreDomNavigate,
@@ -54,7 +54,7 @@ const LoginWithOtp = props => {
           <CoreTypographyBody2>
             {`We have sent you a verification code on your ${
               isNaN(navData?.emailOrPhone) ? " email " : " phone "
-            } ${maskEmailOrPhone(
+            } ${stringUtils.maskEmailOrPhone(
               navData?.emailOrPhone
                 ? navData?.emailOrPhone
                 : ""

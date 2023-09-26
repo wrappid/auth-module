@@ -8,7 +8,7 @@ import {
   CoreTextButton,
   CoreForm,
   CoreLink,
-  maskEmailOrPhone,
+  stringUtils,
   CoreClasses,
   CoreDomNavigate,
   CoreRouteRegistryContext
@@ -78,7 +78,7 @@ const LoginWithPassword = props => {
           hideSeeMore={true}
           styleClasses={[CoreClasses.TEXT.TEXT_CENTER]}
         >
-          {maskEmailOrPhone(
+          {stringUtils.maskEmailOrPhone(
             navData?.emailOrPhone
               ? navData?.emailOrPhone
               : ""

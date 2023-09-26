@@ -8,7 +8,7 @@ import {
   CoreTextButton,
   CoreBox,
   CoreLink,
-  maskEmailOrPhone,
+  stringUtils,
   CoreClasses,
   CoreRouteRegistryContext
 } from "@wrappid/core";
@@ -52,7 +52,7 @@ const  RegisterOrResetPassword = props => {
           hideSeeMore={true}
           
         >
-          {" " + maskEmailOrPhone(navData?.emailOrPhone)}
+          {" " + stringUtils.maskEmailOrPhone(navData?.emailOrPhone)}
         </CoreTypographyBody2>
 
         <CoreTypographyBody2 component="span">
