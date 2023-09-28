@@ -54,13 +54,15 @@ const postLogoutSchema = {
 const sentOtp = {
   body: yup
     .object({
-      emailOrPhone: emailOrPhone.required("Please enter emailOrPhone!!"),
+      data: emailOrPhone.required("Please enter emailOrPhone!!"),
       // Type: yup.string().required("Please enter Type!!"),
       type: yup.string().notRequired(),
       templateID: yup.string().notRequired(),
     })
     .noUnknown()
     .strict(),
+  query: yup.object({}).noUnknown().strict(),
+
 };
 
 const getClientLoginInfo = {
@@ -78,7 +80,7 @@ const postLoginWithUrl = {
   query: yup.object({}).noUnknown().strict(),
 };
 
-const postChangePassword ={
+const postChangePassword = {
   params: yup.object({}).noUnknown().strict(),
   query: yup.object({}).noUnknown().strict(),
 };
@@ -90,6 +92,10 @@ const refreshTokenSchema = {
     })
     .noUnknown()
     .strict(),
+  query: yup.object({}).noUnknown().strict(),
+};
+const postVerifyOtp = {
+  params: yup.object({}).noUnknown().strict(),
   query: yup.object({}).noUnknown().strict(),
 };
 
@@ -113,5 +119,6 @@ module.exports = {
   sentOtp,
   validateEmail,
   validatePhone,
-  postChangePassword
+  postChangePassword,
+  postVerifyOtp
 };

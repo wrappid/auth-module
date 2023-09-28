@@ -290,14 +290,17 @@ const loginHelper = async (req, otherLogin) => {
             let [checkUser, r] = await databaseActions.update(
               "application",
               "Users",
-
               {
-                userUpdateOb,
+                ...userUpdateOb
+              },
+              {
                 where: {
                   id: userId,
                 },
-                transaction: t,
-              }
+              },
+              {
+                transaction: t
+              }   
             );
             if (checkUser == 0) {
               throw "DB update error";
@@ -740,7 +743,7 @@ const sentOtp = async (req, res) => {
 
     let commData = {};
     let userId = req?.user?.userId;
-    let emailOrPhone = req.body.emailOrPhone;
+    let emailOrPhone = req.body.data;
     let commType = req.body.type;
     if (!commType) {
       let { type } = clearValidatePhoneEmail(emailOrPhone);
@@ -752,10 +755,10 @@ const sentOtp = async (req, res) => {
         where:
           commType === COMMUNICATION_EMAIL
             ? {
-              email: req.body.emailOrPhone,
+              email: req.body.data,
             }
             : {
-              phone: req.body.emailOrPhone,
+              phone: req.body.data,
             },
       });
       userId = user?.id;
@@ -852,6 +855,68 @@ const postChangePasswordFunc = async (req, res) => {
   }
 };
 
+const postVerifyOtpFunc = async (req, res) => {
+  try {
+    var userId = req.user.userId;
+    
+    var person = await databaseActions.findOne("application","Persons",{
+      where: {
+        userId: userId
+      }
+    })
+    var personId = person.id;
+
+    var otpInDb = await databaseActions.findOne("application","Otps",{
+      where: {
+        userId: userId,
+        isActive: true,
+      },
+      order: [
+        ["id", "desc"]
+      ]
+    });
+
+    console.log("OTP in db", otpInDb.otp);
+    console.log("OTP by user", req.body.otp);
+
+    if (req.body.otp == otpInDb.otp) {
+      console.log("OTP matched");
+      var [nrows, rows] = await databaseActions.update("application","PersonContacts",
+        { verified: true },
+        {
+          where: {
+            personId: personId,
+            data: req.body.data,
+          },
+        }
+      );
+      if (nrows > 0) {
+        console.log("Person contact updated.");
+        console.log("OTP verified");
+        return {status:200, message: "OTP verified"};
+        // res.status(200).json({ message: "OTP verified" });
+      } else {
+        console.log("Person contact not updated");
+        return {status:500, message: "Internal error"};
+        // res.status(500).json({ message: "Internal error" });
+      }
+    } else {
+      console.log(
+        "OTP mismatch, dbOtp: ",
+        otpInDb.otp,
+        ",user given otp:",
+        req.body.otp
+      );
+      return {status:500, message: "OTP mismatch" };
+      // res.status(500).json({ message: "OTP mismatch" });
+    }
+  } catch (err) {
+    console.log(err);
+    return {status:500, message: "Error to fetch Contacts data"};
+    // res.status(500).json({ message: "Error to fetch Contacts data" });
+  }
+};
+
 
 module.exports = {
   checkLoginOrRegisterUtil,
@@ -861,5 +926,6 @@ module.exports = {
   refreshTokenHelper,
   clientLoginInformationHelper,
   sentOtp,
-  postChangePasswordFunc
+  postChangePasswordFunc,
+  postVerifyOtpFunc
 };

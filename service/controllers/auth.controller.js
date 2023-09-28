@@ -118,4 +118,14 @@ module.exports.postChangePassword = async (req, res) => {
   }
 };
 
-
+module.exports.postVerifyOtp = async (req, res) => {
+  try{
+    // res.status(200).json({message: "API call sucessfully!!"});
+    let data = await authFunctions.postVerifyOtpFunc(req, res);
+    let {status, ...resData} = data;
+    res.status(status).json({ ...resData });
+  }catch(err){
+    console.log(err);
+    res.status(500).json({message: err});
+  }
+};
