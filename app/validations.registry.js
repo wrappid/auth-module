@@ -1,4 +1,4 @@
-import { clearValidatePhoneEmail } from "@wrappid/core";
+import { clearValidatePhoneEmail, getFormikRequiredMessage } from "@wrappid/core";
 import * as yup from "yup";
 
 export const ValidationsRegistry = {
@@ -16,10 +16,11 @@ export const ValidationsRegistry = {
   confirmPassword: {
     confirmPassword: yup
       .string()
-      .oneOf([yup.ref("newPassword"), null], "Passwords must match"),
+      .oneOf([yup.ref("newPassword"), null], "Passwords must match")
+      .required(getFormikRequiredMessage("confirmPassword")),
     newPassword: yup
       .string()
-      .required()
+      .required(getFormikRequiredMessage("newPassword"))
       .min(8)
       .matches(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\\$%^&*])(?=.{8,})/,
@@ -27,12 +28,7 @@ export const ValidationsRegistry = {
       ),
     password: yup
       .string()
-      .required()
-      .min(8)
-      .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\\$%^&*])(?=.{8,})/,
-        "At least 8 Characters, a mixture of uppercase, lowercase, numbers and special  characters"
-      ),
+      .required("Enter old password"),
   },
 
   enterPassword: { password: yup.string().required("Enter password") }
