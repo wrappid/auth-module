@@ -1,4 +1,4 @@
-import { RouteRegistry } from "../routes.registry";
+import { ModuleRoute } from "../constants/app.constants";
 import {
   SIGNUP_ERROR,
   SIGNUP_SUCCESS,
@@ -46,7 +46,7 @@ const initState = {
   authError  : null,
   authLoading: false,
 
-  authNextPage       : RouteRegistry.LOGIN_ROUTE,
+  authNextPage       : ModuleRoute.LOGIN_ROUTE,
   changePasswordError: false,
 
   changePasswordLoading: false,
@@ -266,7 +266,7 @@ const authReducer = (state = initState, action) => {
     case CHECK_LOGIN_SUCCESS_REGISTERED:
       return {
         ...state,
-        authNextPage               : RouteRegistry.PASSWORD_ROUTE,
+        authNextPage               : ModuleRoute.PASSWORD_ROUTE,
         checkLoginOrRegisterError  : false,
         checkLoginOrRegisterLoading: false,
         checkLoginOrRegisterMsg    : null,
@@ -278,7 +278,7 @@ const authReducer = (state = initState, action) => {
     case CHECK_LOGIN_SUCCESS_UNREGISTERED:
       return {
         ...state,
-        authNextPage               : RouteRegistry.REGISTER_ROUTE,
+        authNextPage               : ModuleRoute.REGISTER_ROUTE,
         checkLoginOrRegisterError  : false,
         checkLoginOrRegisterLoading: false,
         checkLoginOrRegisterMsg    : action.message,
@@ -296,7 +296,7 @@ const authReducer = (state = initState, action) => {
     case NAVIGATE_TO_OTP_LOGIN_SUCCESS:
       return {
         ...state,
-        authNextPage        : RouteRegistry.LOGIN_OTP_ROUTE,
+        authNextPage        : ModuleRoute.LOGIN_OTP_ROUTE,
         navigateToOtpError  : false,
         navigateToOtpLoading: false,
         navigateToOtpMsg    : action.message,
@@ -306,7 +306,7 @@ const authReducer = (state = initState, action) => {
     case NAVIGATE_TO_RESET_PASSWORD_SUCCESS:
       return {
         ...state,
-        authNextPage                  : RouteRegistry.RESET_PASSWORD_ROUTE,
+        authNextPage                  : ModuleRoute.RESET_PASSWORD_ROUTE,
         navigateToResetPasswordError  : false,
         navigateToResetPasswordLoading: false,
         navigateToResetPasswordMsg    : action.message,
@@ -372,7 +372,7 @@ const authReducer = (state = initState, action) => {
       return {
         ...state,
         accessToken                : null,
-        authNextPage               : RouteRegistry.PASSWORD_ROUTE,
+        authNextPage               : ModuleRoute.PASSWORD_ROUTE,
         checkLoginOrRegisterSuccess: true,
         loginPage                  : null,
         refreshToken               : null,
