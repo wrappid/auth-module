@@ -691,7 +691,7 @@ const refreshTokenHelper = async (req, res) => {
 
 const clientLoginInformationHelper = async (req, res) => {
   try {
-    let userID = req.user.userId;
+    let userID = req.body.userId;
 
     // ip
     let ip = req?.socket?.remoteAddress || req?.ip || "Not found";
@@ -723,10 +723,9 @@ const clientLoginInformationHelper = async (req, res) => {
     const userAgent = req.headers["user-agent"];
     const result = detector.detect(userAgent);
     // console.log('result parse', result);
-
-    return res
-      .status(200)
-      .json({ deviceInfo, ip, lastLoginDetails, result, userAgent });
+    return  {status: 200, deviceInfo: deviceInfo, ip: ip, lastLoginDetails: lastLoginDetails, result: result, userAgent: userAgent }
+      // .status(200)
+      // .json({ deviceInfo, ip, lastLoginDetails, result, userAgent });
   } catch (err) {
     console.log("Error : ", err);
     throw err;
