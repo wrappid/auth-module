@@ -1,7 +1,7 @@
 {
-  "name": "wrappid-module",
+  "name": "auth-module",
   "version": "0.0.1",
-  "description": "This is a template repository for a wrappid module.",
+  "description": "This is auth-module repository for wrappid-app and wrappid-service projects.",
   "main": "index.js",
   "scripts": {
     "prepare": "husky install",
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git:https://github.com/wrappid/wrappid-module.git"
+    "url": "git:https://github.com/wrappid/auth-module.git"
   },
   "keywords": [
     "wrappid",
@@ -25,6 +25,9 @@
   "author": "wrappid",
   "license": "ISC",
   "devDependencies": {
+    "@commitlint/cli": "^17.5.0",
+    "@commitlint/config-conventional": "^17.4.4",
+    "@commitlint/prompt-cli": "^17.5.0",
     "@wrappid/core": "latest",
     "@wrappid/styles": "latest",
     "eslint": "^8.40.0",
