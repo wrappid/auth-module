@@ -2,10 +2,10 @@ const {
   configProvider,
   coreConstant,
   databaseActions,
-  databaseProvider,
 } = require("@wrappid/service-core");
 const DeviceDetector = require("node-device-detector");
 const otpGenerator = require("otp-generator");
+
 const otpLength = configProvider.wrappid.otpLength;
 
 const COMMUNICATION_EMAIL = coreConstant.commType.EMAIL;
@@ -57,7 +57,6 @@ async function getDeviceId(req) {
 }
 
 async function getIP(req) {
-  let otp = null;
   let ip;
   if (req.headers["x-forwarded-for"]) {
     ip = req.headers["x-forwarded-for"].split(",")[0];
@@ -129,8 +128,8 @@ async function communicate(
     }
 
     for (let i = 0; i < reciepients.length; i++) {
+      let otp;
       let dataOb = dataList[i];
-
       if (otpFlag) {
         if (!dataList[i] || (dataList[i] && !dataList[i].otp)) {
           otp = otpGenerator.generate(otpLength, {
@@ -206,7 +205,7 @@ async function communicate(
         console.log("Whatsapp com created");
       }
       if (otpFlag) {
-        let updateOldOtp = await databaseActions.update(
+        await databaseActions.update(
           "application",
           "Otps",
           { isActive: false },
@@ -238,7 +237,7 @@ async function communicate(
           }
         }
 
-        let otpEntry = await databaseActions.create(
+        await databaseActions.create(
           "application",
           "Otps",
           entry,

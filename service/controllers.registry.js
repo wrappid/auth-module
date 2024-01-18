@@ -1,5 +1,5 @@
-const authController = require("./controllers/auth.controller");
 const { CoreMiddlewaresRegistry } = require("@wrappid/service-core");
+const authController = require("./controllers/auth.controller");
 const {
   checkLoginOrRegister,
   login,
