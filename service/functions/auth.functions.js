@@ -125,7 +125,7 @@ const checkLoginOrRegisterUtil = async (req) => {
               {
                 data: emailOrPhone,
                 type:
-                  ob.type === coreConstant.communication.EMAIL
+                  ob.type === coreConstant.commType.EMAIL
                     ? coreConstant.contact.EMAIL
                     : coreConstant.contact.PHONE,
                 personId: personData.id,
@@ -223,6 +223,10 @@ const loginHelper = async (req, otherLogin) => {
           return { status: 500, message: "OTP does not match" };
         } else {
           console.log("OTP match passed");
+          await databaseActions.update("application","Otps", {_status: coreConstant.entityStatus.INACTIVE}, {where:{
+            userId: userId,
+            otp: req.body.otp
+          }} )
           if (resetPassword) {
             let passwordValid = resetPasswordCheck(
               req.body.password,
@@ -508,7 +512,7 @@ async function checkOtp(userId, otp) {
   let dbOtp = await databaseActions.findOne("application", "Otps", {
     where: {
       userId: userId,
-      isActive: true,
+      _status: coreConstant.entityStatus.ACTIVE,
     },
   });
   // console.log("DB OTP:", dbOtp.otp, Number(dbOtp.otp));
@@ -802,6 +806,17 @@ const sentOtp = async (req, res) => {
     });
 
     if (commResult) {
+      await databaseActions.update("application", "Otps", {_status: coreConstant.entityStatus.INACTIVE}, {
+        where: {
+        type: commType,
+        userId: userId,
+      }})
+      await databaseActions.create("application", "Otps", {
+        otp: genetatedOTP,
+        type: commType,
+        _status: coreConstant.entityStatus.ACTIVE,
+        userId: userId,
+      })
       console.log(`OTP ${commType} sent successfully.`);
       return { status: 200, message: `OTP ${commType} sent successfully.` };
     } else {
