@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 
 import {
   CoreBox,
@@ -13,14 +13,15 @@ import {
   CoreDomNavigate,
   CoreRouteRegistryContext
 } from "@wrappid/core";
-import { AuthContainer } from "./AuthContainer";
-import { clearAuthState, saveAuthData } from "../actions/authActions";
 import { useDispatch, useSelector } from "react-redux";
 
-const LoginWithPassword = props => {
-  const dispatch = useDispatch()
+import { AuthContainer } from "./AuthContainer";
+import { clearAuthState, saveAuthData } from "../actions/authActions";
+
+const LoginWithPassword = () => {
+  const dispatch = useDispatch();
   const auth = useSelector(state => state.auth);
-  const routeRegistry = useContext(CoreRouteRegistryContext)
+  const routeRegistry = useContext(CoreRouteRegistryContext);
   const {
     navigateToResetPasswordSuccess,
     navigateToOtpSuccess,
@@ -34,12 +35,12 @@ const LoginWithPassword = props => {
   const GoBack = () => {
     dispatch(
       saveAuthData({
-        authNextPage: "checkUserExist",
-        checkLoginOrRegisterError: false,
-        checkLoginOrRegisterLoading: false,
-        checkLoginOrRegisterMsg: false,
-        checkLoginOrRegisterSuccess: false,
-        navigateToOtpSuccess: false,
+        authNextPage                  : "checkUserExist",
+        checkLoginOrRegisterError     : false,
+        checkLoginOrRegisterLoading   : false,
+        checkLoginOrRegisterMsg       : false,
+        checkLoginOrRegisterSuccess   : false,
+        navigateToOtpSuccess          : false,
         navigateToResetPasswordSuccess: false,
       })
     );
@@ -121,8 +122,8 @@ const LoginWithPassword = props => {
           </CoreLink>
         </CoreBox>
       </AuthContainer>
-    )
-}
+    );
+};
 
-export default LoginWithPassword
+export default LoginWithPassword;
 
