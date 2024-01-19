@@ -1,4 +1,5 @@
 const SessionManagers = require("./models/SessionManagers.model");
+
 const modelsRegistry = {
  
   SessionManagers: {

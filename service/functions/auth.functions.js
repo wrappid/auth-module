@@ -1,8 +1,3 @@
-const bcrypt = require("bcrypt");
-const DeviceDetector = require("node-device-detector");
-const jwt = require("jsonwebtoken");
-const otpGenerator = require("otp-generator");
-
 const {
   communicate,
   configProvider,
@@ -10,6 +5,11 @@ const {
   databaseActions,
   databaseProvider,
 } = require("@wrappid/service-core");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const DeviceDetector = require("node-device-detector");
+const otpGenerator = require("otp-generator");
+
 
 const {
   accessTokenSecret,
@@ -125,7 +125,7 @@ const checkLoginOrRegisterUtil = async (req) => {
               {
                 data: emailOrPhone,
                 type:
-                  ob.type === coreConstant.communication.EMAIL
+                  ob.type === coreConstant.commType.EMAIL
                     ? coreConstant.contact.EMAIL
                     : coreConstant.contact.PHONE,
                 personId: personData.id,
@@ -223,6 +223,12 @@ const loginHelper = async (req, otherLogin) => {
           return { status: 500, message: "OTP does not match" };
         } else {
           console.log("OTP match passed");
+          await databaseActions.update("application", "Otps", { _status: coreConstant.entityStatus.INACTIVE }, {
+            where: {
+              userId: userId,
+              otp: req.body.otp
+            }
+          });
           if (resetPassword) {
             let passwordValid = resetPasswordCheck(
               req.body.password,
@@ -252,7 +258,7 @@ const loginHelper = async (req, otherLogin) => {
         return { status: 401, message: "Invalid password" };
       }
 
-      deviceId = await getDeviceId(req);
+      let deviceId = await getDeviceId(req);
       console.log("Device id fetched");
 
       let { refreshToken, accessToken } = genarateAccessToken(
@@ -276,7 +282,7 @@ const loginHelper = async (req, otherLogin) => {
 
       console.log("All sessions fetchd:", sessions.length);
 
-      found = false;
+      let found = false;
 
       const result = await databaseProvider.application.sequelize.transaction(
         async (t) => {
@@ -287,7 +293,7 @@ const loginHelper = async (req, otherLogin) => {
           }
 
           if (userDetails.firstLogin || updatePassword) {
-            let [checkUser, r] = await databaseActions.update(
+            let [checkUser] = await databaseActions.update(
               "application",
               "Users",
               {
@@ -300,7 +306,7 @@ const loginHelper = async (req, otherLogin) => {
               },
               {
                 transaction: t
-              }   
+              }
             );
             if (checkUser == 0) {
               throw "DB update error";
@@ -313,7 +319,7 @@ const loginHelper = async (req, otherLogin) => {
           if (otpLogin || urlLogin) {
             console.log("PersonContacts updating due to otplogin or urllogin");
 
-            let [checkContacts, r] = await databaseActions.update(
+            let [checkContacts] = await databaseActions.update(
               "application",
               "PersonContacts",
 
@@ -353,7 +359,7 @@ const loginHelper = async (req, otherLogin) => {
               verificationOb["userInvitationToken"] = null;
             }
 
-            let [checkPerson, r] = await databaseActions.update(
+            let [checkPerson] = await databaseActions.update(
               "application",
               "Persons",
 
@@ -373,14 +379,14 @@ const loginHelper = async (req, otherLogin) => {
           }
 
           for (let session = 0; session < sessions.length; session++) {
-            currSession = sessions[session];
+            let currSession = sessions[session];
             if (bcrypt.compareSync(deviceId, currSession.deviceId)) {
               console.log("*****************************");
               console.log("session found", currSession.id);
               console.log("*****************************");
               found = true;
 
-              let [nrows, rows] = await databaseActions.update(
+              let [nrows] = await databaseActions.update(
                 "application",
                 "SessionManagers",
 
@@ -469,16 +475,16 @@ const loginHelper = async (req, otherLogin) => {
 const logoutHelper = async (req, res) => {
   try {
     console.error("user:: ", req.user);
-    deviceId = await getDeviceId(req);
-    sessions = await databaseActions.findAll("application", "SessionManagers", {
+    let deviceId = await getDeviceId(req);
+    let sessions = await databaseActions.findAll("application", "SessionManagers", {
       where: {
         userId: 1, //hard data
       },
     });
     for (let session = 0; session < sessions.length; session++) {
-      currSession = sessions[session];
+      let currSession = sessions[session];
       if (bcrypt.compareSync(deviceId, currSession.deviceId)) {
-        [nrows, rows] = await databaseActions.update(
+        let [nrows] = await databaseActions.update(
           "application",
           "SessionManagers",
           { refreshToken: "" },
@@ -508,7 +514,7 @@ async function checkOtp(userId, otp) {
   let dbOtp = await databaseActions.findOne("application", "Otps", {
     where: {
       userId: userId,
-      isActive: true,
+      _status: coreConstant.entityStatus.ACTIVE,
     },
   });
   // console.log("DB OTP:", dbOtp.otp, Number(dbOtp.otp));
@@ -598,13 +604,14 @@ async function createLoginLogs(path, userId, extraInfo = "{}") {
 }
 const getIPHelper = async (req, res) => {
   try {
+    console.log(res);
     let detector = new DeviceDetector({
       clientIndexes: true,
       deviceIndexes: true,
       deviceAliasCode: true,
     });
-    let result = detector.detect(req.headers["user-agent"]);
-    devId = await getDeviceId(req);
+    detector.detect(req.headers["user-agent"]);
+    let devId = await getDeviceId(req);
     req.devId = devId;
     return { status: 200, devId: devId };
   } catch (err) {
@@ -626,8 +633,8 @@ const refreshTokenHelper = async (req, res) => {
         let userId = user.userId;
         // let isValidJOI = await authenticateJOI(req,"refreshtokenPOST",["body"])
         // if(isValidJOI.validFlag){
-        deviceId = await getDeviceId(req);
-        sessions = await databaseActions.findAll(
+        let deviceId = await getDeviceId(req);
+        let sessions = await databaseActions.findAll(
           "application",
           "SessionManagers",
           {
@@ -639,7 +646,7 @@ const refreshTokenHelper = async (req, res) => {
         );
         console.log("Sessions available:", sessions.length);
         for (let session = 0; session < sessions.length; session++) {
-          currSession = sessions[session];
+          let currSession = sessions[session];
           if (bcrypt.compareSync(deviceId, currSession.deviceId)) {
             const token = req.body.refreshToken;
             const refreshToken = currSession.refreshToken;
@@ -691,6 +698,7 @@ const refreshTokenHelper = async (req, res) => {
 
 const clientLoginInformationHelper = async (req, res) => {
   try {
+    console.log(res);
     let userID = req.body.userId;
 
     // ip
@@ -723,9 +731,9 @@ const clientLoginInformationHelper = async (req, res) => {
     const userAgent = req.headers["user-agent"];
     const result = detector.detect(userAgent);
     // console.log('result parse', result);
-    return  {status: 200, deviceInfo: deviceInfo, ip: ip, lastLoginDetails: lastLoginDetails, result: result, userAgent: userAgent }
-      // .status(200)
-      // .json({ deviceInfo, ip, lastLoginDetails, result, userAgent });
+    return { status: 200, deviceInfo: deviceInfo, ip: ip, lastLoginDetails: lastLoginDetails, result: result, userAgent: userAgent };
+    // .status(200)
+    // .json({ deviceInfo, ip, lastLoginDetails, result, userAgent });
   } catch (err) {
     console.log("Error : ", err);
     throw err;
@@ -739,7 +747,7 @@ const clientLoginInformationHelper = async (req, res) => {
  */
 const sentOtp = async (req, res) => {
   try {
-
+    console.log(res);
     let commData = {};
     let userId = req?.user?.userId;
     let emailOrPhone = req.body.data;
@@ -802,6 +810,18 @@ const sentOtp = async (req, res) => {
     });
 
     if (commResult) {
+      await databaseActions.update("application", "Otps", { _status: coreConstant.entityStatus.INACTIVE }, {
+        where: {
+          type: commType,
+          userId: userId,
+        }
+      });
+      await databaseActions.create("application", "Otps", {
+        otp: genetatedOTP,
+        type: commType,
+        _status: coreConstant.entityStatus.ACTIVE,
+        userId: userId,
+      });
       console.log(`OTP ${commType} sent successfully.`);
       return { status: 200, message: `OTP ${commType} sent successfully.` };
     } else {
@@ -815,9 +835,10 @@ const sentOtp = async (req, res) => {
 
 const postChangePasswordFunc = async (req, res) => {
   try {
+    console.log(res);
     let { password, newPassword, confirmPassword } = req.body;
 
-    let user = await databaseActions.findOne("application", "Users",{
+    let user = await databaseActions.findOne("application", "Users", {
       where: {
         id: req.user.userId
       }
@@ -830,7 +851,7 @@ const postChangePasswordFunc = async (req, res) => {
 
     if (oldPassExist && newPassword === confirmPassword) {
       // 
-      let result = await databaseActions.update("application","Users",{
+      let result = await databaseActions.update("application", "Users", {
         password: bcrypt.hashSync(newPassword, 9)
       }, {
         where: {
@@ -839,33 +860,34 @@ const postChangePasswordFunc = async (req, res) => {
       });
 
       if (result) {
-        return {status:200, message: "Password changed successfully." }
+        return { status: 200, message: "Password changed successfully." };
         // res.status(200).json({message: "Password changed successfully."})
       } else {
-        throw new Error("Something went wrong.")
+        throw new Error("Something went wrong.");
       }
     } else {
-      throw new Error("Old password is wrong.")
+      throw new Error("Old password is wrong.");
     }
   } catch (err) {
     console.log(err);
-    return {status: 500,  message: err?.message || "Something went wrong."};
+    return { status: 500, message: err?.message || "Something went wrong." };
     // res.status(500).json({ message: err?.message || "Something went wrong." });
   }
 };
 
 const postVerifyOtpFunc = async (req, res) => {
   try {
+    console.log(res);
     var userId = req.user.userId;
-    
-    var person = await databaseActions.findOne("application","Persons",{
+
+    var person = await databaseActions.findOne("application", "Persons", {
       where: {
         userId: userId
       }
-    })
+    });
     var personId = person.id;
 
-    var otpInDb = await databaseActions.findOne("application","Otps",{
+    var otpInDb = await databaseActions.findOne("application", "Otps", {
       where: {
         userId: userId,
         isActive: true,
@@ -880,7 +902,7 @@ const postVerifyOtpFunc = async (req, res) => {
 
     if (req.body.otp == otpInDb.otp) {
       console.log("OTP matched");
-      var [nrows, rows] = await databaseActions.update("application","PersonContacts",
+      var [nrows] = await databaseActions.update("application", "PersonContacts",
         { verified: true },
         {
           where: {
@@ -892,11 +914,11 @@ const postVerifyOtpFunc = async (req, res) => {
       if (nrows > 0) {
         console.log("Person contact updated.");
         console.log("OTP verified");
-        return {status:200, message: "OTP verified"};
+        return { status: 200, message: "OTP verified" };
         // res.status(200).json({ message: "OTP verified" });
       } else {
         console.log("Person contact not updated");
-        return {status:500, message: "Internal error"};
+        return { status: 500, message: "Internal error" };
         // res.status(500).json({ message: "Internal error" });
       }
     } else {
@@ -906,12 +928,12 @@ const postVerifyOtpFunc = async (req, res) => {
         ",user given otp:",
         req.body.otp
       );
-      return {status:500, message: "OTP mismatch" };
+      return { status: 500, message: "OTP mismatch" };
       // res.status(500).json({ message: "OTP mismatch" });
     }
   } catch (err) {
     console.log(err);
-    return {status:500, message: "Error to fetch Contacts data"};
+    return { status: 500, message: "Error to fetch Contacts data" };
     // res.status(500).json({ message: "Error to fetch Contacts data" });
   }
 };

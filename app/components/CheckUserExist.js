@@ -1,25 +1,26 @@
-import React, { useContext } from 'react';
+import { useContext } from "react";
+
 import {
   CoreForm,
   CoreClasses,
   CoreDomNavigate,
   CoreRouteRegistryContext
 } from "@wrappid/core";
-
-import { AuthContainer } from "./AuthContainer";
 import { useSelector } from "react-redux";
 
-const  CheckUserExist = props => {
+import { AuthContainer } from "./AuthContainer";
+
+const CheckUserExist = () => {
   const auth = useSelector(state => state.auth);
-  const routeRegistry = useContext(CoreRouteRegistryContext)
+  const routeRegistry = useContext(CoreRouteRegistryContext);
 
   const { checkLoginOrRegisterSuccess, authNextPage } = auth;
-  
+
   if (checkLoginOrRegisterSuccess && authNextPage !== routeRegistry?.checkuserexists) {
     return <CoreDomNavigate to={"/" + authNextPage} />;
   }
   else
-    return ( 
+    return (
       <AuthContainer>
         <CoreForm
           styleClasses={[CoreClasses.LAYOUT.AUTH_FORM_CONTAINER]}
@@ -28,7 +29,7 @@ const  CheckUserExist = props => {
           authenticated={false}
         />
       </AuthContainer>
-    )
-}
+    );
+};
 
 export default CheckUserExist;
