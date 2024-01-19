@@ -1,5 +1,7 @@
-const authController = require("./controllers/auth.controller");
 const { CoreMiddlewaresRegistry } = require("@wrappid/service-core");
+
+const authController = require("./controllers/auth.controller");
+
 const {
   checkLoginOrRegister,
   login,
@@ -15,10 +17,7 @@ const {
 } = require("./validations/auth.validation");
 
 const controllersRegistry = {
-  checkLoginOrRegister: [
-    CoreMiddlewaresRegistry.validation(checkLoginOrRegister),
-    authController.checkLoginOrRegister,
-  ],
+  checkLoginOrRegister: [CoreMiddlewaresRegistry.validation(checkLoginOrRegister), authController.checkLoginOrRegister],
   login: [CoreMiddlewaresRegistry.validation(login), authController.login],
   logout: [CoreMiddlewaresRegistry.validation(postLogoutSchema), authController.logout],
   loginWithOtp: [CoreMiddlewaresRegistry.validation(postLoginWithOtp),authController.loginWithOtp],

@@ -1,4 +1,5 @@
-import React, {useContext} from 'react'
+import { useContext } from "react";
+
 import {
   CoreDomNavigate,
   CoreH1,
@@ -20,10 +21,10 @@ import { saveAuthData } from "../actions/authActions";
 
 const appConfig = getConfigurationObject();
 
-const  RegisterOrResetPassword = props => {
-  const dispatch = useDispatch()
+const RegisterOrResetPassword = () => {
+  const dispatch = useDispatch();
   const auth = useSelector(state => state.auth);
-  const routeRegistry = useContext(CoreRouteRegistryContext)
+  const routeRegistry = useContext(CoreRouteRegistryContext);
 
   const { checkLoginOrRegisterSuccess, authNextPage, navData } = auth;
 
@@ -36,47 +37,45 @@ const  RegisterOrResetPassword = props => {
       checkLoginOrRegisterSuccess   : false,
       navigateToOtpSuccess          : false,
       navigateToResetPasswordSuccess: false,
-    }))
+    }));
   };
 
-  const showEmailOrPhone = ()=>{
-    return( 
+  const showEmailOrPhone = () => {
+    return (
       <CoreTypographyBody2 styleClasses={[CoreClasses.TEXT.TEXT_JUSTIFY]}>
         <CoreTypographyBody2 component="span">
-          We have sent you a verification code on 
+          We have sent you a verification code on
         </CoreTypographyBody2>
 
-        <CoreTypographyBody2 
+        <CoreTypographyBody2
           component="span"
           limitChars={42}
           hideSeeMore={true}
-          
+
         >
           {" " + stringUtils.maskEmailOrPhone(navData?.emailOrPhone)}
         </CoreTypographyBody2>
 
         <CoreTypographyBody2 component="span">
-          {`. Please enter the One Time Password (OTP) to verify your ${
-            isNaN(navData?.emailOrPhone) ? " email." : " phone."
-          }`} 
+          {`. Please enter the One Time Password (OTP) to verify your ${isNaN(navData?.emailOrPhone) ? " email." : " phone."
+          }`}
         </CoreTypographyBody2>
       </CoreTypographyBody2>
     );
   };
 
-    if (
-      !checkLoginOrRegisterSuccess &&
-      (authNextPage !== routeRegistry.register ||
-        authNextPage !== routeRegistry.resetpassword)
-    ) {
-      return <CoreDomNavigate to={"/" + authNextPage} />;
-    }
-    else
+  if (
+    !checkLoginOrRegisterSuccess &&
+    (authNextPage !== routeRegistry.register ||
+      authNextPage !== routeRegistry.resetpassword)
+  ) {
+    return <CoreDomNavigate to={"/" + authNextPage} />;
+  }
+  else
     return (
       <AuthContainer>
         <CoreH1 variant="h5" styleClasses={[CoreClasses.TEXT.TEXT_CENTER]}>
-          {`Verify your${
-            isNaN(navData?.emailOrPhone) ? " email" : " phone"
+          {`Verify your${isNaN(navData?.emailOrPhone) ? " email" : " phone"
           }`}
         </CoreH1>
 
@@ -134,6 +133,6 @@ const  RegisterOrResetPassword = props => {
         )}
       </AuthContainer>
     );
-}
+};
 
-export default RegisterOrResetPassword
+export default RegisterOrResetPassword;

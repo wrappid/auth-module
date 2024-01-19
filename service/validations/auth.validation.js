@@ -4,7 +4,7 @@ const emailOrPhone = yup
   .string()
   .matches(/^([0-9]{10}|[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+)$/);
 
-const otp = yup.string().min(000000).max(999999);
+const otp = yup.string().min(0o0).max(999999);
 
 const checkLoginOrRegister = {
   body: yup
