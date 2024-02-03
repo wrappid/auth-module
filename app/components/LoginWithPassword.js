@@ -11,7 +11,7 @@ import {
   stringUtils,
   CoreClasses,
   CoreDomNavigate,
-  CoreRouteRegistryContext
+  CoreRoutesContext
 } from "@wrappid/core";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -21,7 +21,7 @@ import { clearAuthState, saveAuthData } from "../actions/authActions";
 const LoginWithPassword = () => {
   const dispatch = useDispatch();
   const auth = useSelector(state => state.auth);
-  const routeRegistry = useContext(CoreRouteRegistryContext);
+  const routeRegistry = useContext(CoreRoutesContext);
   const {
     navigateToResetPasswordSuccess,
     navigateToOtpSuccess,
@@ -113,11 +113,11 @@ const LoginWithPassword = () => {
            * we need send otp to the provided email or phone
            * fix required: email or phone getting removed from store auth.navData
            */}
-          <CoreLink styleClasses={[CoreClasses.COLOR.TEXT_WHITE]} href={"/" + routeRegistry?.resetpassword}>
+          <CoreLink styleClasses={[CoreClasses.COLOR.TEXT_WHITE]} href={"/resetpassword"}>
             Reset Password
           </CoreLink>
 
-          <CoreLink styleClasses={[CoreClasses.COLOR.TEXT_WHITE]} href={"/" + routeRegistry?.enterotp}>
+          <CoreLink styleClasses={[CoreClasses.COLOR.TEXT_WHITE]} href={"/enterotp"}>
             Login with OTP
           </CoreLink>
         </CoreBox>

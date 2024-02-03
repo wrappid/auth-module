@@ -1,4 +1,5 @@
 export const ModuleRoute = {
+  LOGIN_DASHBOARD     : "dashboard",
   LOGIN_OTP_ROUTE     : "enterOtp",
   LOGIN_ROUTE         : "checkUserExist",
   LOGOUT              : "logout",
@@ -6,4 +7,3 @@ export const ModuleRoute = {
   REGISTER_ROUTE      : "register",
   RESET_PASSWORD_ROUTE: "resetPassword",
 };
-  

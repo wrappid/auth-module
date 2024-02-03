@@ -121,6 +121,7 @@ const authReducer = (state = initState, action) => {
         accessToken : action.payload.accessToken,
         authError   : null,
         authLoading : false,
+        authNextPage: ModuleRoute.LOGIN_DASHBOARD,
         refreshToken: action.payload.refreshToken,
         uid         : action.payload.id,
         user        : action.payload,
