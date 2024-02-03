@@ -35,12 +35,12 @@ const LoginWithPassword = () => {
   const GoBack = () => {
     dispatch(
       saveAuthData({
-        authNextPage: "checkUserExist",
-        checkLoginOrRegisterError: false,
-        checkLoginOrRegisterLoading: false,
-        checkLoginOrRegisterMsg: false,
-        checkLoginOrRegisterSuccess: false,
-        navigateToOtpSuccess: false,
+        authNextPage                  : "checkUserExist",
+        checkLoginOrRegisterError     : false,
+        checkLoginOrRegisterLoading   : false,
+        checkLoginOrRegisterMsg       : false,
+        checkLoginOrRegisterSuccess   : false,
+        navigateToOtpSuccess          : false,
         navigateToResetPasswordSuccess: false,
       })
     );

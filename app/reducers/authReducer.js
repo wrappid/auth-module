@@ -43,58 +43,58 @@ import {
 
 const initState = {
   accessToken: null,
-  authError: null,
+  authError  : null,
   authLoading: false,
 
-  authNextPage: ModuleRoute.LOGIN_ROUTE,
+  authNextPage       : ModuleRoute.LOGIN_ROUTE,
   changePasswordError: false,
 
   changePasswordLoading: false,
   changePasswordSuccess: false,
-  checkLoginOrRegister: null,
+  checkLoginOrRegister : null,
 
-  checkLoginOrRegisterError: false,
+  checkLoginOrRegisterError  : false,
   checkLoginOrRegisterLoading: false,
-  checkLoginOrRegisterMsg: null,
-  checkLoginOrRegisterOtp: false,
+  checkLoginOrRegisterMsg    : null,
+  checkLoginOrRegisterOtp    : false,
   checkLoginOrRegisterSuccess: false,
-  checkSignup: false,
-  clientLoginFlag: false,
-  clientLoginInformation: null,
+  checkSignup                : false,
+  clientLoginFlag            : false,
+  clientLoginInformation     : null,
 
-  loginPage: null,
+  loginPage    : null,
   logoutLoading: false,
-  name: "",
+  name         : "",
 
-  navData: {},
-  navigateToOtpError: false,
-  navigateToOtpLoading: false,
-  navigateToOtpMsg: false,
-  navigateToOtpSuccess: false,
-  navigateToResetPasswordError: false,
+  navData                       : {},
+  navigateToOtpError            : false,
+  navigateToOtpLoading          : false,
+  navigateToOtpMsg              : false,
+  navigateToOtpSuccess          : false,
+  navigateToResetPasswordError  : false,
   navigateToResetPasswordLoading: false,
 
   navigateToResetPasswordMsg: false,
 
   navigateToResetPasswordSuccess: false,
-  permissions: null,
-  photo: null,
-  refreshToken: null,
+  permissions                   : null,
+  photo                         : null,
+  refreshToken                  : null,
 
-  registerRequestError: false,
+  registerRequestError  : false,
   registerRequestLoading: false,
   registerRequestSuccess: false,
-  resetPasswordError: false,
+  resetPasswordError    : false,
 
   resetPasswordLoading: false,
   resetPasswordSuccess: false,
 
-  role: null,
-  rolePermissionsError: false,
+  role                  : null,
+  rolePermissionsError  : false,
   rolePermissionsLoading: false,
-  rolePermissionsMsg: false,
+  rolePermissionsMsg    : false,
   rolePermissionsSuccess: false,
-  user: null,
+  user                  : null,
 };
 
 const authReducer = (state = initState, action) => {
@@ -102,7 +102,7 @@ const authReducer = (state = initState, action) => {
     case AUTH_LOADING:
       return {
         ...state,
-        authError: null,
+        authError  : null,
         authLoading: true,
       };
 
@@ -118,13 +118,13 @@ const authReducer = (state = initState, action) => {
     case LOGIN_SUCCESS:
       return {
         ...state,
+        accessToken : action.payload.accessToken,
+        authError   : null,
+        authLoading : false,
         authNextPage: ModuleRoute.LOGIN_DASHBOARD,
-        accessToken: action.payload.accessToken,
-        authError: null,
-        authLoading: false,
         refreshToken: action.payload.refreshToken,
-        uid: action.payload.id,
-        user: action.payload,
+        uid         : action.payload.id,
+        user        : action.payload,
       };
 
     case TOKEN_REFRESH_SUCCESS:
@@ -132,7 +132,7 @@ const authReducer = (state = initState, action) => {
       return {
         ...state,
         accessToken: action.payload.accessToken,
-        authError: null,
+        authError  : null,
         authLoading: false,
       };
 
@@ -166,7 +166,7 @@ const authReducer = (state = initState, action) => {
     case RESET_PASSWORD_LOADING:
       return {
         ...state,
-        resetPasswordError: false,
+        resetPasswordError  : false,
         resetPasswordLoading: true,
         resetPasswordSuccess: false,
       };
@@ -175,7 +175,7 @@ const authReducer = (state = initState, action) => {
       alert("Password reset successfuly. Check your mail.");
       return {
         ...state,
-        resetPasswordError: false,
+        resetPasswordError  : false,
         resetPasswordLoading: false,
         resetPasswordSuccess: true,
       };
@@ -184,7 +184,7 @@ const authReducer = (state = initState, action) => {
       alert("Password reset error...");
       return {
         ...state,
-        resetPasswordError: true,
+        resetPasswordError  : true,
         resetPasswordLoading: false,
         resetPasswordSuccess: false,
       };
@@ -192,7 +192,7 @@ const authReducer = (state = initState, action) => {
     case CHANGE_PASSWORD_LOADING:
       return {
         ...state,
-        changePasswordError: false,
+        changePasswordError  : false,
         changePasswordLoading: true,
         changePasswordSuccess: false,
       };
@@ -200,7 +200,7 @@ const authReducer = (state = initState, action) => {
     case CHANGE_PASSWORD_SUCCESS:
       return {
         ...state,
-        changePasswordError: false,
+        changePasswordError  : false,
         changePasswordLoading: false,
         changePasswordSuccess: true,
       };
@@ -208,7 +208,7 @@ const authReducer = (state = initState, action) => {
     case CHANGE_PASSWORD_ERROR:
       return {
         ...state,
-        changePasswordError: true,
+        changePasswordError  : true,
         changePasswordLoading: false,
         changePasswordSuccess: false,
       };
@@ -216,7 +216,7 @@ const authReducer = (state = initState, action) => {
     case RESET_CHANGE_PASSWORD_STATUS:
       return {
         ...state,
-        changePasswordError: false,
+        changePasswordError  : false,
         changePasswordLoading: false,
         changePasswordSuccess: false,
       };
@@ -224,7 +224,7 @@ const authReducer = (state = initState, action) => {
     case ADD_USER_LOADING:
       return {
         ...state,
-        signUpError: false,
+        signUpError  : false,
         signUpLoading: true,
         signUpMessage: null,
         signUpSuccess: false,
@@ -233,7 +233,7 @@ const authReducer = (state = initState, action) => {
     case ADD_USER_SUCCESS:
       return {
         ...state,
-        signUpError: false,
+        signUpError  : false,
         signUpLoading: false,
         signUpMessage: action.message,
         signUpSuccess: true,
@@ -242,7 +242,7 @@ const authReducer = (state = initState, action) => {
     case ADD_USER_ERROR:
       return {
         ...state,
-        signUpError: true,
+        signUpError  : true,
         signUpLoading: false,
         signUpMessage: action.message,
         signUpSuccess: false,
@@ -257,39 +257,39 @@ const authReducer = (state = initState, action) => {
     case CHECK_LOGIN_LOADING:
       return {
         ...state,
-        checkLoginOrRegister: null,
-        checkLoginOrRegisterError: false,
+        checkLoginOrRegister       : null,
+        checkLoginOrRegisterError  : false,
         checkLoginOrRegisterLoading: true,
-        checkLoginOrRegisterMsg: null,
+        checkLoginOrRegisterMsg    : null,
         checkLoginOrRegisterSuccess: false,
       };
 
     case CHECK_LOGIN_SUCCESS_REGISTERED:
       return {
         ...state,
-        authNextPage: ModuleRoute.PASSWORD_ROUTE,
-        checkLoginOrRegisterError: false,
+        authNextPage               : ModuleRoute.PASSWORD_ROUTE,
+        checkLoginOrRegisterError  : false,
         checkLoginOrRegisterLoading: false,
-        checkLoginOrRegisterMsg: null,
+        checkLoginOrRegisterMsg    : null,
         checkLoginOrRegisterSuccess: true,
-        name: action.payload.data.name,
-        photo: action.payload.data.photoUrl,
+        name                       : action.payload.data.name,
+        photo                      : action.payload.data.photoUrl,
       };
 
     case CHECK_LOGIN_SUCCESS_UNREGISTERED:
       return {
         ...state,
-        authNextPage: ModuleRoute.REGISTER_ROUTE,
-        checkLoginOrRegisterError: false,
+        authNextPage               : ModuleRoute.REGISTER_ROUTE,
+        checkLoginOrRegisterError  : false,
         checkLoginOrRegisterLoading: false,
-        checkLoginOrRegisterMsg: action.message,
+        checkLoginOrRegisterMsg    : action.message,
         checkLoginOrRegisterSuccess: true,
       };
 
     case NAVIGATE_TO_OTP_LOGIN_LOADING:
       return {
         ...state,
-        navigateToOtpError: false,
+        navigateToOtpError  : false,
         navigateToOtpLoading: true,
         navigateToOtpSuccess: false,
       };
@@ -297,63 +297,63 @@ const authReducer = (state = initState, action) => {
     case NAVIGATE_TO_OTP_LOGIN_SUCCESS:
       return {
         ...state,
-        authNextPage: ModuleRoute.LOGIN_OTP_ROUTE,
-        navigateToOtpError: false,
+        authNextPage        : ModuleRoute.LOGIN_OTP_ROUTE,
+        navigateToOtpError  : false,
         navigateToOtpLoading: false,
-        navigateToOtpMsg: action.message,
+        navigateToOtpMsg    : action.message,
         navigateToOtpSuccess: true,
       };
 
     case NAVIGATE_TO_RESET_PASSWORD_SUCCESS:
       return {
         ...state,
-        authNextPage: ModuleRoute.RESET_PASSWORD_ROUTE,
-        navigateToResetPasswordError: false,
+        authNextPage                  : ModuleRoute.RESET_PASSWORD_ROUTE,
+        navigateToResetPasswordError  : false,
         navigateToResetPasswordLoading: false,
-        navigateToResetPasswordMsg: action.message,
+        navigateToResetPasswordMsg    : action.message,
         navigateToResetPasswordSuccess: true,
       };
 
     case GET_ROLE_PERMISSION_LOADING:
       return {
         ...state,
-        permissions: null,
-        role: null,
-        rolePermissionsError: false,
+        permissions           : null,
+        role                  : null,
+        rolePermissionsError  : false,
         rolePermissionsLoading: true,
-        rolePermissionsMsg: action.message,
+        rolePermissionsMsg    : action.message,
         rolePermissionsSuccess: false,
       };
 
     case GET_ROLE_PERMISSION_SUCCESS:
       return {
         ...state,
-        permissions: action.payload?.data?.permissions,
-        role: action.payload?.data?.role,
-        rolePermissionsError: false,
+        permissions           : action.payload?.data?.permissions,
+        role                  : action.payload?.data?.role,
+        rolePermissionsError  : false,
         rolePermissionsLoading: false,
-        rolePermissionsMsg: action.payload.message,
+        rolePermissionsMsg    : action.payload.message,
         rolePermissionsSuccess: true,
       };
 
     case GET_ROLE_PERMISSION_ERROR:
       return {
         ...state,
-        permissions: null,
-        role: null,
-        rolePermissionsError: true,
+        permissions           : null,
+        role                  : null,
+        rolePermissionsError  : true,
         rolePermissionsLoading: false,
-        rolePermissionsMsg: action.message,
+        rolePermissionsMsg    : action.message,
         rolePermissionsSuccess: false,
       };
 
     case CHECK_LOGIN_ERROR:
       return {
         ...state,
-        checkLoginOrRegister: null,
-        checkLoginOrRegisterError: true,
+        checkLoginOrRegister       : null,
+        checkLoginOrRegisterError  : true,
         checkLoginOrRegisterLoading: false,
-        checkLoginOrRegisterMsg: action.message,
+        checkLoginOrRegisterMsg    : action.message,
         checkLoginOrRegisterSuccess: false,
       };
 
@@ -372,13 +372,13 @@ const authReducer = (state = initState, action) => {
     case SESSION_EXPIRED: {
       return {
         ...state,
-        accessToken: null,
-        authNextPage: ModuleRoute.PASSWORD_ROUTE,
+        accessToken                : null,
+        authNextPage               : ModuleRoute.PASSWORD_ROUTE,
         checkLoginOrRegisterSuccess: true,
-        loginPage: null,
-        refreshToken: null,
-        sessionDetail: null,
-        sessionExpired: true,
+        loginPage                  : null,
+        refreshToken               : null,
+        sessionDetail              : null,
+        sessionExpired             : true,
       };
     }
 
@@ -386,14 +386,14 @@ const authReducer = (state = initState, action) => {
       return {
         ...state,
         sessionDetail: action.payload,
-        uid: null,
+        uid          : null,
       };
     }
 
     case SESSION_RECALLED: {
       return {
         ...state,
-        sessionDetail: null,
+        sessionDetail : null,
         sessionExpired: false,
       };
     }
@@ -407,14 +407,14 @@ const authReducer = (state = initState, action) => {
     case CLIENT_INFORMATION_FETCH_SUCCESS:
       return {
         ...state,
-        clientLoginFlag: true,
+        clientLoginFlag       : true,
         clientLoginInformation: action.payload,
       };
 
     case CLIENT_INFORMATION_FETCH_ERROR:
       return {
         ...state,
-        clientLoginFlag: false,
+        clientLoginFlag       : false,
         clientLoginInformation: null,
       };
 
