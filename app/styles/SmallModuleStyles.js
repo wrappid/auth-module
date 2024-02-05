@@ -1,13 +1,13 @@
 import { SmallCoreStyles } from "@wrappid/core";
 
 export default class SmallModuleStyles extends SmallCoreStyles {
-  constructor(){
+  constructor() {
     super();
     this.style = {
       /**************************************************
        * Using smallUtilityStyles example
        *************************************************/
-      testWrappidStyleClass: { ...this.styles.devBorder },
+      testWrappidStyleClass: { ...this.style.devBorder },
     };
   }
 }

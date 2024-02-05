@@ -1,13 +1,13 @@
 import { MediumCoreStyles } from "@wrappid/core";
 
 export default class MediumModuleStyles extends MediumCoreStyles {
-  constructor(){
+  constructor() {
     super();
     this.style = {
       /**************************************************
        * Using defaultUtilityStyles example
        *************************************************/
-      testWrappidStyleClass: { ...this.styles.devBorder },
+      testWrappidStyleClass: { ...this.style.devBorder },
     };
   }
 }

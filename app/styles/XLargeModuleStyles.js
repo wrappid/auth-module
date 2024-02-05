@@ -1,13 +1,13 @@
 import { XLargeCoreStyles } from "@wrappid/core";
 
 export default class XLargeModuleStyles extends XLargeCoreStyles {
-  constructor(){
+  constructor() {
     super();
     this.style = {
       /**************************************************
        * Using XLargeUtilityStyles example
        *************************************************/
-      testWrappidStyleClass: { ...this.styles.devBorder },
+      testWrappidStyleClass: { ...this.style.devBorder },
     };
   }
 }
