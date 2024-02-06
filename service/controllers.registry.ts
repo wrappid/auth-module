@@ -1,8 +1,8 @@
-const { CoreMiddlewaresRegistry } = require("@wrappid/service-core");
+import { CoreMiddlewaresRegistry } from "@wrappid/service-core";
 
-const authController = require("./controllers/auth.controller");
+import * as authController from "./controllers/auth.controller";
 
-const {
+import {
   checkLoginOrRegister,
   login,
   postLoginWithOtp,
@@ -13,14 +13,23 @@ const {
   getClientLoginInfo,
   sentOtp,
   postChangePassword,
-  postVerifyOtp
-} = require("./validations/auth.validation");
+  postVerifyOtp,
+} from "./validations/auth.validation";
 
 const controllersRegistry = {
-  checkLoginOrRegister: [CoreMiddlewaresRegistry.validation(checkLoginOrRegister), authController.checkLoginOrRegister],
+  checkLoginOrRegister: [
+    CoreMiddlewaresRegistry.validation(checkLoginOrRegister),
+    authController.checkLoginOrRegister,
+  ],
   login: [CoreMiddlewaresRegistry.validation(login), authController.login],
-  logout: [CoreMiddlewaresRegistry.validation(postLogoutSchema), authController.logout],
-  loginWithOtp: [CoreMiddlewaresRegistry.validation(postLoginWithOtp),authController.loginWithOtp],
+  logout: [
+    CoreMiddlewaresRegistry.validation(postLogoutSchema),
+    authController.logout,
+  ],
+  loginWithOtp: [
+    CoreMiddlewaresRegistry.validation(postLoginWithOtp),
+    authController.loginWithOtp,
+  ],
   getIP: [
     CoreMiddlewaresRegistry.validation(getIpSchema),
     authController.getIP,
@@ -41,8 +50,14 @@ const controllersRegistry = {
     CoreMiddlewaresRegistry.validation(sentOtp),
     authController.sentOtp,
   ],
-  postChangePassword : [CoreMiddlewaresRegistry.validation(postChangePassword),authController.postChangePassword,],
-  postVerifyOtp : [CoreMiddlewaresRegistry.validation(postVerifyOtp),authController.postVerifyOtp]
+  postChangePassword: [
+    CoreMiddlewaresRegistry.validation(postChangePassword),
+    authController.postChangePassword,
+  ],
+  postVerifyOtp: [
+    CoreMiddlewaresRegistry.validation(postVerifyOtp),
+    authController.postVerifyOtp,
+  ],
 };
 
-exports.controllersRegistry = controllersRegistry;
+export default controllersRegistry;

@@ -1,4 +1,4 @@
-const authFunctions = require("../functions/auth.functions");
+import * as authFunctions from "../functions/auth.functions";
 
 /**
  *
@@ -6,122 +6,115 @@ const authFunctions = require("../functions/auth.functions");
  * @param {*} res
  * @returns
  */
-module.exports.checkLoginOrRegister = async (req, res) => {
+export const checkLoginOrRegister = async (req: any, res: any) => {
   try {
     let data = await authFunctions.checkLoginOrRegisterUtil(req);
     // console.log("API Call sucessfully");
     let { status, ...restData } = data;
     res.status(status).json(restData);
-  } catch (error) {
+  } catch (error: any) {
     console.error("checkLoginOrRegister Error:: ", error);
     res.status(500).json({ message: error.message });
   }
 };
 
-module.exports.login = async (req, res) => {
+export const login = async (req: any, res: any) => {
   try {
-    let data = await authFunctions.loginHelper(req);
+    let data = await authFunctions.loginHelper(req, { otpLogin: false });
     res.status(data?.status).json(data);
-  } catch (error) {
+  } catch (error: any) {
     console.error("login Error:: ", error);
     res.status(500).json({ message: error.message });
   }
 };
-module.exports.loginWithOtp = async (req, res) => {
+export const loginWithOtp = async (req: any, res: any) => {
   try {
     let data = await authFunctions.loginHelper(req, { otpLogin: true });
     res.status(data?.status).json(data);
-  } catch (error) {
+  } catch (error: any) {
     console.error("loginWithOtp Error:: ", error);
     res.status(500).json({ message: error.message });
   }
 };
 
-module.exports.loginWithUrl = async (req, res) => {
+export const loginWithUrl = async (req: any, res: any) => {
   try {
     let data = await authFunctions.loginHelper(req, { urlLogin: true });
     res.status(data?.status).json(data);
-  } catch (error) {
+  } catch (error: any) {
     console.error("loginWithUrl Error:: ", error);
     res.status(500).json({ message: error.message });
   }
 };
 
-
-module.exports.logout = async (req, res) => {
+export const logout = async (req: any, res: any) => {
   try {
-    let data = await authFunctions.logoutHelper(req, res);
+    let data: any = await authFunctions.logoutHelper(req, res);
     res.status(data?.status).json(data);
-  } catch (error) {
+  } catch (error: any) {
     console.error("logout Error:: ", error);
     res.status(500).json({ message: error.message });
   }
 };
 
-module.exports.getIP = async (req, res) => {
+export const getIP = async (req: any, res: any) => {
   try {
     let data = await authFunctions.getIPHelper(req, res);
     let devId = req.devId;
     res.status(data?.status).json({ devId: devId });
-  } catch (error) {
+  } catch (error: any) {
     console.error("getIP Error:: ", error);
     res.status(500).json({ message: error.message });
   }
 };
 
-
-
-module.exports.refreshToken = async (req, res) => {
+export const refreshToken = async (req: any, res: any) => {
   try {
-    let data = await authFunctions.refreshTokenHelper(req, res);
+    let data: any = await authFunctions.refreshTokenHelper(req, res);
     res.status(data?.status).json(data);
-  } catch (error) {
+  } catch (error: any) {
     console.error("refreshToken Error:: ", error);
     res.status(500).json({ message: error.message });
   }
 };
 
-
-
-module.exports.clientLoginInformation = async (req, res) => {
+export const clientLoginInformation = async (req: any, res: any) => {
   try {
     let data = await authFunctions.clientLoginInformationHelper(req, res);
     res.status(data?.status).json(data);
-  } catch (error) {
+  } catch (error: any) {
     console.error("refreshToken Error:: ", error);
     res.status(500).json({ message: error.message });
   }
 };
 
-
-module.exports.sentOtp = async (req, res) => {
+export const sentOtp = async (req: any, res: any) => {
   try {
     let data = await authFunctions.sentOtp(req, res);
     res.status(data?.status).json({ message: data?.message });
-  } catch (error) {
+  } catch (error: any) {
     console.error("refreshToken Error:: ", error);
     res.status(500).json({ message: error.message });
   }
 };
 
-
-module.exports.postChangePassword = async (req, res) => {
+export const postChangePassword = async (req: any, res: any) => {
   try {
     let data = await authFunctions.postChangePasswordFunc(req, res);
     res.status(data?.status).json({ message: data?.message });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error:: ", error);
     res.status(500).json({ message: error.message });
   }
 };
 
-module.exports.postVerifyOtp = async (req, res) => {
+export const postVerifyOtp = async (req: any, res: any) => {
   try {
     // res.status(200).json({message: "API call sucessfully!!"});
     let data = await authFunctions.postVerifyOtpFunc(req, res);
     let { status, ...resData } = data;
     res.status(status).json({ ...resData });
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     res.status(500).json({ message: err });
   }

@@ -62,13 +62,15 @@ const sentOtp = {
     .noUnknown()
     .strict(),
   query: yup.object({}).noUnknown().strict(),
-
 };
 
 const getClientLoginInfo = {
-  body: yup.object({
-    userId: yup.string().required()
-  }).noUnknown().strict(),
+  body: yup
+    .object({
+      userId: yup.string().required(),
+    })
+    .noUnknown()
+    .strict(),
   query: yup.object({}).noUnknown().strict(),
 };
 
@@ -109,7 +111,7 @@ const validatePhone = yup
   .string()
   .matches(/^[0-9]{10}$/, "Phone number must contains 10 digits")
   .required();
-module.exports = {
+export {
   checkLoginOrRegister,
   login,
   postLoginWithOtp,
@@ -122,5 +124,5 @@ module.exports = {
   validateEmail,
   validatePhone,
   postChangePassword,
-  postVerifyOtp
+  postVerifyOtp,
 };

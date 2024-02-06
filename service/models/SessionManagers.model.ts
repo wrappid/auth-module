@@ -1,4 +1,4 @@
-module.exports = (sequelize, DataTypes) => {
+export const SessionManagers = (sequelize: any, DataTypes: any) => {
   const SessionManagers = sequelize.define("SessionManagers", {
     id: {
       type: DataTypes.INTEGER,
@@ -34,7 +34,8 @@ module.exports = (sequelize, DataTypes) => {
     },
   });
 
-  SessionManagers.associate = (models) => {
+  /*
+  SessionManagers.associate = (models: any) => {
     SessionManagers.belongsTo(models.Users, {
       foreignKey: "createdBy",
       as: "Owner",
@@ -56,6 +57,6 @@ module.exports = (sequelize, DataTypes) => {
       sourceKey: "id",
     });
   };
-
+  */
   return SessionManagers;
 };

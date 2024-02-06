@@ -37,6 +37,7 @@
     "@commitlint/config-conventional": "^17.4.4",
     "@commitlint/prompt-cli": "^17.5.0",
     "@wrappid/core": "latest",
+    "@wrappid/service-core": "file:../service-core/dist",
     "@wrappid/styles": "latest",
     "eslint": "^8.40.0",
     "eslint-plugin-etc": "^2.0.2",
@@ -48,13 +49,14 @@
     "eslint-plugin-sort-keys-fix": "^1.1.2",
     "eslint-plugin-unused-imports": "^2.0.0",
     "husky": "^8.0.3",
+    "license-checker": "^25.0.1",
     "react-redux": "^8.0.5",
-    "license-checker": "^25.0.1"
-  },
-  "dependencies": {
     "@faker-js/faker": "^8.1.0",
+    "bcrypt": "^5.1.1",
     "jest": "^27.5.1",
-    "service-core": "^3.0.1",
+    "jsonwebtoken": "^9.0.2",
+    "node-device-detector": "^2.0.18",
+    "otp-generator": "^4.0.1",
     "supertest": "^6.3.3"
   },
   "jest": {
