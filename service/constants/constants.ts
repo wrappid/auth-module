@@ -90,4 +90,4 @@ const constant = {
   },
 };
 
-module.exports = constant;
+export default constant;
