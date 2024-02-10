@@ -1,19 +1,19 @@
-const {
+import {
   configProvider,
   coreConstant,
   databaseActions,
-} = require("@wrappid/service-core");
-const DeviceDetector = require("node-device-detector");
-const otpGenerator = require("otp-generator");
+} from "@wrappid/service-core";
+import DeviceDetector from "node-device-detector";
+import otpGenerator from "otp-generator";
 
-const otpLength = configProvider.wrappid.otpLength;
+const otpLength = configProvider().wrappid.otpLength;
 
 const COMMUNICATION_EMAIL = coreConstant.commType.EMAIL;
 const COMMUNICATION_SMS = coreConstant.commType.SMS;
 const COMMUNICATION_WHATSAPP = coreConstant.commType.WHATSAPP;
 const COMMUNICATION_PUSH_NOTIFICATION = coreConstant.commType.NOTIFICATION;
 
-function clearValidatePhoneEmail(text) {
+function clearValidatePhoneEmail(text: any) {
   let t = text;
   if (t[0] == "'") {
     t = t.slice(1);
@@ -39,7 +39,7 @@ function clearValidatePhoneEmail(text) {
   return [f, t];
 }
 
-async function getDeviceId(req) {
+async function getDeviceId(req: any) {
   // console.log("mac_ip", mac_ip)
   let detector = new DeviceDetector({
     clientIndexes: true,
@@ -56,7 +56,7 @@ async function getDeviceId(req) {
   return con;
 }
 
-async function getIP(req) {
+async function getIP(req: any) {
   let ip;
   if (req.headers["x-forwarded-for"]) {
     ip = req.headers["x-forwarded-for"].split(",")[0];
@@ -71,19 +71,19 @@ async function getIP(req) {
 }
 
 async function communicate(
-  reciepients = [],
-  type = COMMUNICATION_EMAIL,
-  template = null,
-  dataList = [],
-  otpFlag = false,
-  transaction = null,
-  requesterId = null
+  reciepients: any = [],
+  type: any = COMMUNICATION_EMAIL,
+  template: any = null,
+  dataList: any = [],
+  otpFlag: any = false,
+  transaction: any = null,
+  requesterId: any = null
 ) {
   try {
     //   console.log("IN COMMUNICATE", transaction, otpFlag);
-    let templateId = null;
-    let templateName = null;
-    let templateOb = null;
+    let templateId: any = null;
+    let templateName: any = null;
+    let templateOb: any = null;
     if (typeof template === "string") {
       templateName = template;
     } else if (typeof template === "number") {
@@ -91,7 +91,7 @@ async function communicate(
     }
 
     if (templateId) {
-      templateOb = await databaseActions.findByPk(
+      let templateOb: any = await databaseActions.findByPk(
         "application",
         "CommunicationTemplates",
         templateId
@@ -129,7 +129,7 @@ async function communicate(
 
     for (let i = 0; i < reciepients.length; i++) {
       let otp;
-      let dataOb = dataList[i];
+      let dataOb: any = dataList[i];
       if (otpFlag) {
         if (!dataList[i] || (dataList[i] && !dataList[i].otp)) {
           otp = otpGenerator.generate(otpLength, {
@@ -155,7 +155,7 @@ async function communicate(
         _status: coreConstant.entityStatus.NEW,
         createdBy: requesterId,
       };
-      let newCom = null;
+      let newCom: any = null;
       if (type === COMMUNICATION_EMAIL) {
         dataObFinal = {
           ...dataObFinal,
@@ -218,7 +218,7 @@ async function communicate(
         );
         console.log("Old otp entries updated");
 
-        let entry = { otp, userId: reciepients[i].id };
+        let entry: any = { otp, userId: reciepients[i].id };
         if (type === COMMUNICATION_EMAIL) {
           entry["mailCommId"] = newCom.id;
         } else if (type === COMMUNICATION_SMS) {
@@ -237,14 +237,9 @@ async function communicate(
           }
         }
 
-        await databaseActions.create(
-          "application",
-          "Otps",
-          entry,
-          {
-            transaction: transaction ? transaction : null,
-          }
-        );
+        await databaseActions.create("application", "Otps", entry, {
+          transaction: transaction ? transaction : null,
+        });
         console.log("New  otp entry created");
       }
 
@@ -260,7 +255,7 @@ async function communicate(
   }
 }
 
-module.exports = {
+export {
   clearValidatePhoneEmail,
   getDeviceId,
   getIP,

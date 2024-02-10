@@ -1,11 +1,10 @@
-const SessionManagers = require("./models/SessionManagers.model");
+import { SessionManagers } from "./models/SessionManagers.model";
 
 const modelsRegistry = {
- 
   SessionManagers: {
     database: "application",
     model: SessionManagers,
   },
 };
 
-exports.modelsRegistry = modelsRegistry;
+export default modelsRegistry;
