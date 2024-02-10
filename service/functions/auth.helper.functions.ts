@@ -6,7 +6,7 @@ import {
 import DeviceDetector from "node-device-detector";
 import otpGenerator from "otp-generator";
 
-const otpLength = configProvider.wrappid.otpLength;
+const otpLength = configProvider().wrappid.otpLength;
 
 const COMMUNICATION_EMAIL = coreConstant.commType.EMAIL;
 const COMMUNICATION_SMS = coreConstant.commType.SMS;
