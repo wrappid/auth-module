@@ -15,7 +15,7 @@ const {
   refreshAccessTokenSecret,
   expTime,
   expTimeRefreshToken,
-} = configProvider.jwt;
+} = configProvider().jwt;
 
 import {
   clearValidatePhoneEmail,
@@ -823,11 +823,14 @@ const sentOtp = async (req: any, res: any) => {
           : coreConstant.communication.SENT_OTP_SMS_EN;
     }
 
-    let genetatedOTP = otpGenerator.generate(configProvider.wrappid.otpLength, {
-      specialChars: false,
-      lowerCaseAlphabets: false,
-      upperCaseAlphabets: false,
-    });
+    let genetatedOTP = otpGenerator.generate(
+      configProvider().wrappid.otpLength,
+      {
+        specialChars: false,
+        lowerCaseAlphabets: false,
+        upperCaseAlphabets: false,
+      }
+    );
 
     if (genetatedOTP) {
       commData.otp = genetatedOTP;
