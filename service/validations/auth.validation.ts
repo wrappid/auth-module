@@ -1,4 +1,4 @@
-const yup = require("yup");
+import * as yup from "yup";
 
 const emailOrPhone = yup
   .string()

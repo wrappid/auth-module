@@ -8,9 +8,9 @@ import * as authFunctions from "../functions/auth.functions";
  */
 export const checkLoginOrRegister = async (req: any, res: any) => {
   try {
-    let data = await authFunctions.checkLoginOrRegisterUtil(req);
+    const data = await authFunctions.checkLoginOrRegisterUtil(req);
     // console.log("API Call sucessfully");
-    let { status, ...restData } = data;
+    const { status, ...restData } = data;
     res.status(status).json(restData);
   } catch (error: any) {
     console.error("checkLoginOrRegister Error:: ", error);
@@ -20,7 +20,7 @@ export const checkLoginOrRegister = async (req: any, res: any) => {
 
 export const login = async (req: any, res: any) => {
   try {
-    let data = await authFunctions.loginHelper(req, { otpLogin: false });
+    const data = await authFunctions.loginHelper(req, { otpLogin: false });
     res.status(data?.status).json(data);
   } catch (error: any) {
     console.error("login Error:: ", error);
@@ -29,7 +29,7 @@ export const login = async (req: any, res: any) => {
 };
 export const loginWithOtp = async (req: any, res: any) => {
   try {
-    let data = await authFunctions.loginHelper(req, { otpLogin: true });
+    const data = await authFunctions.loginHelper(req, { otpLogin: true });
     res.status(data?.status).json(data);
   } catch (error: any) {
     console.error("loginWithOtp Error:: ", error);
@@ -39,7 +39,7 @@ export const loginWithOtp = async (req: any, res: any) => {
 
 export const loginWithUrl = async (req: any, res: any) => {
   try {
-    let data = await authFunctions.loginHelper(req, { urlLogin: true });
+    const data = await authFunctions.loginHelper(req, { urlLogin: true });
     res.status(data?.status).json(data);
   } catch (error: any) {
     console.error("loginWithUrl Error:: ", error);
@@ -49,7 +49,7 @@ export const loginWithUrl = async (req: any, res: any) => {
 
 export const logout = async (req: any, res: any) => {
   try {
-    let data: any = await authFunctions.logoutHelper(req, res);
+    const data: any = await authFunctions.logoutHelper(req, res);
     res.status(data?.status).json(data);
   } catch (error: any) {
     console.error("logout Error:: ", error);
@@ -59,8 +59,8 @@ export const logout = async (req: any, res: any) => {
 
 export const getIP = async (req: any, res: any) => {
   try {
-    let data = await authFunctions.getIPHelper(req, res);
-    let devId = req.devId;
+    const data = await authFunctions.getIPHelper(req, res);
+    const devId = req.devId;
     res.status(data?.status).json({ devId: devId });
   } catch (error: any) {
     console.error("getIP Error:: ", error);
@@ -70,7 +70,7 @@ export const getIP = async (req: any, res: any) => {
 
 export const refreshToken = async (req: any, res: any) => {
   try {
-    let data: any = await authFunctions.refreshTokenHelper(req, res);
+    const data: any = await authFunctions.refreshTokenHelper(req, res);
     res.status(data?.status).json(data);
   } catch (error: any) {
     console.error("refreshToken Error:: ", error);
@@ -80,7 +80,7 @@ export const refreshToken = async (req: any, res: any) => {
 
 export const clientLoginInformation = async (req: any, res: any) => {
   try {
-    let data = await authFunctions.clientLoginInformationHelper(req, res);
+    const data = await authFunctions.clientLoginInformationHelper(req, res);
     res.status(data?.status).json(data);
   } catch (error: any) {
     console.error("refreshToken Error:: ", error);
@@ -90,7 +90,7 @@ export const clientLoginInformation = async (req: any, res: any) => {
 
 export const sentOtp = async (req: any, res: any) => {
   try {
-    let data = await authFunctions.sentOtp(req, res);
+    const data = await authFunctions.sentOtp(req, res);
     res.status(data?.status).json({ message: data?.message });
   } catch (error: any) {
     console.error("refreshToken Error:: ", error);
@@ -100,7 +100,7 @@ export const sentOtp = async (req: any, res: any) => {
 
 export const postChangePassword = async (req: any, res: any) => {
   try {
-    let data = await authFunctions.postChangePasswordFunc(req, res);
+    const data = await authFunctions.postChangePasswordFunc(req, res);
     res.status(data?.status).json({ message: data?.message });
   } catch (error: any) {
     console.error("Error:: ", error);
@@ -111,8 +111,8 @@ export const postChangePassword = async (req: any, res: any) => {
 export const postVerifyOtp = async (req: any, res: any) => {
   try {
     // res.status(200).json({message: "API call sucessfully!!"});
-    let data = await authFunctions.postVerifyOtpFunc(req, res);
-    let { status, ...resData } = data;
+    const data = await authFunctions.postVerifyOtpFunc(req, res);
+    const { status, ...resData } = data;
     res.status(status).json({ ...resData });
   } catch (err: any) {
     console.log(err);
