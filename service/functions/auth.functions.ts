@@ -31,8 +31,8 @@ import {
 const checkLoginOrRegisterUtil = async (req: any) => {
   try {
     // let iWsValidJOI = await authenticateJOI(req,"checkLoginOrRegisterPOST",["body","query"])
-    let emailOrPhone = req.body.emailOrPhone;
-    let ob: any = clearValidatePhoneEmail(emailOrPhone);
+    const emailOrPhone = req.body.emailOrPhone;
+    const ob: any = clearValidatePhoneEmail(emailOrPhone);
     let whereOb = {};
     if (ob.type === COMMUNICATION_EMAIL) whereOb = { email: emailOrPhone };
     else if (ob.type === COMMUNICATION_SMS) whereOb = { phone: emailOrPhone };
@@ -41,7 +41,7 @@ const checkLoginOrRegisterUtil = async (req: any) => {
       return { staus: 500, message: "Not a valid email or phone" };
     }
 
-    let data = await databaseActions.findOne("application", "Users", {
+    const data = await databaseActions.findOne("application", "Users", {
       where: whereOb,
     });
 
@@ -51,7 +51,7 @@ const checkLoginOrRegisterUtil = async (req: any) => {
         return { status: 201, message: "First login for created user" };
       } else {
         console.log("User found", data.id);
-        let personData = await databaseActions.findOne(
+        const personData = await databaseActions.findOne(
           "application",
           "Persons",
           {
@@ -78,18 +78,18 @@ const checkLoginOrRegisterUtil = async (req: any) => {
       }
     } else {
       if (ob.valid) {
-        let userBody = whereOb;
+        const userBody = whereOb;
         const result = await databaseProvider.application.sequelize.transaction(
           async (t: any) => {
             //Changed
-            let rolesData = await databaseActions.findOne(
+            const rolesData = await databaseActions.findOne(
               "application",
               "Roles",
               {
                 where: { role: "doctor" },
               }
             );
-            let userData = await databaseActions.create(
+            const userData = await databaseActions.create(
               "application",
               "Users",
               {
@@ -101,7 +101,7 @@ const checkLoginOrRegisterUtil = async (req: any) => {
             );
             console.log("User Created", userData.id);
 
-            let personData = await databaseActions.create(
+            const personData = await databaseActions.create(
               "application",
               "Persons",
               {
@@ -118,7 +118,7 @@ const checkLoginOrRegisterUtil = async (req: any) => {
             );
             console.log("Person Created", personData.id);
 
-            let person = await databaseActions.create(
+            const person = await databaseActions.create(
               "application",
               "PersonContacts",
               {
@@ -154,8 +154,8 @@ const loginHelper = async (req: any, otherLogin: any) => {
   try {
     let otpLogin = false;
     let urlLogin = false;
-    let emailOrPhone = req.body.emailOrPhone;
-    let ob: any = clearValidatePhoneEmail(req.body.emailOrPhone);
+    const emailOrPhone = req.body.emailOrPhone;
+    const ob: any = clearValidatePhoneEmail(req.body.emailOrPhone);
     let whereOb = {};
     let resetPassword = false;
     let updatePassword = false;
@@ -191,7 +191,7 @@ const loginHelper = async (req: any, otherLogin: any) => {
       }
     }
 
-    let userDetails = await databaseActions.findOne("application", "Users", {
+    const userDetails = await databaseActions.findOne("application", "Users", {
       where: whereOb,
     });
 
@@ -202,21 +202,21 @@ const loginHelper = async (req: any, otherLogin: any) => {
       console.error("User not active");
       return { status: 401, message: "User not active...Contact admin" };
     } else {
-      let userId = userDetails.id;
-      let mail = userDetails.email;
-      let phone = userDetails.phone;
-      let userUpdateOb: any = {};
+      const userId = userDetails.id;
+      const mail = userDetails.email;
+      const phone = userDetails.phone;
+      const userUpdateOb: any = {};
 
       // console.log("i am in >>>>>>>>>>>>>>>>>>>>>>>>>>>",userId)
-      let personData = await databaseActions.findOne("application", "Persons", {
+      const personData = await databaseActions.findOne("application", "Persons", {
         attributes: ["id", "userInvitationToken"],
         where: { userId: userId },
       });
-      let personId = personData.id;
+      const personId = personData.id;
       console.log("Person details fetched");
 
       if (otpLogin) {
-        let otpCheck = await checkOtp(userId, req.body.otp);
+        const otpCheck = await checkOtp(userId, req.body.otp);
         if (!otpCheck) {
           console.log("OTP match fail");
           return { status: 500, message: "OTP does not match" };
@@ -234,7 +234,7 @@ const loginHelper = async (req: any, otherLogin: any) => {
             }
           );
           if (resetPassword) {
-            let passwordValid = resetPasswordCheck(
+            const passwordValid = resetPasswordCheck(
               req.body.password,
               userDetails
             );
@@ -250,7 +250,7 @@ const loginHelper = async (req: any, otherLogin: any) => {
           }
         }
       } else if (urlLogin) {
-        let check = checkUrlLoginValidation(req, personData);
+        const check = checkUrlLoginValidation(req, personData);
         if (check) {
           console.log("Validation done");
         } else {
@@ -262,10 +262,10 @@ const loginHelper = async (req: any, otherLogin: any) => {
         return { status: 401, message: "Invalid password" };
       }
 
-      let deviceId = await getDeviceId(req);
+      const deviceId = await getDeviceId(req);
       console.log("Device id fetched");
 
-      let { refreshToken, accessToken } = genarateAccessToken(
+      const { refreshToken, accessToken } = genarateAccessToken(
         userId,
         mail,
         phone,
@@ -274,7 +274,7 @@ const loginHelper = async (req: any, otherLogin: any) => {
       );
       console.log("Tokens generate done");
 
-      let sessions = await databaseActions.findAll(
+      const sessions = await databaseActions.findAll(
         "application",
         "SessionManagers",
         {
@@ -297,7 +297,7 @@ const loginHelper = async (req: any, otherLogin: any) => {
           }
 
           if (userDetails.firstLogin || updatePassword) {
-            let [checkUser] = await databaseActions.update(
+            const [checkUser] = await databaseActions.update(
               "application",
               "Users",
               {
@@ -323,7 +323,7 @@ const loginHelper = async (req: any, otherLogin: any) => {
           if (otpLogin || urlLogin) {
             console.log("PersonContacts updating due to otplogin or urllogin");
 
-            let [checkContacts] = await databaseActions.update(
+            const [checkContacts] = await databaseActions.update(
               "application",
               "PersonContacts",
 
@@ -363,7 +363,7 @@ const loginHelper = async (req: any, otherLogin: any) => {
               verificationOb["userInvitationToken"] = null;
             }
 
-            let [checkPerson] = await databaseActions.update(
+            const [checkPerson] = await databaseActions.update(
               "application",
               "Persons",
 
@@ -383,14 +383,14 @@ const loginHelper = async (req: any, otherLogin: any) => {
           }
 
           for (let session = 0; session < sessions.length; session++) {
-            let currSession = sessions[session];
+            const currSession = sessions[session];
             if (bcrypt.compareSync(deviceId, currSession.deviceId)) {
               console.log("*****************************");
               console.log("session found", currSession.id);
               console.log("*****************************");
               found = true;
 
-              let [nrows] = await databaseActions.update(
+              const [nrows] = await databaseActions.update(
                 "application",
                 "SessionManagers",
 
@@ -406,7 +406,7 @@ const loginHelper = async (req: any, otherLogin: any) => {
               if (nrows > 0) {
                 console.log("Login Success");
                 // get person id
-                let person = await databaseActions.findOne(
+                const person = await databaseActions.findOne(
                   "application",
                   "Persons",
                   {
@@ -433,7 +433,7 @@ const loginHelper = async (req: any, otherLogin: any) => {
           }
 
           if (!found) {
-            let newSession = await databaseActions.create(
+            const newSession = await databaseActions.create(
               "application",
               "SessionManagers",
 
@@ -453,7 +453,7 @@ const loginHelper = async (req: any, otherLogin: any) => {
             createLoginLogs(req.originalUrl, userId, req.body?.devInfo);
 
             // get person id
-            let person = await databaseActions.findOne(
+            const person = await databaseActions.findOne(
               "application",
               "Persons",
               {
@@ -487,8 +487,8 @@ const loginHelper = async (req: any, otherLogin: any) => {
 const logoutHelper = async (req: any, res: any) => {
   try {
     console.error("user:: ", req.user);
-    let deviceId = await getDeviceId(req);
-    let sessions = await databaseActions.findAll(
+    const deviceId = await getDeviceId(req);
+    const sessions = await databaseActions.findAll(
       "application",
       "SessionManagers",
       {
@@ -498,9 +498,9 @@ const logoutHelper = async (req: any, res: any) => {
       }
     );
     for (let session = 0; session < sessions.length; session++) {
-      let currSession = sessions[session];
+      const currSession = sessions[session];
       if (bcrypt.compareSync(deviceId, currSession.deviceId)) {
-        let [nrows] = await databaseActions.update(
+        const [nrows] = await databaseActions.update(
           "application",
           "SessionManagers",
           { refreshToken: "" },
@@ -527,7 +527,7 @@ const logoutHelper = async (req: any, res: any) => {
 };
 
 async function checkOtp(userId: any, otp: any) {
-  let dbOtp = await databaseActions.findOne("application", "Otps", {
+  const dbOtp = await databaseActions.findOne("application", "Otps", {
     where: {
       userId: userId,
       _status: coreConstant.entityStatus.ACTIVE,
@@ -545,7 +545,7 @@ async function checkOtp(userId: any, otp: any) {
 }
 
 function resetPasswordCheck(password: any, userDetails: any) {
-  let samePasswordCheck = checkPassword(password, userDetails.password);
+  const samePasswordCheck = checkPassword(password, userDetails.password);
 
   if (samePasswordCheck) {
     console.log("Password can not be same as previous password");
@@ -627,13 +627,13 @@ async function createLoginLogs(path: any, userId: any, extraInfo: any = "{}") {
 const getIPHelper = async (req: any, res: any) => {
   try {
     console.log(res);
-    let detector = new DeviceDetector({
+    const detector = new DeviceDetector({
       clientIndexes: true,
       deviceIndexes: true,
       deviceAliasCode: true,
     });
     detector.detect(req.headers["user-agent"]);
-    let devId = await getDeviceId(req);
+    const devId = await getDeviceId(req);
     req.devId = devId;
     return { status: 200, devId: devId };
   } catch (err: any) {
@@ -652,11 +652,11 @@ const refreshTokenHelper = async (req: any, res: any) => {
           console.error("Refresh token expired", err);
           return res.status(401).json({ message: "Refresh token expired" });
         }
-        let userId = user.userId;
+        const userId = user.userId;
         // let isValidJOI = await authenticateJOI(req,"refreshtokenPOST",["body"])
         // if(isValidJOI.validFlag){
-        let deviceId = await getDeviceId(req);
-        let sessions = await databaseActions.findAll(
+        const deviceId = await getDeviceId(req);
+        const sessions = await databaseActions.findAll(
           "application",
           "SessionManagers",
           {
@@ -668,7 +668,7 @@ const refreshTokenHelper = async (req: any, res: any) => {
         );
         console.log("Sessions available:", sessions.length);
         for (let session = 0; session < sessions.length; session++) {
-          let currSession = sessions[session];
+          const currSession = sessions[session];
           if (bcrypt.compareSync(deviceId, currSession.deviceId)) {
             const token = req.body.refreshToken;
             const refreshToken = currSession.refreshToken;
@@ -681,7 +681,7 @@ const refreshTokenHelper = async (req: any, res: any) => {
               return res.status(401).json({ message: "unauthorised access" });
             }
 
-            let userDetails = await databaseActions.findOne(
+            const userDetails = await databaseActions.findOne(
               "application",
               "Users",
               {
@@ -721,10 +721,10 @@ const refreshTokenHelper = async (req: any, res: any) => {
 const clientLoginInformationHelper = async (req: any, res: any) => {
   try {
     console.log(res);
-    let userID = req.body.userId;
+    const userID = req.body.userId;
 
     // ip
-    let ip = req?.socket?.remoteAddress || req?.ip || "Not found";
+    const ip = req?.socket?.remoteAddress || req?.ip || "Not found";
 
     // last login info
     const lastLoginDetails = await databaseActions.findOne(
@@ -777,31 +777,31 @@ const clientLoginInformationHelper = async (req: any, res: any) => {
 const sentOtp = async (req: any, res: any) => {
   try {
     console.log(res);
-    let commData: any = {};
+    const commData: any = {};
     let userId = req?.user?.userId;
-    let emailOrPhone = req.body.data;
+    const emailOrPhone = req.body.data;
     let commType = req.body.type;
     if (!commType) {
-      let { type }: any = clearValidatePhoneEmail(emailOrPhone);
+      const { type }: any = clearValidatePhoneEmail(emailOrPhone);
       commType = type;
     }
     let templateID = req.body.templateID;
     if (!userId) {
-      let user = await databaseActions.findOne("application", "Users", {
+      const user = await databaseActions.findOne("application", "Users", {
         where:
           commType === COMMUNICATION_EMAIL
             ? {
-                email: req.body.data,
-              }
+              email: req.body.data,
+            }
             : {
-                phone: req.body.data,
-              },
+              phone: req.body.data,
+            },
       });
       userId = user?.id;
       commData.id = user?.id;
     }
 
-    let contactType =
+    const contactType =
       commType === coreConstant.commType.SMS
         ? coreConstant.contact.PHONE
         : commType;
@@ -823,7 +823,7 @@ const sentOtp = async (req: any, res: any) => {
           : coreConstant.communication.SENT_OTP_SMS_EN;
     }
 
-    let genetatedOTP = otpGenerator.generate(
+    const genetatedOTP = otpGenerator.generate(
       configProvider().wrappid.otpLength,
       {
         specialChars: false,
@@ -836,7 +836,7 @@ const sentOtp = async (req: any, res: any) => {
       commData.otp = genetatedOTP;
     }
 
-    let commResult = await communicate({
+    const commResult = await communicate({
       commType,
       commRecipients: {
         to: [emailOrPhone],
@@ -879,14 +879,14 @@ const sentOtp = async (req: any, res: any) => {
 const postChangePasswordFunc = async (req: any, res: any) => {
   try {
     console.log(res);
-    let { password, newPassword, confirmPassword } = req.body;
+    const { password, newPassword, confirmPassword } = req.body;
 
-    let user = await databaseActions.findOne("application", "Users", {
+    const user = await databaseActions.findOne("application", "Users", {
       where: {
         id: req.user.userId,
       },
     });
-    let oldPassExist = checkPassword(password, user.password);
+    const oldPassExist = checkPassword(password, user.password);
 
     if (password === newPassword) {
       throw new Error("Password can't be same.");
@@ -894,7 +894,7 @@ const postChangePasswordFunc = async (req: any, res: any) => {
 
     if (oldPassExist && newPassword === confirmPassword) {
       //
-      let result = await databaseActions.update(
+      const result = await databaseActions.update(
         "application",
         "Users",
         {
@@ -926,16 +926,16 @@ const postChangePasswordFunc = async (req: any, res: any) => {
 const postVerifyOtpFunc = async (req: any, res: any) => {
   try {
     console.log(res);
-    var userId = req.user.userId;
+    const userId = req.user.userId;
 
-    var person = await databaseActions.findOne("application", "Persons", {
+    const person = await databaseActions.findOne("application", "Persons", {
       where: {
         userId: userId,
       },
     });
-    var personId = person.id;
+    const personId = person.id;
 
-    var otpInDb = await databaseActions.findOne("application", "Otps", {
+    const otpInDb = await databaseActions.findOne("application", "Otps", {
       where: {
         userId: userId,
         isActive: true,
@@ -948,7 +948,7 @@ const postVerifyOtpFunc = async (req: any, res: any) => {
 
     if (req.body.otp == otpInDb.otp) {
       console.log("OTP matched");
-      var [nrows] = await databaseActions.update(
+      const [nrows] = await databaseActions.update(
         "application",
         "PersonContacts",
         { verified: true },

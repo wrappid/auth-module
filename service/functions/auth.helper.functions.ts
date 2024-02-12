@@ -41,14 +41,14 @@ function clearValidatePhoneEmail(text: any) {
 
 async function getDeviceId(req: any) {
   // console.log("mac_ip", mac_ip)
-  let detector = new DeviceDetector({
+  const detector = new DeviceDetector({
     clientIndexes: true,
     deviceIndexes: true,
     deviceAliasCode: true,
   });
-  let result = detector.detect(req.headers["user-agent"]);
+  const result = detector.detect(req.headers["user-agent"]);
   console.log("Result:: ", result);
-  let ip = await getIP(req);
+  const ip = await getIP(req);
   // console.log('ip:: ', ip)
   let con = result.device.id + ip;
   con = con.trim();
@@ -218,7 +218,7 @@ async function communicate(
         );
         console.log("Old otp entries updated");
 
-        let entry: any = { otp, userId: reciepients[i].id };
+        const entry: any = { otp, userId: reciepients[i].id };
         if (type === COMMUNICATION_EMAIL) {
           entry["mailCommId"] = newCom.id;
         } else if (type === COMMUNICATION_SMS) {
