@@ -493,7 +493,7 @@ const logoutHelper = async (req: any, res: any) => {
       "SessionManagers",
       {
         where: {
-          userId: 1, //hard data
+          userId: req.user.userId,
         },
       }
     );
