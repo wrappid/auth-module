@@ -86,7 +86,7 @@ const checkLoginOrRegisterUtil = async (req: any) => {
               "application",
               "Roles",
               {
-                where: { role: "doctor" },
+                where: { role: configProvider().wrappid.role },
               }
             );
             const userData = await databaseActions.create(
