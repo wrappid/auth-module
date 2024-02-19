@@ -9,6 +9,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import DeviceDetector from "node-device-detector";
 import otpGenerator from "otp-generator";
+import constant from "../constants/constants";
 
 const {
   accessTokenSecret,
@@ -86,7 +87,7 @@ const checkLoginOrRegisterUtil = async (req: any) => {
               "application",
               "Roles",
               {
-                where: { role: configProvider().wrappid.role },
+                where: { role: configProvider().wrappid.defaultUserRole || constant.userRoles.ROLE_DEVELOPER },
               }
             );
             const userData = await databaseActions.create(
