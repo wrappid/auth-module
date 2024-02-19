@@ -37,12 +37,7 @@ const constant = {
 
   userRoles: {
     ROLE_SYSTEM_ADMIN: "system_admin",
-    ROLE_ONBOARDING_SALESFORCE: "onboarding_salesforce",
-    ROLE_ONBOARDING_BACK_OFFICE: "onboarding_back_office",
-    ROLE_PATIENT_BACK_OFFICE: "patient_back_office",
-    ROLE_DOCTOR: "doctor",
-    ROLE_ASSISTANT: "assistant",
-    ROLE_PATIENT: "patient",
+    ROLE_DEVELOPER: "developer"
   },
 
   contact: {
