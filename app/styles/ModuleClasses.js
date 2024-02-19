@@ -9,7 +9,11 @@ const ModuleClasses = {
         CARD_MAX_WIDTH: "authCardMaxWidth",
         CARD_MIN_WIDTH: "authCardMinWidth",
         LOGO: "authAppLogo",
-        WRAPPER: "authWrapper"
+        WRAPPER: "authWrapper",
+        BANNER: "authBanner",
+        CONATINER: "authContainer",
+        FORM: "authForm",
+        FORMCONATINER: "authFormContainer"
     }
 };
 
