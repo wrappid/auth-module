@@ -4,10 +4,11 @@ import {
   CoreForm,
   CoreClasses,
   CoreDomNavigate,
-  CoreRouteRegistryContext,
-  CoreLayoutItem
+  CoreRouteRegistryContext
 } from "@wrappid/core";
 import { useSelector } from "react-redux";
+
+import { AuthContainer } from "./AuthContainer";
 
 const CheckUserExist = () => {
   const auth = useSelector(state => state.auth);
@@ -20,16 +21,14 @@ const CheckUserExist = () => {
   }
   else
     return (
-      <>
-        <CoreLayoutItem id="content">
-          <CoreForm
-            styleClasses={[CoreClasses.LAYOUT.AUTH_FORM_CONTAINER]}
-            formId="checkUserExist"
-            mode="edit" // commented since default mode : edit
-            authenticated={false}
-          />
-        </CoreLayoutItem>
-      </>
+      <AuthContainer>
+        <CoreForm
+          styleClasses={[CoreClasses.LAYOUT.AUTH_FORM_CONTAINER]}
+          formId="checkUserExist"
+          mode="edit" // commented since default mode : edit
+          authenticated={false}
+        />
+      </AuthContainer>
     );
 };
 
