@@ -2,19 +2,19 @@
 import { UtilityClasses } from "@wrappid/styles";
 
 const ModuleClasses = {
-    ...UtilityClasses,
-    TEST_WRAPPID_STYLE_CLASS: "testWrappidStyleClass",
-    AUTH: {
-        CARD: "authCard",
-        CARD_MAX_WIDTH: "authCardMaxWidth",
-        CARD_MIN_WIDTH: "authCardMinWidth",
-        LOGO: "authAppLogo",
-        WRAPPER: "authWrapper",
-        BANNER: "authBanner",
-        CONATINER: "authContainer",
-        FORM: "authForm",
-        FORMCONATINER: "authFormContainer"
-    }
+  ...UtilityClasses,
+  AUTH: {
+    BANNER        : "authBanner",
+    CARD          : "authCard",
+    CARD_MAX_WIDTH: "authCardMaxWidth",
+    CARD_MIN_WIDTH: "authCardMinWidth",
+    CONATINER     : "authContainer",
+    FORM          : "authForm",
+    FORMCONATINER : "authFormContainer",
+    LOGO          : "authAppLogo",
+    WRAPPER       : "authWrapper"
+  },
+  TEST_WRAPPID_STYLE_CLASS: "testWrappidStyleClass"
 };
 
 export default ModuleClasses;

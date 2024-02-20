@@ -6,21 +6,17 @@ export default class DefaultModuleStyles extends BaseStyle {
   constructor() {
     super();
     this.style = {
-      /**************************************************
-       * Using defaultUtilityStyles example
-       *************************************************/
-      testWrappidStyleClass: { ...this.defaultUtilityStyles.devBorder },
-
+      
       authAppLogo: {
         height: 50,
-        width: 190
+        width : 190
       },
-
+      
       authCard: {
         background: "transparent" + IMPORTANT,
-        boxShadow: "none" + IMPORTANT
+        boxShadow : "none" + IMPORTANT
       },
-
+      
       authWrapper: {
         ...this.defaultUtilityStyles.justifyContentCenter,
         ...this.defaultUtilityStyles.alignContentCenter,
@@ -28,6 +24,11 @@ export default class DefaultModuleStyles extends BaseStyle {
         ...this.defaultUtilityStyles.vh100,
         width: "98vw" + IMPORTANT,
       },
+
+      /**************************************************
+       * Using defaultUtilityStyles example
+       *************************************************/
+      testWrappidStyleClass: { ...this.defaultUtilityStyles.devBorder },
     };
   }
 }
