@@ -6,17 +6,17 @@ export default class DefaultModuleStyles extends BaseStyle {
   constructor() {
     super();
     this.style = {
-      
+
       authAppLogo: {
         height: 50,
         width : 190
       },
-      
+
       authCard: {
         background: "transparent" + IMPORTANT,
         boxShadow : "none" + IMPORTANT
       },
-      
+
       authWrapper: {
         ...this.defaultUtilityStyles.justifyContentCenter,
         ...this.defaultUtilityStyles.alignContentCenter,
