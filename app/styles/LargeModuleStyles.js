@@ -6,7 +6,7 @@ export default class LargeModuleStyles extends BaseStyle {
   constructor() {
     super();
     this.style = {
-      
+
       authBanner: {
         backgroundImage   : "url(./images/welcome-bg.png)",
         backgroundPosition: "center" + IMPORTANT,
@@ -14,13 +14,13 @@ export default class LargeModuleStyles extends BaseStyle {
         backgroundSize    : "cover" + IMPORTANT,
         height            : "100%" + IMPORTANT,
       },
-      
+
       authContainer: { height: "100%" + IMPORTANT },
-      
+
       authForm: { height: "100%" + IMPORTANT },
-      
+
       authFormContainer: { width: "60%" + IMPORTANT },
-      
+
       authWrapper          : { width: "45vw" + IMPORTANT },
       /**************************************************
        * Using LargeUtilityStyles example
