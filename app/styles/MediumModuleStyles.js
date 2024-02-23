@@ -19,9 +19,9 @@ export default class MediumModuleStyles extends BaseStyle {
         height            : "100%" + IMPORTANT,
       },
       
-      authCardMaxWidth: { maxWidth: "25%" + IMPORTANT },
+      authCardMaxWidth: { maxWidth: "50%" + IMPORTANT },
       
-      authCardMinWidth: { minWidth: "25%" + IMPORTANT },
+      authCardMinWidth: { minWidth: "50%" + IMPORTANT },
       
       authContainer: { height: "100%" + IMPORTANT },
       

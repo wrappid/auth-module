@@ -44,7 +44,8 @@ export const AuthContainer = props => {
     <CoreThemeProvider theme={AUTH_THEME}>
       <CoreImageBackground
         source={authBackground}
-        resizeMode="cover">
+        resizeMode="cover"
+        styleClasses={[ModuleClasses?.ALIGNMENT?.JUSTIFY_CONTENT_CENTER]}>
         <CoreBox styleClasses={[ModuleClasses?.AUTH?.WRAPPER, ModuleClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER]}>
           <CoreSection
             elevated={false}
