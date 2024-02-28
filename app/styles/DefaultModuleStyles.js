@@ -12,9 +12,18 @@ export default class DefaultModuleStyles extends BaseStyle {
         width : 190
       },
 
+      authBanner: {
+        backgroundImage   : "url(./images/welcome-bg.png)",
+        backgroundPosition: "center" + IMPORTANT,
+        backgroundRepeat  : "no-repeat" + IMPORTANT,
+        backgroundSize    : "cover" + IMPORTANT,
+        height            : "100%" + IMPORTANT,
+      },
+
       authCard: {
         background: "transparent" + IMPORTANT,
-        boxShadow : "none" + IMPORTANT
+        // ...this.defaultUtilityStyles.bgTransparent,
+        ...this.defaultUtilityStyles.shadowNone
       },
 
       authWrapper: {

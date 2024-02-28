@@ -1,5 +1,4 @@
 import {
-  IMPORTANT,
   SmallUtilityStyles,
   BaseStyle
   // eslint-disable-next-line import/no-unresolved
@@ -20,19 +19,12 @@ export default class SmallModuleStyles extends BaseStyle {
           width : 190
         }, 
       */
-      authBanner: {
-        backgroundImage   : "url(./images/welcome-bg.png)" + IMPORTANT,
-        backgroundPosition: "center" + IMPORTANT,
-        backgroundRepeat  : "no-repeat" + IMPORTANT,
-        backgroundSize    : "cover" + IMPORTANT,
-        height            : "100%" + IMPORTANT,
-      },
       
-      authContainer: { height: "100%" + IMPORTANT },
+      authContainer: { ...this.largeUtilityStyles.h100 },
       
-      authForm: { height: "100%" + IMPORTANT },
+      authForm: { ...this.largeUtilityStyles.h100 },
       
-      authFormContainer    : { width: "100%" + IMPORTANT },
+      authFormContainer    : { ...this.largeUtilityStyles.w100 },
       /**************************************************
        * Using smallUtilityStyles example
        *************************************************/

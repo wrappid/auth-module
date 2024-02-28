@@ -7,7 +7,8 @@ import {
   CoreResourceContext,
   CoreImage,
   CoreThemeProvider,
-  coreUseNavigate
+  coreUseNavigate,
+  CoreClasses
 } from "@wrappid/core";
 import { useSelector } from "react-redux";
 
@@ -45,19 +46,13 @@ export const AuthContainer = props => {
       <CoreImageBackground
         source={authBackground}
         resizeMode="cover"
-        styleClasses={[ModuleClasses?.ALIGNMENT?.JUSTIFY_CONTENT_CENTER]}>
-        <CoreBox styleClasses={[ModuleClasses?.AUTH?.WRAPPER, ModuleClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER]}>
+        styleClasses={[CoreClasses?.ALIGNMENT?.JUSTIFY_CONTENT_CENTER]}>
+        <CoreBox styleClasses={[ModuleClasses?.AUTH?.WRAPPER, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER]}>
           <CoreSection
             elevated={false}
-            styleClasses={[
-              ModuleClasses?.UTILS?.FIT_CONTENT_WIDTH,
-              ModuleClasses?.UTILS?.FIT_CONTENT_HEIGHT,
-              ModuleClasses?.AUTH?.CARD_MIN_WIDTH,
-              ModuleClasses?.AUTH?.CARD_MAX_WIDTH,
-              ModuleClasses?.AUTH?.CARD
-            ]}>
+            styleClasses={[ModuleClasses?.AUTH?.CARD_MIN_WIDTH, ModuleClasses?.AUTH?.CARD_MAX_WIDTH, ModuleClasses?.AUTH?.CARD]}>
             <CoreBox
-              styleClasses={[ModuleClasses?.LAYOUT?.FULL_WIDTH, ModuleClasses?.ALIGNMENT?.ALIGN_ITEMS_CENTER, ModuleClasses?.ALIGNMENT?.JUSTIFY_CONTENT_CENTER, ModuleClasses?.MARGIN?.MB5]}>
+              styleClasses={[ModuleClasses?.LAYOUT?.FULL_WIDTH, CoreClasses.ALIGNMENT.ALIGN_ITEMS_CENTER, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER, CoreClasses.MARGIN.MB5]}>
               {logo && (
                 <CoreImage
                   src={logo}
