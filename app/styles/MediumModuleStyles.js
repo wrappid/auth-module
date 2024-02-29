@@ -14,9 +14,9 @@ export default class MediumModuleStyles extends BaseStyle {
       
       authCardMinWidth: { minWidth: "50%" },
       
-      authContainer: { ...this.largeUtilityStyles.h100 },
+      authContainer: { ...this.mediumUtilityStyles.h100 },
       
-      authForm: { ...this.largeUtilityStyles.h100 },
+      authForm: { ...this.mediumUtilityStyles.h100 },
       
       authFormContainer: { width: "60%" },
       

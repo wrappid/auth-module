@@ -20,11 +20,11 @@ export default class SmallModuleStyles extends BaseStyle {
         }, 
       */
       
-      authContainer: { ...this.largeUtilityStyles.h100 },
+      authContainer: { ...this.smallUtilityStyles.h100 },
       
-      authForm: { ...this.largeUtilityStyles.h100 },
+      authForm: { ...this.smallUtilityStyles.h100 },
       
-      authFormContainer    : { ...this.largeUtilityStyles.w100 },
+      authFormContainer    : { ...this.smallUtilityStyles.w100 },
       /**************************************************
        * Using smallUtilityStyles example
        *************************************************/

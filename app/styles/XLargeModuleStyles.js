@@ -7,9 +7,9 @@ export default class XLargeModuleStyles extends BaseStyle {
     super();
     this.style = {
       
-      authContainer: { ...this.largeUtilityStyles.h100 },
+      authContainer: { ...this.xLargeUtilityStyles.h100 },
       
-      authForm: { ...this.largeUtilityStyles.h100 },
+      authForm: { ...this.xLargeUtilityStyles.h100 },
       
       authFormContainer    : { width: "60%" },
       /**************************************************
