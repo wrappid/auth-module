@@ -1,25 +1,15 @@
 // eslint-disable-next-line import/no-unresolved
-import { BaseStyle, IMPORTANT, XLargeUtilityStyles } from "@wrappid/styles";
-
-export default class XLargeModuleStyles extends BaseStyle {
-  xLargeUtilityStyles = new XLargeUtilityStyles().style;
+import { XLargeCoreStyles } from "@wrappid/core";
+export default class XLargeModuleStyles extends XLargeCoreStyles {
   constructor() {
     super();
     this.style = {
       
-      authBanner: {
-        backgroundImage   : "url(./images/welcome-bg.png)" + IMPORTANT,
-        backgroundPosition: "center" + IMPORTANT,
-        backgroundRepeat  : "no-repeat" + IMPORTANT,
-        backgroundSize    : "cover" + IMPORTANT,
-        height            : "100%" + IMPORTANT,
-      },
+      authContainer: { ...this.xLargeUtilityStyles.h100 },
       
-      authContainer: { height: "100%" + IMPORTANT },
+      authForm: { ...this.xLargeUtilityStyles.h100 },
       
-      authForm: { height: "100%" + IMPORTANT },
-      
-      authFormContainer    : { width: "60%" + IMPORTANT },
+      authFormContainer    : { width: "60%" },
       /**************************************************
        * Using XLargeUtilityStyles example
        *************************************************/

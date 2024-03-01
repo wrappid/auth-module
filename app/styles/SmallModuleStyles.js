@@ -1,12 +1,7 @@
-import {
-  IMPORTANT,
-  SmallUtilityStyles,
-  BaseStyle
-  // eslint-disable-next-line import/no-unresolved
-} from "@wrappid/styles";
+// eslint-disable-next-line import/no-unresolved
+import { SmallCoreStyles } from "@wrappid/core";
 
-export default class SmallModuleStyles extends BaseStyle {
-  smallUtilityStyles = new SmallUtilityStyles().style;
+export default class SmallModuleStyles extends SmallCoreStyles {
   constructor() {
     super();
     this.style = {
@@ -20,19 +15,12 @@ export default class SmallModuleStyles extends BaseStyle {
           width : 190
         }, 
       */
-      authBanner: {
-        backgroundImage   : "url(./images/welcome-bg.png)" + IMPORTANT,
-        backgroundPosition: "center" + IMPORTANT,
-        backgroundRepeat  : "no-repeat" + IMPORTANT,
-        backgroundSize    : "cover" + IMPORTANT,
-        height            : "100%" + IMPORTANT,
-      },
       
-      authContainer: { height: "100%" + IMPORTANT },
+      authContainer: { ...this.smallUtilityStyles.h100 },
       
-      authForm: { height: "100%" + IMPORTANT },
+      authForm: { ...this.smallUtilityStyles.h100 },
       
-      authFormContainer    : { width: "100%" + IMPORTANT },
+      authFormContainer    : { ...this.smallUtilityStyles.w100 },
       /**************************************************
        * Using smallUtilityStyles example
        *************************************************/

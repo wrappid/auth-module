@@ -1,8 +1,8 @@
 // eslint-disable-next-line import/no-unresolved
-import { DefaultUtilityStyles, IMPORTANT, BaseStyle } from "@wrappid/styles";
+import { DefaultCoreStyles } from "@wrappid/core";
+import { IMPORTANT } from "@wrappid/styles";
 
-export default class DefaultModuleStyles extends BaseStyle {
-  defaultUtilityStyles = new DefaultUtilityStyles().style;
+export default class DefaultModuleStyles extends DefaultCoreStyles {
   constructor() {
     super();
     this.style = {
@@ -12,9 +12,17 @@ export default class DefaultModuleStyles extends BaseStyle {
         width : 190
       },
 
+      authBanner: {
+        backgroundImage   : "url(./images/welcome-bg.png)",
+        backgroundPosition: "center" + IMPORTANT,
+        backgroundRepeat  : "no-repeat" + IMPORTANT,
+        backgroundSize    : "cover" + IMPORTANT,
+        height            : "100%" + IMPORTANT,
+      },
+
       authCard: {
-        background: "transparent" + IMPORTANT,
-        boxShadow : "none" + IMPORTANT
+        ...this.defaultUtilityStyles.bgTransparent,
+        ...this.defaultUtilityStyles.shadowNone
       },
 
       authWrapper: {

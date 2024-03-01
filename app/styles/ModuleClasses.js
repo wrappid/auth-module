@@ -1,8 +1,6 @@
 // eslint-disable-next-line import/no-unresolved
-import { UtilityClasses } from "@wrappid/styles";
 
 const ModuleClasses = {
-  ...UtilityClasses,
   AUTH: {
     BANNER        : "authBanner",
     CARD          : "authCard",
