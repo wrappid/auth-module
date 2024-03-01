@@ -1,7 +1,8 @@
 // eslint-disable-next-line import/no-unresolved
-import { BaseStyle, XLargeUtilityStyles } from "@wrappid/styles";
+import { XLargeCoreStyles } from "@wrappid/core";
+import { XLargeUtilityStyles } from "@wrappid/styles";
 
-export default class XLargeModuleStyles extends BaseStyle {
+export default class XLargeModuleStyles extends XLargeCoreStyles {
   xLargeUtilityStyles = new XLargeUtilityStyles().style;
   constructor() {
     super();

@@ -1,8 +1,8 @@
 // eslint-disable-next-line import/no-unresolved
-import { DefaultUtilityStyles, IMPORTANT, BaseStyle } from "@wrappid/styles";
+import { DefaultCoreStyles } from "@wrappid/core";
+import { IMPORTANT } from "@wrappid/styles";
 
-export default class DefaultModuleStyles extends BaseStyle {
-  defaultUtilityStyles = new DefaultUtilityStyles().style;
+export default class DefaultModuleStyles extends DefaultCoreStyles {
   constructor() {
     super();
     this.style = {
@@ -21,8 +21,7 @@ export default class DefaultModuleStyles extends BaseStyle {
       },
 
       authCard: {
-        background: "transparent" + IMPORTANT,
-        // ...this.defaultUtilityStyles.bgTransparent,
+        ...this.defaultUtilityStyles.bgTransparent,
         ...this.defaultUtilityStyles.shadowNone
       },
 

@@ -1,11 +1,7 @@
-import {
-  BaseStyle,
-  MediumUtilityStyles
-  // eslint-disable-next-line import/no-unresolved
-} from "@wrappid/styles";
+// eslint-disable-next-line import/no-unresolved
+import { MediumCoreStyles } from "@wrappid/core";
 
-export default class MediumModuleStyles extends BaseStyle {
-  mediumUtilityStyles = new MediumUtilityStyles().style;
+export default class MediumModuleStyles extends MediumCoreStyles {
   constructor() {
     super();
     this.style = {
