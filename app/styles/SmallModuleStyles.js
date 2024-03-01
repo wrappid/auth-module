@@ -1,9 +1,7 @@
 // eslint-disable-next-line import/no-unresolved
 import { SmallCoreStyles } from "@wrappid/core";
-import { SmallUtilityStyles } from "@wrappid/styles";
 
 export default class SmallModuleStyles extends SmallCoreStyles {
-  smallUtilityStyles = new SmallUtilityStyles().style;
   constructor() {
     super();
     this.style = {

@@ -1,6 +1,5 @@
 // eslint-disable-next-line import/no-unresolved
-import { DefaultCoreStyles } from "@wrappid/core";
-import { IMPORTANT } from "@wrappid/styles";
+import { DefaultCoreStyles, IMPORTANT } from "@wrappid/core";
 
 export default class DefaultModuleStyles extends DefaultCoreStyles {
   constructor() {
