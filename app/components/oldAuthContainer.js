@@ -3,16 +3,15 @@ import React, { useContext } from "react";
 import {
   CoreBox,
   CoreSection,
+  CoreClasses,
   CoreImageBackground,
   CoreResourceContext,
   CoreImage,
   CoreThemeProvider,
-  coreUseNavigate,
-  CoreClasses
+  coreUseNavigate
 } from "@wrappid/core";
 import { useSelector } from "react-redux";
 
-import ModuleClasses from "../styles/ModuleClasses";
 import { AUTH_THEME } from "../theme/authTheme";
 
 export const AuthContainer = props => {
@@ -29,9 +28,9 @@ export const AuthContainer = props => {
         navigate(requestUrl.requestUrl);
       } else if (
         auth.sessionExpired &&
-        auth.sessionDetail &&
-        auth.accessToken &&
-        auth.refreshToken
+                auth.sessionDetail &&
+                auth.accessToken &&
+                auth.refreshToken
       ) {
         let path = auth.sessionDetail?.location?.pathname;
 
@@ -45,18 +44,23 @@ export const AuthContainer = props => {
     <CoreThemeProvider theme={AUTH_THEME}>
       <CoreImageBackground
         source={authBackground}
-        resizeMode="cover"
-        styleClasses={[CoreClasses?.ALIGNMENT?.JUSTIFY_CONTENT_CENTER]}>
-        <CoreBox styleClasses={[ModuleClasses?.AUTH?.WRAPPER, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER]}>
+        resizeMode="cover">
+        <CoreBox styleClasses={[CoreClasses?.AUTH?.WRAPPER]}>
           <CoreSection
             elevated={false}
-            styleClasses={[ModuleClasses?.AUTH?.CARD_MIN_WIDTH, ModuleClasses?.AUTH?.CARD_MAX_WIDTH, ModuleClasses?.AUTH?.CARD]}>
+            styleClasses={[
+              CoreClasses?.UTILS?.FIT_CONTENT_WIDTH,
+              CoreClasses?.UTILS?.FIT_CONTENT_HEIGHT,
+              CoreClasses?.AUTH?.CARD_MIN_WIDTH,
+              CoreClasses?.AUTH?.CARD_MAX_WIDTH,
+              CoreClasses?.AUTH?.CARD
+            ]}>
             <CoreBox
-              styleClasses={[ModuleClasses?.LAYOUT?.FULL_WIDTH, CoreClasses.ALIGNMENT.ALIGN_ITEMS_CENTER, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER, CoreClasses.MARGIN.MB5]}>
+              styleClasses={[CoreClasses?.LAYOUT?.FULL_WIDTH, CoreClasses?.ALIGNMENT?.ALIGN_ITEMS_CENTER, CoreClasses?.ALIGNMENT?.JUSTIFY_CONTENT_CENTER, CoreClasses?.MARGIN?.MB5]}>
               {logo && (
                 <CoreImage
                   src={logo}
-                  styleClasses={[ModuleClasses?.AUTH?.LOGO]}
+                  styleClasses={[CoreClasses?.AUTH?.LOGO]}
                 />
               )}
             </CoreBox>
@@ -66,5 +70,6 @@ export const AuthContainer = props => {
         </CoreBox>
       </CoreImageBackground>
     </CoreThemeProvider>
+
   );
 };

@@ -2,10 +2,9 @@
 // --import { XX_LARGE_WINDOW_WIDTH } from "../config/constants";
 
 // eslint-disable-next-line import/no-unresolved
-import { BaseStyle, XXLargeUtilityStyles } from "@wrappid/styles";
+import { XXLargeCoreStyles } from "@wrappid/core";
 
-export default class XXLargeModuleStyles extends BaseStyle {
-  xxLargeUtilityStyles = new XXLargeUtilityStyles().style;
+export default class XXLargeModuleStyles extends XXLargeCoreStyles {
   constructor() {
     super();
     this.style = {
