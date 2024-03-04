@@ -8,9 +8,10 @@ import AuthCustomFooter from "../AuthCustomFooter";
 export default function AuthLayout() {
   return (
     <>
-      <CoreLayoutPlaceHolder id="content" />
+      <CoreLayoutPlaceHolder id={AuthLayout.PLACEHOLDER.CONTENT} />
 
       <AuthCustomFooter />
     </>
   );
 }
+AuthLayout.PLACEHOLDER = { CONTENT: "content" };

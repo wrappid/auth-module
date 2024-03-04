@@ -9,7 +9,9 @@ import {
 } from "@wrappid/core";
 import { useSelector } from "react-redux";
 
-const CheckUserExist = () => {
+import AuthLayout from "./layout/AuthLayout";
+
+export default function CheckUserExist() {
   const auth = useSelector(state => state.auth);
   const routeRegistry = useContext(CoreRouteRegistryContext);
 
@@ -21,16 +23,18 @@ const CheckUserExist = () => {
   else
     return (
       <>
-        <CoreLayoutItem id="content">
-          <CoreForm
-            styleClasses={[CoreClasses.LAYOUT.AUTH_FORM_CONTAINER]}
-            formId="checkUserExist"
-            mode="edit" // commented since default mode : edit
-            authenticated={false}
-          />
+        <CoreLayoutItem id={AuthLayout.PLACEHOLDER.CONTENT}>
+          {checkLoginOrRegisterSuccess && authNextPage !== routeRegistry?.checkuserexists ? (
+            <CoreDomNavigate to={"/" + authNextPage} />
+          ) : (
+            <CoreForm
+              styleClasses={[CoreClasses.LAYOUT.AUTH_FORM_CONTAINER]}
+              formId="checkUserExist"
+              mode="edit" // commented since default mode : edit
+              authenticated={false}
+            />
+          )}
         </CoreLayoutItem>
       </>
     );
-};
-
-export default CheckUserExist;
+}
