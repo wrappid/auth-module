@@ -1,22 +1,24 @@
 import { useContext } from "react";
 
 import {
-  CoreBox,
   CoreAvatar,
-  CoreH6,
-  CoreTypographyBody2,
-  CoreTextButton,
-  CoreForm,
-  CoreLink,
-  stringUtils,
+  CoreBox,
   CoreClasses,
   CoreDomNavigate,
-  CoreRoutesContext
+  CoreForm,
+  CoreH6,
+  CoreLayoutItem,
+  CoreLink,
+  CoreRoutesContext,
+  CoreTextButton,
+  CoreTypographyBody2,
+  stringUtils
 } from "@wrappid/core";
 import { useDispatch, useSelector } from "react-redux";
 
-import { AuthContainer } from "./AuthContainer";
 import { clearAuthState, saveAuthData } from "../actions/authActions";
+// eslint-disable-next-line import/order
+import AuthLayout from "./layout/AuthLayout";
 
 const LoginWithPassword = () => {
   const dispatch = useDispatch();
@@ -48,81 +50,84 @@ const LoginWithPassword = () => {
     dispatch(clearAuthState());
   };
 
-  if (
-    (navigateToResetPasswordSuccess ||
+  return (
+    <>
+      <CoreLayoutItem id={AuthLayout.PLACEHOLDER.CONTENT}>
+        
+        {(navigateToResetPasswordSuccess ||
       navigateToOtpSuccess ||
       !checkLoginOrRegisterSuccess) &&
-    authNextPage !== routeRegistry?.enterpassword
-  ) {
-    return <CoreDomNavigate to={"/" + authNextPage} />;
-  }
-  else
-    return (
-      <AuthContainer>
-        <CoreBox
-          styleClasses={[CoreClasses.ALIGNMENT.ALIGN_ITEMS_CENTER, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER, CoreClasses.MARGIN.MB3]}
-        >
-          <CoreAvatar
-            styleClasses={[CoreClasses.DATA_DISPLAY.AVATAR_LARGE]}
-            src={photo ? photo : "photo.jpg"}
-          />
-        </CoreBox>
+          authNextPage !== routeRegistry?.enterpassword ? (
+            <CoreDomNavigate to={"/" + authNextPage} />
+          ) : (
+            <>
+              <CoreBox
+                styleClasses={[CoreClasses.ALIGNMENT.ALIGN_ITEMS_CENTER, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER, CoreClasses.MARGIN.MB3]}
+              >
+                <CoreAvatar
+                  styleClasses={[CoreClasses.DATA_DISPLAY.AVATAR_LARGE]}
+                  src={photo ? photo : "photo.jpg"}
+                />
+              </CoreBox>
 
-        <CoreH6
-          styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.MARGIN.MB1]}
-        >
-          {name && name?.trim() !== "" ? name : "Unknown User"}
-        </CoreH6>
+              <CoreH6
+                styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.MARGIN.MB1]}
+              >
+                {name && name?.trim() !== "" ? name : "Unknown User"}
+              </CoreH6>
 
-        <CoreTypographyBody2
-          limitChars={42}
-          hideSeeMore={true}
-          styleClasses={[CoreClasses.TEXT.TEXT_CENTER]}
-        >
-          {stringUtils.maskEmailOrPhone(
-            navData?.emailOrPhone
-              ? navData?.emailOrPhone
-              : ""
-          )}
-        </CoreTypographyBody2>
+              <CoreTypographyBody2
+                limitChars={42}
+                hideSeeMore={true}
+                styleClasses={[CoreClasses.TEXT.TEXT_CENTER]}
+              >
+                {stringUtils.maskEmailOrPhone(
+                  navData?.emailOrPhone
+                    ? navData?.emailOrPhone
+                    : ""
+                )}
+              </CoreTypographyBody2>
 
-        <CoreBox
-          styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.MARGIN.MB1]}
-        >
-          <CoreTextButton OnClick={GoBack} label="Not you" />
-        </CoreBox>
+              <CoreBox
+                styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.MARGIN.MB1]}
+              >
+                <CoreTextButton OnClick={GoBack} label="Not you" />
+              </CoreBox>
 
-        <CoreForm
-          styleClasses={CoreClasses.LAYOUT.AUTH_FORM_CONTAINER}
-          formId={"loginWithPassword"}
-          mode={"edit"}
-          authenticated={false}
-        />
+              <CoreForm
+                styleClasses={CoreClasses.LAYOUT.AUTH_FORM_CONTAINER}
+                formId={"loginWithPassword"}
+                mode={"edit"}
+                authenticated={false}
+              />
 
-        <CoreBox
-          styleClasses={[
-            CoreClasses.LAYOUT.FULL_WIDTH,
-            CoreClasses.FLEX.DIRECTION_ROW,
-            CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_SPACE_AROUND,
-            CoreClasses.ALIGNMENT.ALIGN_ITEMS_CENTER,
-            CoreClasses.MARGIN.MT3,
-          ]}
-        >
-          {/**
+              <CoreBox
+                styleClasses={[
+                  CoreClasses.LAYOUT.FULL_WIDTH,
+                  CoreClasses.FLEX.DIRECTION_ROW,
+                  CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_SPACE_AROUND,
+                  CoreClasses.ALIGNMENT.ALIGN_ITEMS_CENTER,
+                  CoreClasses.MARGIN.MT3,
+                ]}
+              >
+                {/**
            * @TODO:
            * we need send otp to the provided email or phone
            * fix required: email or phone getting removed from store auth.navData
            */}
-          <CoreLink styleClasses={[CoreClasses.COLOR.TEXT_WHITE]} href={"/resetpassword"}>
+                <CoreLink styleClasses={[CoreClasses.COLOR.TEXT_WHITE]} href={"/resetpassword"}>
             Reset Password
-          </CoreLink>
+                </CoreLink>
 
-          <CoreLink styleClasses={[CoreClasses.COLOR.TEXT_WHITE]} href={"/enterotp"}>
+                <CoreLink styleClasses={[CoreClasses.COLOR.TEXT_WHITE]} href={"/enterotp"}>
             Login with OTP
-          </CoreLink>
-        </CoreBox>
-      </AuthContainer>
-    );
+                </CoreLink>
+              </CoreBox>
+            </>
+          )}
+      </CoreLayoutItem>
+    </>
+  );
 };
 
 export default LoginWithPassword;
