@@ -9,7 +9,7 @@ import {
 } from "@wrappid/core";
 import { useSelector } from "react-redux";
 
-import AuthLayout from "./layout/AuthLayout";
+import AuthLayout from "./layout/AuthLayout.js";
 
 export default function CheckUserExist() {
   const auth = useSelector(state => state.auth);
