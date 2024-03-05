@@ -6,9 +6,9 @@ import RegisterOrResetPassword from "./components/RegisterOrResetPassword";
 
 export const ComponentsRegistry = {
   AuthLayout       : { comp: AuthLayout, layout: true },
-  CheckUserExist   : { comp: CheckUserExist },
-  LoginWithOtp     : { comp: LoginWithOtp },
-  LoginWithPassword: { comp: LoginWithPassword },
-  Register         : { comp: RegisterOrResetPassword },
-  ResetPassword    : { comp: RegisterOrResetPassword }
+  checkUserExist   : { comp: CheckUserExist },
+  loginWithOtp     : { comp: LoginWithOtp },
+  loginWithPassword: { comp: LoginWithPassword },
+  register         : { comp: RegisterOrResetPassword },
+  resetPassword    : { comp: RegisterOrResetPassword }
 };

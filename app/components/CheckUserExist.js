@@ -1,11 +1,11 @@
 import { useContext } from "react";
 
 import {
-  CoreForm,
   CoreClasses,
   CoreDomNavigate,
-  CoreRouteRegistryContext,
-  CoreLayoutItem
+  CoreForm,
+  CoreLayoutItem,
+  CoreRouteRegistryContext
 } from "@wrappid/core";
 import { useSelector } from "react-redux";
 
@@ -17,24 +17,20 @@ export default function CheckUserExist() {
 
   const { checkLoginOrRegisterSuccess, authNextPage } = auth;
 
-  if (checkLoginOrRegisterSuccess && authNextPage !== routeRegistry?.checkuserexists) {
-    return <CoreDomNavigate to={"/" + authNextPage} />;
-  }
-  else
-    return (
-      <>
-        <CoreLayoutItem id={AuthLayout.PLACEHOLDER.CONTENT}>
-          {checkLoginOrRegisterSuccess && authNextPage !== routeRegistry?.checkuserexists ? (
-            <CoreDomNavigate to={"/" + authNextPage} />
-          ) : (
-            <CoreForm
-              styleClasses={[CoreClasses.LAYOUT.AUTH_FORM_CONTAINER]}
-              formId="checkUserExist"
-              mode="edit" // commented since default mode : edit
-              authenticated={false}
-            />
-          )}
-        </CoreLayoutItem>
-      </>
-    );
+  return (
+    <>
+      <CoreLayoutItem id={AuthLayout.PLACEHOLDER.CONTENT}>
+        {checkLoginOrRegisterSuccess && authNextPage !== routeRegistry?.checkuserexists ? (
+          <CoreDomNavigate to={"/" + authNextPage} />
+        ) : (
+          <CoreForm
+            styleClasses={[CoreClasses.LAYOUT.AUTH_FORM_CONTAINER]}
+            formId="checkUserExist"
+            mode="edit" // commented since default mode : edit
+            authenticated={false}
+          />
+        )}
+      </CoreLayoutItem>
+    </>
+  );
 }
