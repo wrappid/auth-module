@@ -1,7 +1,7 @@
 // eslint-disable-next-line unused-imports/no-unused-imports, no-unused-vars
 import React, { useContext } from "react";
 
-import { CoreLayoutPlaceholder, CoreClasses, CoreImageBackground, CoreResourceContext, CoreH6 } from "@wrappid/core";
+import { CoreLayoutPlaceholder, CoreClasses, CoreImageBackground, CoreResourceContext} from "@wrappid/core";
 
 import AuthCustomFooter from "../AuthCustomFooter";
 
@@ -29,10 +29,6 @@ export default function AuthLayout() {
               CoreClasses.BG.BG_SECONDARY_DARK
             ]
           } />
-
-        <CoreH6>
-            Hello World!
-        </CoreH6>
 
         <AuthCustomFooter key="authlayoutfooter" />
       </CoreImageBackground>
