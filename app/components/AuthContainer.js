@@ -3,7 +3,6 @@ import React, { useContext } from "react";
 import {
   CoreBox,
   CoreSection,
-  CoreImageBackground,
   CoreResourceContext,
   CoreImage,
   CoreThemeProvider,
@@ -21,7 +20,6 @@ export const AuthContainer = props => {
   const requestUrl = useSelector(state => state?.manageAssistant?.requestUrl);
   const resourceContext = useContext(CoreResourceContext);
   const logo = resourceContext?.appLogoLight;
-  const authBackground = resourceContext?.authBackground;
 
   React.useEffect(() => {
     if (auth.uid) {
@@ -43,28 +41,30 @@ export const AuthContainer = props => {
   });
   return (
     <CoreThemeProvider theme={AUTH_THEME}>
-      <CoreImageBackground
+      {/* <CoreImageBackground
         source={authBackground}
         resizeMode="cover"
         styleClasses={[CoreClasses?.ALIGNMENT?.JUSTIFY_CONTENT_CENTER]}>
-        <CoreBox styleClasses={[ModuleClasses?.AUTH?.WRAPPER, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER]}>
-          <CoreSection
-            elevated={false}
-            styleClasses={[ModuleClasses?.AUTH?.CARD_MIN_WIDTH, ModuleClasses?.AUTH?.CARD_MAX_WIDTH, ModuleClasses?.AUTH?.CARD]}>
-            <CoreBox
-              styleClasses={[ModuleClasses?.LAYOUT?.FULL_WIDTH, CoreClasses.ALIGNMENT.ALIGN_ITEMS_CENTER, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER, CoreClasses.MARGIN.MB5]}>
-              {logo && (
-                <CoreImage
-                  src={logo}
-                  styleClasses={[ModuleClasses?.AUTH?.LOGO]}
-                />
-              )}
-            </CoreBox>
-
-            {props.children}
-          </CoreSection>
+        <CoreBox styleClasses={[ModuleClasses?.AUTH?.WRAPPER, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER, CoreClasses.BG.BG_SECONDARY]}>*/}
+      <CoreSection
+        elevated={false}
+        styleClasses={[ModuleClasses?.AUTH?.CARD_MIN_WIDTH, ModuleClasses?.AUTH?.CARD_MAX_WIDTH, ModuleClasses?.AUTH?.CARD]}>
+        <CoreBox
+          styleClasses={[ModuleClasses?.LAYOUT?.FULL_WIDTH, CoreClasses.ALIGNMENT.ALIGN_ITEMS_CENTER, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER, CoreClasses.MARGIN.MB5]}>
+          {logo && (
+            <CoreImage
+              src={logo}
+              styleClasses={[ModuleClasses?.AUTH?.LOGO]}
+            />
+          )}
         </CoreBox>
-      </CoreImageBackground>
+
+        {props.children}
+      </CoreSection>
+
+      {/*</CoreBox>
+
+      </CoreImageBackground> */}
     </CoreThemeProvider>
   );
 };
