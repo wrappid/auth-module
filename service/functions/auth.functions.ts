@@ -5,6 +5,7 @@ import {
   databaseActions,
   databaseProvider,
 } from "@wrappid/service-core";
+// eslint-disable-next-line import/no-unresolved
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import DeviceDetector from "node-device-detector";
@@ -643,6 +644,7 @@ const getIPHelper = async (req: any, res: any) => {
   }
 };
 
+// eslint-disable-next-line no-unused-vars
 const refreshTokenHelper = async (req: any, res: any) => {
   try {
     return jwt.verify(
