@@ -5,6 +5,7 @@ import {
   databaseActions,
   databaseProvider,
 } from "@wrappid/service-core";
+// eslint-disable-next-line import/no-unresolved
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import DeviceDetector from "node-device-detector";
@@ -643,19 +644,22 @@ const getIPHelper = async (req: any, res: any) => {
   }
 };
 
+// eslint-disable-next-line no-unused-vars
 const refreshTokenHelper = async (req: any, res: any) => {
   try {
-    jwt.verify(
+    return jwt.verify(
       req.body.refreshToken,
       refreshAccessTokenSecret,
       async (err: any, user: any) => {
         if (err) {
           console.error("Refresh token expired", err);
-          return res.status(401).json({ message: "Refresh token expired" });
+
+          return{status:401, message: "Refresh token expired" };
         }
         const userId = user.userId;
         // let isValidJOI = await authenticateJOI(req,"refreshtokenPOST",["body"])
         // if(isValidJOI.validFlag){
+        // const deviceId = '::1';
         const deviceId = await getDeviceId(req);
         const sessions = await databaseActions.findAll(
           "application",
@@ -675,11 +679,13 @@ const refreshTokenHelper = async (req: any, res: any) => {
             const refreshToken = currSession.refreshToken;
             console.log("Session:", currSession.id);
             if (!token) {
-              return res.status(401).json({ message: "Invalid request" });
+              return {status:401, message: "Invalid request" };
             }
             if (refreshToken != token) {
               console.error("Wrong refresh token");
-              return res.status(401).json({ message: "unauthorised access" });
+              return {status:401, message: "unauthorised access" };
+
+              // return res.status(401).json({ message: "unauthorised access" });
             }
 
             const userDetails = await databaseActions.findOne(
@@ -702,13 +708,17 @@ const refreshTokenHelper = async (req: any, res: any) => {
               { expiresIn: expTime }
             );
             console.log("Access token refreshed");
-            return res.status(200).json({
+            return {
+              status:200,
               accessToken: accessToken,
-            });
+            };
+            // return res.status(200).json({
+            //   accessToken: accessToken,
+            // });
           }
         }
         console.log("session not found");
-        return res.status(401).json({
+        return ({status:401,
           message: "session not found",
         });
       }
