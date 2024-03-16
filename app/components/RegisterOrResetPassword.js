@@ -1,9 +1,8 @@
-import { useContext } from "react";
+import React from "react";
 
 import {
   CoreBox,
   CoreClasses,
-  CoreDomNavigate,
   CoreForm,
   CoreH1,
   CoreLayoutItem,
@@ -12,6 +11,7 @@ import {
   CoreTextButton,
   CoreTypographyBody1,
   CoreTypographyBody2,
+  coreUseNavigate,
   stringUtils
 } from "@wrappid/core";
 import { getConfigurationObject } from "@wrappid/styles";
@@ -25,8 +25,9 @@ const appConfig = getConfigurationObject();
 
 const RegisterOrResetPassword = () => {
   const dispatch = useDispatch();
+  const navigate = coreUseNavigate();
   const auth = useSelector(state => state.auth);
-  const routeRegistry = useContext(CoreRouteRegistryContext);
+  const routeRegistry = React.useContext(CoreRouteRegistryContext);
 
   const { checkLoginOrRegisterSuccess, authNextPage, navData } = auth;
 
@@ -66,73 +67,73 @@ const RegisterOrResetPassword = () => {
     );
   };
 
+  React.useEffect(() => {
+    if (!checkLoginOrRegisterSuccess && (authNextPage !== "register" || authNextPage !== "resetpassword")) {
+      navigate(`/${authNextPage}`);
+    }
+  }, [authNextPage]);
+  
   return (
     <>
       <CoreLayoutItem id={AuthLayout.PLACEHOLDER.CONTENT}>
-        { !checkLoginOrRegisterSuccess && (authNextPage !== routeRegistry.register ||
-            authNextPage !== routeRegistry.resetpassword) ? (
-            <CoreDomNavigate to={"/" + authNextPage} />
-          ) : (
-            <>
-              <CoreH1 variant="h5" styleClasses={[CoreClasses.TEXT.TEXT_CENTER]}>
-                {`Verify your${isNaN(navData?.emailOrPhone) ? " email" : " phone"
-                }`}
-              </CoreH1>
+        <CoreH1 variant="h5" styleClasses={[CoreClasses.TEXT.TEXT_CENTER]}>
+          {`Verify your${isNaN(navData?.emailOrPhone) ? " email" : " phone"
+          }`}
+        </CoreH1>
 
-              {authNextPage === routeRegistry.register ? (
-                showEmailOrPhone()
-              ) : (
-                <>
-                  <CoreTypographyBody1 styleClasses={[CoreClasses.TEXT.TEXT_CENTER]}>
+        {authNextPage === routeRegistry.register ? (
+          showEmailOrPhone()
+        ) : (
+          <>
+            <CoreTypographyBody1 styleClasses={[CoreClasses.TEXT.TEXT_CENTER]}>
               Reset Password through OTP
-                  </CoreTypographyBody1>
+            </CoreTypographyBody1>
 
-                  {showEmailOrPhone()}
-                </>
-              )}
+            {showEmailOrPhone()}
+          </>
+        )}
 
-              <CoreBox
-                styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.MARGIN.MB1]}>
-                <CoreTextButton OnClick={GoBack} label="Not You" />
-              </CoreBox>
+        <CoreBox
+          styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.MARGIN.MB1]}>
+          <CoreTextButton OnClick={GoBack} label="Not You" />
+        </CoreBox>
 
-              <CoreForm
-                styleClasses={CoreClasses.LAYOUT.AUTH_FORM_CONTAINER}
-                formId="loginWithResetPassword"
-                mode="edit"
-                authenticated={false}
-                initProps={{ otp: { to: navData?.emailOrPhone } }}
-              />
+        <CoreForm
+          styleClasses={CoreClasses.LAYOUT.AUTH_FORM_CONTAINER}
+          formId="loginWithResetPassword"
+          mode="edit"
+          authenticated={false}
+          initProps={{ otp: { to: navData?.emailOrPhone } }}
+        />
 
-              {authNextPage === routeRegistry?.register && (
-                <CoreTypographyBody2>
+        {authNextPage === routeRegistry?.register && (
+          <CoreTypographyBody2>
             By signing up you agree to our{" "}
 
-                  <CoreLink
-                    styleClasses={[CoreClasses.COLOR.TEXT_WHITE]}
-                    href={
-                      appConfig?.wrappid?.privacyLink ||
+            <CoreLink
+              styleClasses={[CoreClasses.COLOR.TEXT_WHITE]}
+              href={
+                appConfig?.wrappid?.privacyLink ||
                 "#"
-                    }>
+              }>
               Privacy Policy
-                  </CoreLink>{" "}
+            </CoreLink>{" "}
 
-                  <CoreTypographyBody2 component="span">&</CoreTypographyBody2>{" "}
+            <CoreTypographyBody2 component="span">&</CoreTypographyBody2>{" "}
 
-                  <CoreLink
-                    styleClasses={[CoreClasses.COLOR.TEXT_WHITE]}
-                    href={
-                      appConfig?.wrappid?.termsLink ||
+            <CoreLink
+              styleClasses={[CoreClasses.COLOR.TEXT_WHITE]}
+              href={
+                appConfig?.wrappid?.termsLink ||
                 "#"
-                    }>
+              }>
               Terms
-                  </CoreLink>
+            </CoreLink>
 
-                  {"."}
-                </CoreTypographyBody2>
-              )}
-            </>
-          )}
+            {"."}
+          </CoreTypographyBody2>
+        )}
+            
       </CoreLayoutItem>
     </>
   );

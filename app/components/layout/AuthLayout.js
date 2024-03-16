@@ -1,9 +1,13 @@
 // eslint-disable-next-line unused-imports/no-unused-imports, no-unused-vars
 import React, { useContext } from "react";
 
-import { CoreLayoutPlaceholder, CoreClasses, CoreImageBackground, CoreResourceContext} from "@wrappid/core";
+import {
+  CoreBox, CoreClasses, CoreImage, CoreImageBackground, CoreLayoutPlaceholder, CoreResourceContext
+} from "@wrappid/core";
 
-import AuthCustomFooter from "../AuthCustomFooter";
+import ModuleClasses from "../../styles/ModuleClasses";
+// eslint-disable-next-line import/order
+import AuthCustomFooter from "./AuthCustomFooter";
 
 export default function AuthLayout() {
   const resourceContext = useContext(CoreResourceContext);
@@ -15,10 +19,8 @@ export default function AuthLayout() {
         source={authBackground}
         resizeMode="cover"
         styleClasses={[CoreClasses.HEIGHT.VH_100]}>
-          
-        <CoreLayoutPlaceholder
-          key="authlayoutplaceholder"
-          id={AuthLayout.PLACEHOLDER.CONTENT}
+
+        <CoreBox
           styleClasses={
             [
               CoreClasses.HEIGHT.VH_100,
@@ -26,9 +28,19 @@ export default function AuthLayout() {
               CoreClasses.FLEX.DIRECTION_COLUMN,
               CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER,
               CoreClasses.ALIGNMENT.ALIGN_ITEMS_CENTER,
-              CoreClasses.BG.BG_SECONDARY_DARK
             ]
-          } />
+          }
+        >
+          <CoreLayoutPlaceholder
+            key="authlayoutplaceholder"
+            id={AuthLayout.PLACEHOLDER.CONTENT}
+            styleClasses={[ModuleClasses.AUTH.CONATINER]}
+          >
+            <CoreBox styleClasses={[CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER, CoreClasses.MARGIN.MB2]}>
+              <CoreImage width={100} src={resourceContext.appLogo} alt="logo" />
+            </CoreBox>
+          </CoreLayoutPlaceholder>
+        </CoreBox>
 
         <AuthCustomFooter key="authlayoutfooter" />
       </CoreImageBackground>

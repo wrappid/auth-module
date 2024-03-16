@@ -11,8 +11,8 @@ import {
 } from "@wrappid/core";
 import { useSelector } from "react-redux";
 
-import ModuleClasses from "../styles/ModuleClasses";
-import { AUTH_THEME } from "../theme/authTheme";
+import ModuleClasses from "../../styles/ModuleClasses";
+import { AUTH_THEME } from "../../theme/authTheme";
 
 export const AuthContainer = props => {
   const navigate = coreUseNavigate();
