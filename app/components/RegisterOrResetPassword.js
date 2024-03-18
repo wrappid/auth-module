@@ -14,18 +14,18 @@ import {
   coreUseNavigate,
   stringUtils
 } from "@wrappid/core";
-import { getConfigurationObject } from "@wrappid/styles";
+import { WrappidDataContext } from "@wrappid/styles";
 import { useDispatch, useSelector } from "react-redux";
 
 import { saveAuthData } from "../actions/authActions";
 // eslint-disable-next-line import/order
 import AuthLayout from "./layout/AuthLayout";
 
-const appConfig = getConfigurationObject();
-
 const RegisterOrResetPassword = () => {
   const dispatch = useDispatch();
   const navigate = coreUseNavigate();
+  const { config: appConfig } = React.useContext(WrappidDataContext);
+
   const auth = useSelector(state => state.auth);
   const routeRegistry = React.useContext(CoreRouteRegistryContext);
 
@@ -72,7 +72,7 @@ const RegisterOrResetPassword = () => {
       navigate(`/${authNextPage}`);
     }
   }, [authNextPage]);
-  
+
   return (
     <>
       <CoreLayoutItem id={AuthLayout.PLACEHOLDER.CONTENT}>
@@ -133,7 +133,7 @@ const RegisterOrResetPassword = () => {
             {"."}
           </CoreTypographyBody2>
         )}
-            
+
       </CoreLayoutItem>
     </>
   );
