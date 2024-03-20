@@ -1,3 +1,3 @@
-const routesRegistry = {};
+const RoutesRegistry = {};
 
-export default routesRegistry;
+export default RoutesRegistry;

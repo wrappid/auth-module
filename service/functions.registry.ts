@@ -1,6 +1,6 @@
 import * as authFunctions from "./functions/auth.functions";
 
-const functionsRegistry = {
+const FunctionsRegistry = {
   checkLoginOrRegisterUtil: authFunctions.checkLoginOrRegisterUtil,
   loginHelper: authFunctions.loginHelper,
   logoutHelper: authFunctions.logoutHelper,
@@ -8,4 +8,4 @@ const functionsRegistry = {
   refreshTokenHelper: authFunctions.refreshTokenHelper,
 };
 
-export default functionsRegistry;
+export default FunctionsRegistry;
