@@ -1,10 +1,10 @@
 import { SessionManagers } from "./models/SessionManagers.model";
 
-const modelsRegistry = {
+const ModelsRegistry = {
   SessionManagers: {
     database: "application",
     model: SessionManagers,
   },
 };
 
-export default modelsRegistry;
+export default ModelsRegistry;

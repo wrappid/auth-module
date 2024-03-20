@@ -1,3 +1,3 @@
-const validationsRegistry = {};
+const ValidationsRegistry = {};
 
-export default validationsRegistry;
+export default ValidationsRegistry;
