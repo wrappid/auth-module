@@ -16,7 +16,7 @@ import {
   postVerifyOtp,
 } from "./validations/auth.validation";
 
-const controllersRegistry = {
+const ControllersRegistry = {
   checkLoginOrRegister: [
     CoreMiddlewaresRegistry.validation(checkLoginOrRegister),
     authController.checkLoginOrRegister,
@@ -60,4 +60,4 @@ const controllersRegistry = {
   ],
 };
 
-export default controllersRegistry;
+export default ControllersRegistry;
