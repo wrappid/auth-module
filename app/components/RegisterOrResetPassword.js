@@ -33,7 +33,7 @@ const RegisterOrResetPassword = () => {
 
   const GoBack = () => {
     dispatch(saveAuthData({
-      authNextPage                  : routeRegistry.checkuserexist,
+      authNextPage                  : "checkuserexist",
       checkLoginOrRegisterError     : false,
       checkLoginOrRegisterLoading   : false,
       checkLoginOrRegisterMsg       : false,
@@ -67,11 +67,13 @@ const RegisterOrResetPassword = () => {
     );
   };
 
-  React.useEffect(() => {
-    if (!checkLoginOrRegisterSuccess && (authNextPage !== "register" || authNextPage !== "resetpassword")) {
-      navigate(`/${authNextPage}`);
-    }
-  }, [authNextPage]);
+  if (
+    !checkLoginOrRegisterSuccess &&
+    (authNextPage !== "register" ||
+      authNextPage !== "resetpassword")
+  ) {
+    navigate(`/${authNextPage}`);
+  }
 
   return (
     <>

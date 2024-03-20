@@ -1,4 +1,3 @@
-import React from "react";
 
 import {
   CoreAvatar,
@@ -24,9 +23,9 @@ const LoginWithPassword = () => {
   const navigate = coreUseNavigate();
   const auth = useSelector(state => state.auth);
   const {
-    // navigateToResetPasswordSuccess,
-    // navigateToOtpSuccess,
-    // checkLoginOrRegisterSuccess,
+    navigateToResetPasswordSuccess,
+    navigateToOtpSuccess,
+    checkLoginOrRegisterSuccess,
     authNextPage,
     name,
     navData,
@@ -49,11 +48,14 @@ const LoginWithPassword = () => {
     dispatch(clearAuthState());
   };
 
-  React.useEffect(() => {
-    if (authNextPage !== "enterpassword") {
-      navigate(`/${authNextPage}`);
-    }
-  }, [authNextPage]);
+  if (
+    (navigateToResetPasswordSuccess ||
+      navigateToOtpSuccess ||
+      !checkLoginOrRegisterSuccess) &&
+    authNextPage !== "enterpassword"
+  ) {
+    navigate(`/${authNextPage}`);
+  }
 
   return (
     <>

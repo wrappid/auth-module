@@ -1,4 +1,3 @@
-import React from "react";
 
 import {
   CoreForm,
@@ -14,11 +13,9 @@ export default function CheckUserExist() {
   const navigate = coreUseNavigate();
   const { checkLoginOrRegisterSuccess, authNextPage } = auth;
 
-  React.useEffect(() => {
-    if (checkLoginOrRegisterSuccess && authNextPage !== "checkuserexists") {
-      navigate(`/${authNextPage}`);
-    }
-  }, [authNextPage]);
+  if (checkLoginOrRegisterSuccess && authNextPage !== "checkuserexists") {
+    navigate(`/${authNextPage}`);
+  }
 
   return (
     <>

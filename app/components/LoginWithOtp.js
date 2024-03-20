@@ -1,4 +1,3 @@
-import { useContext } from "react";
 
 import {
   CoreBox,
@@ -6,9 +5,9 @@ import {
   CoreForm,
   CoreH1,
   CoreLayoutItem,
-  CoreRouteRegistryContext,
   CoreTextButton,
   CoreTypographyBody2,
+  coreUseNavigate,
   stringUtils
 } from "@wrappid/core";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,17 +18,17 @@ import AuthLayout from "./layout/AuthLayout";
 
 const LoginWithOtp = () => {
   const dispatch = useDispatch();
+  const navigate = coreUseNavigate();
   const auth = useSelector(state => state.auth);
-  const routeRegistry = useContext(CoreRouteRegistryContext);
   const {
-    // checkLoginOrRegisterSuccess,
-    // authNextPage,
+    checkLoginOrRegisterSuccess,
+    authNextPage,
     navData
   } = auth;
 
   const GoBack = () => {
     dispatch(saveAuthData({
-      authNextPage                  : routeRegistry?.checkUserExists,
+      authNextPage                  : "checkuserexists",
       checkLoginOrRegisterError     : false,
       checkLoginOrRegisterLoading   : false,
       checkLoginOrRegisterSuccess   : false,
@@ -43,13 +42,9 @@ const LoginWithOtp = () => {
    * @todo
    *  review required
    */
-  /* - 
-    {!checkLoginOrRegisterSuccess && authNextPage !== routeRegistry?.checkuserexists ? (
-      <CoreDomNavigate to={"/" + authNextPage} />
-    ) : (
-      <></>
-    )} 
-  */
+  if (!checkLoginOrRegisterSuccess && authNextPage !== "checkuserexists") {
+    navigate(`/${authNextPage}`);
+  }
 
   return (
     <>
@@ -83,7 +78,7 @@ const LoginWithOtp = () => {
             { otp: { to: navData?.emailOrPhone } }
           }
         />
-            
+
       </CoreLayoutItem>
     </>
   );
