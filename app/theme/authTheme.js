@@ -1,6 +1,7 @@
-import { getConfigurationObject } from "@wrappid/styles";
+import { WrappidData } from "@wrappid/styles";
 
-const appThemeConfig = getConfigurationObject()?.theme || {};
+const { themes, config } = WrappidData;
+const appThemeConfig = themes[config?.defultTheme];
 
 export const AUTH_THEME = {
   palette: {

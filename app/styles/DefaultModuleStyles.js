@@ -18,6 +18,7 @@ export default class DefaultModuleStyles extends DefaultCoreStyles {
         backgroundRepeat  : "no-repeat" + IMPORTANT,
         backgroundSize    : "cover" + IMPORTANT,
         height            : "100%" + IMPORTANT,
+        ...this.defaultUtilityStyles.justifyContentCenter
       },
 
       authCard: {

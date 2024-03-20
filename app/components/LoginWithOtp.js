@@ -1,15 +1,13 @@
-import { useContext } from "react";
 
 import {
   CoreBox,
   CoreClasses,
-  CoreDomNavigate,
   CoreForm,
   CoreH1,
   CoreLayoutItem,
-  CoreRouteRegistryContext,
   CoreTextButton,
   CoreTypographyBody2,
+  coreUseNavigate,
   stringUtils
 } from "@wrappid/core";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,8 +18,8 @@ import AuthLayout from "./layout/AuthLayout";
 
 const LoginWithOtp = () => {
   const dispatch = useDispatch();
+  const navigate = coreUseNavigate();
   const auth = useSelector(state => state.auth);
-  const routeRegistry = useContext(CoreRouteRegistryContext);
   const {
     checkLoginOrRegisterSuccess,
     authNextPage,
@@ -30,7 +28,7 @@ const LoginWithOtp = () => {
 
   const GoBack = () => {
     dispatch(saveAuthData({
-      authNextPage                  : routeRegistry?.checkUserExists,
+      authNextPage                  : "checkuserexists",
       checkLoginOrRegisterError     : false,
       checkLoginOrRegisterLoading   : false,
       checkLoginOrRegisterSuccess   : false,
@@ -40,46 +38,47 @@ const LoginWithOtp = () => {
     }));
   };
 
+  /**
+   * @todo
+   *  review required
+   */
+  if (!checkLoginOrRegisterSuccess && authNextPage !== "checkuserexists") {
+    navigate(`/${authNextPage}`);
+  }
+
   return (
     <>
       <CoreLayoutItem id={AuthLayout.PLACEHOLDER.CONTENT}>
-        {!checkLoginOrRegisterSuccess &&
-          authNextPage !== routeRegistry?.checkuserexists ? (
-            <CoreDomNavigate to={"/" + authNextPage} />
-          ) : (
-            <>
-              
-              <CoreH1 styleClasses={[CoreClasses.TEXT.TEXT_CENTER]} variant="h5">
+        <CoreH1 styleClasses={[CoreClasses.TEXT.TEXT_CENTER]} variant="h5">
           Enter OTP
-              </CoreH1>
+        </CoreH1>
 
-              <CoreTypographyBody2>
-                {`We have sent you a verification code on your ${isNaN(navData?.emailOrPhone) ? " email " : " phone "
-                } ${stringUtils.maskEmailOrPhone(
-                  navData?.emailOrPhone
-                    ? navData?.emailOrPhone
-                    : ""
-                )}.\nPlease enter the One Time Password (OTP) to verify your ${isNaN(navData.emailOrPhone) ? " email." : " phone."
-                }`}
-              </CoreTypographyBody2>
+        <CoreTypographyBody2>
+          {`We have sent you a verification code on your ${isNaN(navData?.emailOrPhone) ? " email " : " phone "
+          } ${stringUtils.maskEmailOrPhone(
+            navData?.emailOrPhone
+              ? navData?.emailOrPhone
+              : ""
+          )}.\nPlease enter the One Time Password (OTP) to verify your ${isNaN(navData.emailOrPhone) ? " email." : " phone."
+          }`}
+        </CoreTypographyBody2>
 
-              <CoreBox
-                styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.MARGIN.MB1]}
-              >
-                <CoreTextButton OnClick={GoBack} label="Not you" />
-              </CoreBox>
+        <CoreBox
+          styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.MARGIN.MB1]}
+        >
+          <CoreTextButton OnClick={GoBack} label="Not you" />
+        </CoreBox>
 
-              <CoreForm
-                styleClasses={CoreClasses.LAYOUT.AUTH_FORM_CONTAINER}
-                formId={"loginWithOtp"}
-                mode={"edit"}
-                authenticated={false}
-                initProps={
-                  { otp: { to: navData?.emailOrPhone } }
-                }
-              />
-            </>
-          )}
+        <CoreForm
+          styleClasses={CoreClasses.LAYOUT.AUTH_FORM_CONTAINER}
+          formId={"loginWithOtp"}
+          mode={"edit"}
+          authenticated={false}
+          initProps={
+            { otp: { to: navData?.emailOrPhone } }
+          }
+        />
+
       </CoreLayoutItem>
     </>
   );
