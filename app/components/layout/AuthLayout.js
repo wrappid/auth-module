@@ -2,37 +2,54 @@
 import React, { useContext } from "react";
 
 import {
-  CoreBox, CoreClasses, CoreImage, CoreImageBackground, CoreLayoutPlaceholder, CoreResourceContext, CoreTypographyBody1, coreUseNavigate
+  CoreBox, CoreClasses, CoreImage, CoreImageBackground, CoreLayoutPlaceholder, CoreResourceContext, CoreTypographyBody1
 } from "@wrappid/core";
-import { useSelector } from "react-redux";
 
 import ModuleClasses from "../../styles/ModuleClasses";
 // eslint-disable-next-line import/order
 import AuthCustomFooter from "./AuthCustomFooter";
 
 export default function AuthLayout() {
-  const navigate = coreUseNavigate();
-  const auth = useSelector(state => state.auth);
-  const { redirectUrl } = useSelector(state=>state.app);
+  /**
+   * @todo
+   * commented code will help us handle redirect url post login
+   */
+  // eslint-disable-next-line etc/no-commented-out-code
+  // const navigate = coreUseNavigate();
+  // const {
+  //   uid,
+  //   sessionExpired,
+  //   sessionDetail,
+  //   accessToken,
+  //   refreshToken
+  // } = useSelector(state => state.auth);
+  // const { redirectUrl } = useSelector(state => state.app);
   const resourceContext = useContext(CoreResourceContext);
   const authBackground = resourceContext?.authBackground;
 
-  if (auth?.uid) {
-    if (redirectUrl) {
-      navigate(redirectUrl);
-    } else if (
-      auth.sessionExpired &&
-      auth.sessionDetail &&
-      auth.accessToken &&
-      auth.refreshToken
-    ) {
-      let path = auth.sessionDetail?.location?.pathname;
-
-      navigate("/", { state: { recalledPath: path } });
-    } else {
-      navigate("/");
-    }
-  }
+  // React.useEffect(() => {
+  //   if (uid) {
+  //     if (redirectUrl) {
+  //       navigate(redirectUrl);
+  //     } else if (
+  //       sessionExpired &&
+  //       sessionDetail &&
+  //       accessToken &&
+  //       refreshToken
+  //     ) {
+  //       let path = sessionDetail?.location?.pathname;
+  
+  //       navigate("/", { state: { recalledPath: path } });
+  //     }
+  //   }
+  // }, [
+  //   uid,
+  //   redirectUrl,
+  //   sessionExpired,
+  //   sessionDetail,
+  //   accessToken,
+  //   refreshToken
+  // ]);
 
   return (
     <>
