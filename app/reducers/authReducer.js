@@ -1,21 +1,20 @@
 import { ModuleRoute } from "../constants/app.constants";
 import {
-  SIGNUP_ERROR,
-  SIGNUP_SUCCESS,
-  RESET_PASSWORD_LOADING,
-  RESET_PASSWORD_SUCCESS,
-  RESET_PASSWORD_ERROR,
-  CHANGE_PASSWORD_LOADING,
-  CHANGE_PASSWORD_SUCCESS,
-  CHANGE_PASSWORD_ERROR,
+  ADD_USER_ERROR,
   ADD_USER_LOADING,
   ADD_USER_SUCCESS,
-  ADD_USER_ERROR,
-  SAVE_DEFAULT,
+  AUTHENTICATION_ERROR,
   AUTH_DATA_SAVED,
   AUTH_LOADING,
+  CHANGE_PASSWORD_ERROR,
+  CHANGE_PASSWORD_LOADING,
+  CHANGE_PASSWORD_SUCCESS,
+  CHECK_LOGIN_ERROR,
+  CHECK_LOGIN_LOADING,
   CHECK_LOGIN_SUCCESS_REGISTERED,
   CHECK_LOGIN_SUCCESS_UNREGISTERED,
+  CLIENT_INFORMATION_FETCH_ERROR,
+  CLIENT_INFORMATION_FETCH_SUCCESS,
   GET_PROFILE_BASIC_SUCCESS,
   GET_ROLE_PERMISSION_ERROR,
   GET_ROLE_PERMISSION_LOADING,
@@ -28,17 +27,18 @@ import {
   NAVIGATE_TO_OTP_LOGIN_LOADING,
   NAVIGATE_TO_OTP_LOGIN_SUCCESS,
   NAVIGATE_TO_RESET_PASSWORD_SUCCESS,
+  RESET_CHANGE_PASSWORD_STATUS,
+  RESET_PASSWORD_ERROR,
+  RESET_PASSWORD_LOADING,
+  RESET_PASSWORD_SUCCESS,
+  SAVE_DEFAULT,
   SAVE_EXPIRED_SESSION,
   SAVE_NAV_DATA,
   SESSION_EXPIRED,
   SESSION_RECALLED,
-  TOKEN_REFRESH_SUCCESS,
-  AUTHENTICATION_ERROR,
-  CLIENT_INFORMATION_FETCH_SUCCESS,
-  CLIENT_INFORMATION_FETCH_ERROR,
-  CHECK_LOGIN_LOADING,
-  CHECK_LOGIN_ERROR,
-  RESET_CHANGE_PASSWORD_STATUS
+  SIGNUP_ERROR,
+  SIGNUP_SUCCESS,
+  TOKEN_REFRESH_SUCCESS
 } from "../types/authTypes";
 
 const initState = {
@@ -118,13 +118,14 @@ const authReducer = (state = initState, action) => {
     case LOGIN_SUCCESS:
       return {
         ...state,
-        accessToken : action.payload.accessToken,
-        authError   : null,
-        authLoading : false,
-        authNextPage: ModuleRoute.LOGIN_DASHBOARD,
-        refreshToken: action.payload.refreshToken,
-        uid         : action.payload.id,
-        user        : action.payload,
+        accessToken                : action.payload.accessToken,
+        authError                  : null,
+        authLoading                : false,
+        authNextPage               : "/",
+        checkLoginOrRegisterSuccess: true,
+        refreshToken               : action.payload.refreshToken,
+        uid                        : action.payload.id,
+        user                       : action.payload,
       };
 
     case TOKEN_REFRESH_SUCCESS:

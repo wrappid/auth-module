@@ -2,12 +2,12 @@
 import React, { useContext } from "react";
 
 import {
-  CoreBox, CoreClasses, CoreImage, CoreImageBackground, CoreLayoutPlaceholder, CoreResourceContext, CoreTypographyBody1
+  CoreBox, CoreClasses, CoreGrid, CoreImage, CoreImageBackground, CoreLayoutPlaceholder, CoreResourceContext, CoreTypographyBody1
 } from "@wrappid/core";
 
-import ModuleClasses from "../../styles/ModuleClasses";
 // eslint-disable-next-line import/order
 import AuthCustomFooter from "./AuthCustomFooter";
+import ModuleClasses from "../../styles/ModuleClasses";
 
 export default function AuthLayout() {
   /**
@@ -58,21 +58,13 @@ export default function AuthLayout() {
         resizeMode="cover"
         styleClasses={[CoreClasses.HEIGHT.VH_100]}>
 
-        <CoreBox
-          styleClasses={
-            [
-              CoreClasses.HEIGHT.VH_100,
-              CoreClasses.DISPLAY.FLEX,
-              CoreClasses.FLEX.DIRECTION_COLUMN,
-              CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER,
-              CoreClasses.ALIGNMENT.ALIGN_ITEMS_CENTER,
-            ]
-          }
-        >
+        <CoreGrid styleClasses={
+          [ModuleClasses.AUTH.CONTENT]
+        }>
           <CoreLayoutPlaceholder
+            gridProps={{ gridSize: { md: 3 } }}
             key="authlayoutplaceholder"
             id={AuthLayout.PLACEHOLDER.CONTENT}
-            styleClasses={[ModuleClasses.AUTH.CONATINER]}
           >
             <CoreBox styleClasses={[CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER, CoreClasses.MARGIN.MB2]}>
               {resourceContext?.appLogo ?
@@ -83,7 +75,7 @@ export default function AuthLayout() {
                 : <CoreTypographyBody1>{ }</CoreTypographyBody1>}
             </CoreBox>
           </CoreLayoutPlaceholder>
-        </CoreBox>
+        </CoreGrid>
 
         <AuthCustomFooter key="authlayoutfooter" />
       </CoreImageBackground>

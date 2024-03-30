@@ -51,9 +51,9 @@ const LoginWithPassword = () => {
     <>
       <CoreLayoutItem id={AuthLayout.PLACEHOLDER.CONTENT}>
         {(navigateToResetPasswordSuccess ||
-          navigateToOtpSuccess ||
-          !checkLoginOrRegisterSuccess) &&
-          authNextPage !== "enterpassword"
+          navigateToOtpSuccess) ||
+          (!checkLoginOrRegisterSuccess &&
+          authNextPage !== "enterpassword")
           ? (
             <CoreDomNavigate to={`/${authNextPage}`} />
           ) : (
