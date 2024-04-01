@@ -34,7 +34,7 @@ const LoginWithPassword = () => {
   const GoBack = () => {
     dispatch(
       saveAuthData({
-        authNextPage                  : "checkuserexist",
+        authNextPage                  : "checkUserExist",
         checkLoginOrRegisterError     : false,
         checkLoginOrRegisterLoading   : false,
         checkLoginOrRegisterMsg       : false,
@@ -53,7 +53,7 @@ const LoginWithPassword = () => {
         {(navigateToResetPasswordSuccess ||
           navigateToOtpSuccess) ||
           (!checkLoginOrRegisterSuccess &&
-          authNextPage !== "enterpassword")
+            authNextPage !== "enterpassword")
           ? (
             <CoreDomNavigate to={`/${authNextPage}`} />
           ) : (
@@ -112,11 +112,11 @@ const LoginWithPassword = () => {
                   * we need send otp to the provided email or phone
                   * fix required: email or phone getting removed from store auth.navData
                   */}
-                <CoreLink styleClasses={[CoreClasses.COLOR.TEXT_WHITE]} href={"/resetpassword"}>
+                <CoreLink href={"/resetpassword"}>
                   Reset Password
                 </CoreLink>
 
-                <CoreLink styleClasses={[CoreClasses.COLOR.TEXT_WHITE]} href={"/enterotp"}>
+                <CoreLink href={"/enterotp"}>
                   Login with OTP
                 </CoreLink>
               </CoreBox>

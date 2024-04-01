@@ -28,7 +28,7 @@ const LoginWithOtp = () => {
 
   const GoBack = () => {
     dispatch(saveAuthData({
-      authNextPage                  : "checkuserexists",
+      authNextPage                  : "checkUserExist",
       checkLoginOrRegisterError     : false,
       checkLoginOrRegisterLoading   : false,
       checkLoginOrRegisterSuccess   : false,

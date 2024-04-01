@@ -33,7 +33,7 @@ const RegisterOrResetPassword = () => {
 
   const GoBack = () => {
     dispatch(saveAuthData({
-      authNextPage                  : "checkuserexist",
+      authNextPage                  : "checkUserExist",
       checkLoginOrRegisterError     : false,
       checkLoginOrRegisterLoading   : false,
       checkLoginOrRegisterMsg       : false,
@@ -113,7 +113,6 @@ const RegisterOrResetPassword = () => {
             By signing up you agree to our{" "}
 
             <CoreLink
-              styleClasses={[CoreClasses.COLOR.TEXT_WHITE]}
               href={
                 appConfig?.wrappid?.privacyLink ||
                 "#"
@@ -124,7 +123,6 @@ const RegisterOrResetPassword = () => {
             <CoreTypographyBody2 component="span">&</CoreTypographyBody2>{" "}
 
             <CoreLink
-              styleClasses={[CoreClasses.COLOR.TEXT_WHITE]}
               href={
                 appConfig?.wrappid?.termsLink ||
                 "#"
