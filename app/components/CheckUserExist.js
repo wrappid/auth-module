@@ -7,6 +7,7 @@ import {
 import { useSelector } from "react-redux";
 
 import AuthLayout from "./layout/AuthLayout";
+import { ModuleRoute } from "../constants/app.constants";
 
 export default function CheckUserExist() {
   const auth = useSelector(state => state.auth);
@@ -15,7 +16,7 @@ export default function CheckUserExist() {
   return (
     <>
       <CoreLayoutItem id={AuthLayout.PLACEHOLDER.CONTENT}>
-        {checkLoginOrRegisterSuccess && authNextPage !== "checkuserexists" ? (
+        {checkLoginOrRegisterSuccess && authNextPage.toLowerCase() !== ModuleRoute.LOGIN_ROUTE ? (
           <CoreDomNavigate to={`/${authNextPage}`} />
         ) : (
           <CoreForm

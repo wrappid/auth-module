@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { clearAuthState, saveAuthData } from "../actions/authActions";
 // eslint-disable-next-line import/order
 import AuthLayout from "./layout/AuthLayout";
+import { ModuleRoute } from "../constants/app.constants";
 
 const LoginWithPassword = () => {
   const dispatch = useDispatch();
@@ -34,7 +35,7 @@ const LoginWithPassword = () => {
   const GoBack = () => {
     dispatch(
       saveAuthData({
-        authNextPage                  : "checkUserExist",
+        authNextPage                  : ModuleRoute.LOGIN_ROUTE,
         checkLoginOrRegisterError     : false,
         checkLoginOrRegisterLoading   : false,
         checkLoginOrRegisterMsg       : false,
@@ -53,7 +54,7 @@ const LoginWithPassword = () => {
         {(navigateToResetPasswordSuccess ||
           navigateToOtpSuccess) ||
           (!checkLoginOrRegisterSuccess &&
-            authNextPage !== "enterpassword")
+            authNextPage.toLowerCase() !== ModuleRoute.PASSWORD_ROUTE)
           ? (
             <CoreDomNavigate to={`/${authNextPage}`} />
           ) : (
@@ -93,8 +94,8 @@ const LoginWithPassword = () => {
 
               <CoreForm
                 styleClasses={CoreClasses.LAYOUT.AUTH_FORM_CONTAINER}
-                formId={"loginWithPassword"}
-                mode={"edit"}
+                formId="loginWithPassword"
+                mode="edit"
                 authenticated={false}
               />
 
