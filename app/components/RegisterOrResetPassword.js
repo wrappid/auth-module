@@ -3,6 +3,7 @@ import React from "react";
 import {
   CoreBox,
   CoreClasses,
+  CoreDomNavigate,
   CoreForm,
   CoreH1,
   CoreLayoutItem,
@@ -20,6 +21,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { saveAuthData } from "../actions/authActions";
 // eslint-disable-next-line import/order
 import AuthLayout from "./layout/AuthLayout";
+import { ModuleRoute } from "../constants/app.constants";
 
 const RegisterOrResetPassword = () => {
   const dispatch = useDispatch();
@@ -33,7 +35,7 @@ const RegisterOrResetPassword = () => {
 
   const GoBack = () => {
     dispatch(saveAuthData({
-      authNextPage                  : "checkuserexist",
+      authNextPage                  : ModuleRoute.LOGIN_ROUTE,
       checkLoginOrRegisterError     : false,
       checkLoginOrRegisterLoading   : false,
       checkLoginOrRegisterMsg       : false,
@@ -69,74 +71,76 @@ const RegisterOrResetPassword = () => {
 
   if (
     !checkLoginOrRegisterSuccess &&
-    (authNextPage !== "register" ||
-      authNextPage !== "resetpassword")
+    (authNextPage.toLowerCase() !== ModuleRoute.REGISTER_ROUTE ||
+      authNextPage.toLowerCase() !== ModuleRoute.RESET_PASSWORD_ROUTE)
   ) {
     navigate(`/${authNextPage}`);
   }
 
   return (
     <>
-      <CoreLayoutItem id={AuthLayout.PLACEHOLDER.CONTENT}>
-        <CoreH1 variant="h5" styleClasses={[CoreClasses.TEXT.TEXT_CENTER]}>
-          {`Verify your${isNaN(navData?.emailOrPhone) ? " email" : " phone"
-          }`}
-        </CoreH1>
+      {(!checkLoginOrRegisterSuccess &&
+        (authNextPage.toLowerCase() !== ModuleRoute.REGISTER_ROUTE ||
+          authNextPage.toLowerCase() !== ModuleRoute.RESET_PASSWORD_ROUTE)) ? <CoreDomNavigate to={`/${authNextPage}`} /> : (
+          <CoreLayoutItem id={AuthLayout.PLACEHOLDER.CONTENT}>
+            <CoreH1 variant="h5" styleClasses={[CoreClasses.TEXT.TEXT_CENTER]}>
+              {`Verify your${isNaN(navData?.emailOrPhone) ? " email" : " phone"
+              }`}
+            </CoreH1>
 
-        {authNextPage === routeRegistry.register ? (
-          showEmailOrPhone()
-        ) : (
-          <>
-            <CoreTypographyBody1 styleClasses={[CoreClasses.TEXT.TEXT_CENTER]}>
-              Reset Password through OTP
-            </CoreTypographyBody1>
+            {authNextPage === routeRegistry.register ? (
+              showEmailOrPhone()
+            ) : (
+              <>
+                <CoreTypographyBody1 styleClasses={[CoreClasses.TEXT.TEXT_CENTER]}>
+                Reset Password through OTP
+                </CoreTypographyBody1>
 
-            {showEmailOrPhone()}
-          </>
-        )}
+                {showEmailOrPhone()}
+              </>
+            )}
 
-        <CoreBox
-          styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.MARGIN.MB1]}>
-          <CoreTextButton OnClick={GoBack} label="Not You" />
-        </CoreBox>
+            <CoreBox
+              styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.MARGIN.MB1]}>
+              <CoreTextButton OnClick={GoBack} label="Not You" />
+            </CoreBox>
 
-        <CoreForm
-          styleClasses={CoreClasses.LAYOUT.AUTH_FORM_CONTAINER}
-          formId="loginWithResetPassword"
-          mode="edit"
-          authenticated={false}
-          initProps={{ otp: { to: navData?.emailOrPhone } }}
-        />
+            <CoreForm
+              styleClasses={CoreClasses.LAYOUT.AUTH_FORM_CONTAINER}
+              formId="loginWithResetPassword"
+              mode="edit"
+              authenticated={false}
+              initProps={{ otp: { to: navData?.emailOrPhone } }}
+            />
 
-        {authNextPage === routeRegistry?.register && (
-          <CoreTypographyBody2>
-            By signing up you agree to our{" "}
+            {authNextPage === routeRegistry?.register && (
+              <CoreTypographyBody2>
+              By signing up you agree to our{" "}
 
-            <CoreLink
-              styleClasses={[CoreClasses.COLOR.TEXT_WHITE]}
-              href={
-                appConfig?.wrappid?.privacyLink ||
-                "#"
-              }>
-              Privacy Policy
-            </CoreLink>{" "}
+                <CoreLink
+                  href={
+                    appConfig?.wrappid?.privacyLink ||
+                  "#"
+                  }>
+                Privacy Policy
+                </CoreLink>{" "}
 
-            <CoreTypographyBody2 component="span">&</CoreTypographyBody2>{" "}
+                <CoreTypographyBody2 component="span">&</CoreTypographyBody2>{" "}
 
-            <CoreLink
-              styleClasses={[CoreClasses.COLOR.TEXT_WHITE]}
-              href={
-                appConfig?.wrappid?.termsLink ||
-                "#"
-              }>
-              Terms
-            </CoreLink>
+                <CoreLink
+                  href={
+                    appConfig?.wrappid?.termsLink ||
+                  "#"
+                  }>
+                Terms
+                </CoreLink>
 
-            {"."}
-          </CoreTypographyBody2>
-        )}
+                {"."}
+              </CoreTypographyBody2>
+            )}
 
-      </CoreLayoutItem>
+          </CoreLayoutItem>)
+      }
     </>
   );
 };
