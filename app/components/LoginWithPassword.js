@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { clearAuthState, saveAuthData } from "../actions/authActions";
 // eslint-disable-next-line import/order
 import AuthLayout from "./layout/AuthLayout";
+import { ModuleRoute } from "../constants/app.constants";
 
 const LoginWithPassword = () => {
   const dispatch = useDispatch();
@@ -34,7 +35,7 @@ const LoginWithPassword = () => {
   const GoBack = () => {
     dispatch(
       saveAuthData({
-        authNextPage                  : "checkuserexist",
+        authNextPage                  : ModuleRoute.LOGIN_ROUTE,
         checkLoginOrRegisterError     : false,
         checkLoginOrRegisterLoading   : false,
         checkLoginOrRegisterMsg       : false,
@@ -51,9 +52,9 @@ const LoginWithPassword = () => {
     <>
       <CoreLayoutItem id={AuthLayout.PLACEHOLDER.CONTENT}>
         {(navigateToResetPasswordSuccess ||
-          navigateToOtpSuccess ||
-          !checkLoginOrRegisterSuccess) &&
-          authNextPage !== "enterpassword"
+          navigateToOtpSuccess) ||
+          (!checkLoginOrRegisterSuccess &&
+            authNextPage.toLowerCase() !== ModuleRoute.PASSWORD_ROUTE)
           ? (
             <CoreDomNavigate to={`/${authNextPage}`} />
           ) : (
@@ -93,8 +94,8 @@ const LoginWithPassword = () => {
 
               <CoreForm
                 styleClasses={CoreClasses.LAYOUT.AUTH_FORM_CONTAINER}
-                formId={"loginWithPassword"}
-                mode={"edit"}
+                formId="loginWithPassword"
+                mode="edit"
                 authenticated={false}
               />
 
@@ -112,11 +113,11 @@ const LoginWithPassword = () => {
                   * we need send otp to the provided email or phone
                   * fix required: email or phone getting removed from store auth.navData
                   */}
-                <CoreLink styleClasses={[CoreClasses.COLOR.TEXT_WHITE]} href={"/resetpassword"}>
+                <CoreLink href={"/resetpassword"}>
                   Reset Password
                 </CoreLink>
 
-                <CoreLink styleClasses={[CoreClasses.COLOR.TEXT_WHITE]} href={"/enterotp"}>
+                <CoreLink href={"/enterotp"}>
                   Login with OTP
                 </CoreLink>
               </CoreBox>
