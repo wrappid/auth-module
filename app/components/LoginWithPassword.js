@@ -1,3 +1,4 @@
+import React from "react";
 
 import {
   CoreAvatar,
@@ -10,6 +11,7 @@ import {
   CoreLink,
   CoreTextButton,
   CoreTypographyBody2,
+  coreUseNavigate,
   stringUtils
 } from "@wrappid/core";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,6 +23,7 @@ import { ModuleRoute } from "../constants/app.constants";
 
 const LoginWithPassword = () => {
   const dispatch = useDispatch();
+  const navigate = coreUseNavigate();
   const auth = useSelector(state => state.auth);
   const {
     navigateToResetPasswordSuccess,
@@ -30,7 +33,11 @@ const LoginWithPassword = () => {
     name,
     navData,
     photo,
+    uid,
+    accessToken
   } = auth;
+
+  let authenticated = uid && accessToken ? true : false;
 
   const GoBack = () => {
     dispatch(
@@ -47,6 +54,12 @@ const LoginWithPassword = () => {
 
     dispatch(clearAuthState());
   };
+
+  React.useEffect(() => {
+    if (authenticated) {
+      navigate("/");
+    }
+  }, [authenticated]);
 
   return (
     <>

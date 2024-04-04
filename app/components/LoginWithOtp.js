@@ -1,3 +1,4 @@
+import React from "react";
 
 import {
   CoreBox,
@@ -26,8 +27,12 @@ const LoginWithOtp = () => {
   const {
     checkLoginOrRegisterSuccess,
     authNextPage,
-    navData
+    navData,
+    uid,
+    accessToken
   } = auth;
+
+  let authenticated = uid && accessToken ? true : false;
 
   const GoBack = () => {
     dispatch(saveAuthData({
@@ -44,6 +49,12 @@ const LoginWithOtp = () => {
     //   navigate(`/${authNextPage}`);
     // }
   };
+
+  React.useEffect(() => {
+    if (authenticated) {
+      navigate("/");
+    }
+  }, [authenticated]);
 
   /**
    * @todo
