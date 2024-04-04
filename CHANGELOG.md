@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.5](https://https//github.com/wrappid/wrappid-module/compare/v0.0.4...v0.0.5) (2024-04-04)
+
+
+### Bug Fixes
+
+* **core:** :bug: post login redirect to landing page issue resolved ([227d7a9](https://https//github.com/wrappid/wrappid-module/commit/227d7a905c48376cf8dbdfb3bc6eafc99a404274)), closes [#40](https://https//github.com/wrappid/wrappid-module/issues/40)
+
 ### [0.0.4](https://https//github.com/wrappid/wrappid-module/compare/v0.0.3...v0.0.4) (2024-04-03)
 
 
