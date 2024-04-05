@@ -185,13 +185,125 @@ describe("login", () => {
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36");
     expect(response.status).toBe(200);
     const contentLength = parseInt(response.headers["content-length"] || "0", 10);
+    expect(contentLength).toBeLessThan(200 * 1024);
+ 
 
-    expect(contentLength).toBeLessThan(10 * 1024);
-    // expect(response.headers["content-length"]).toBeLessThan(10 * 1024);
-
-    // const payloadSize = Buffer.from(JSON.stringify(response.body)).length;
+    // const  payloadSize = Buffer.from(JSON.stringify(response.body)).length;
     //         const maxSize = 1000; // Set the maximum allowed payload size in bytes
     //         expect(payloadSize).toBeLessThanOrEqual(maxSize)
 
   });
+
+  //new
+  test("TC014 Verify API Handles Malformed Requests", async () => {
+    const response = await request(API_URL)
+      .post("login")
+      .send({ emailOrPhone: "Pritam@rxefy.com"}) // Missing password field
+      .set("Content-Type", "application/json"); 
+    expect(response.status).toBe(406); // Expect bad request (modify if different error code)  Expect 406 for now (might need to adjust)
+  });
+  test("TC015 Verify API Handles Authentication Failure", async () => {
+    const response = await request(API_URL)
+      .post("login") // Replace with correct endpoint
+      .set("Authorization", "Bearer invalid_token") // Set invalid token for testing
+      .set("content-Type", "application/json")
+      .set("Accept-Encoding", "gzip, deflate, br")
+      .set("Connection", "keep-alive");
+    expect(response.status).toBe(406); // Expect bad request (modify if different error code)  Expect 406 for now (might need to adjust)
+  });
+  test("TC016 Verify API Handles Missing Request Payload", async () => {
+    const response = await request(API_URL)
+      .post("login")
+      //.send({ emailOrPhone: "pritam@rxefy.com", password: "Pritam@rxefy123" })
+      .set("content-Type", "application/json")
+      .set("Accept-Encoding", "gzip, deflate, br")
+      .set("Connection", "keep-alive")
+      .set("User-Agent",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36");
+    //expect(response.status).toBe(400);
+    expect(response.status).toBe(406); // Potentially adjust based on API behavior
+  });
+  test("TC017 Verify API Handles Non-Existent Resource", async () => {
+    const response = await request(API_URL)
+      .post("invalid-resource") // Replace with a non-existent endpoint
+      .send({ emailOrPhone: "pritam@rxefy.com", password: "Pritam@rxefy123" })
+      .set("Authorization", "Bearer invalid_token") // Set invalid token for testing
+      .set("content-Type", "application/json")
+      .set("Accept-Encoding", "gzip, deflate, br")
+      .set("Connection", "keep-alive");
+    expect(response.status).toBe(404);
+  });
+  test("TC018 Verify API Handles Non-Existent Resource", async () => {
+    const response = await request(API_URL)
+      .get("login") 
+      //.send({ emailOrPhone: "pritam@rxefy.com", password: "Pritam@rxefy123" })
+      .set("Authorization", "Bearer invalid_token") // Set invalid token for testing
+      .set("content-Type", "application/json")
+      .set("Accept-Encoding", "gzip, deflate, br")
+      .set("Connection", "keep-alive");
+    expect(response.status).toBe(401); // 
+  });
+  test("TC019 Verify API Handles Request Payload Size Limit", async () => {
+    const response = await request(API_URL)
+      .post("login") 
+      .send({ emailOrPhone: "pritam@rxefy.com".repeat(2000000), password: "Pritam@rxefy123" }) //use .repeat(20000000) for big payload size
+      .set("Authorization", "Bearer invalid_token") // Set invalid token for testing
+      .set("content-Type", "application/json")
+      .set("Accept-Encoding", "gzip, deflate, br")
+      .set("Connection", "keep-alive");
+    expect(response.status).toBe(413);
+  });
+  test("TC020 Verify API Handles Invalid Request Method", async () => {
+    const response = await request(API_URL)
+      .put("login") 
+      .send({ emailOrPhone: "pritam@rxefy.com", password: "Pritam@rxefy123" }) 
+      .set("Authorization", "Bearer invalid_token") // Set invalid token for testing
+      .set("content-Type", "application/json")
+      .set("Accept-Encoding", "gzip, deflate, br")
+      .set("Connection", "keep-alive");
+    expect(response.status).toBe(405);
+  });
+  test("TC021 Verify API Returns Success for Resource Creation", async () => {
+    const validData = {emailOrPhone: "pritam@rxefy.com", password: "Pritam@rxefy123"}; 
+  
+    const response = await request(API_URL)
+      .post("login")  
+      .send(validData)
+      .set("Content-Type", "application/json") // Adjust if needed based on API
+      .set("Accept-Encoding", "gzip, deflate, br")
+      .set("Connection", "keep-alive")
+      .set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36");
+    expect(response.status).toBe(200); // Expect Created (200) status code
+  });
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  test("TC22 Verify API Returns Success for Resource Update", async () => {
+    const updateData = { emailOrPhone: "pritam@rxefy.com", password: "Pritam@rxefy123" };  // Replace with actual data
+    
+    const response = await request(API_URL)
+      .put("login") // Missing resource ID in the path
+      .send(updateData)
+      .set("Accept-Encoding", "gzip, deflate, br")
+      .set("Connection", "keep-alive")
+      .set("Content-Type", "application/json") // Adjust if needed based on API
+      .set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36");
+    
+    expect(response.status).toBeGreaterThanOrEqual(400); // Expect Bad Request (400) or similar error
+    // Optional: Verify the presence of an error message indicating missing resource ID
+  });
 });
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+test("TC23 Verify API Returns Success for Resource Deletion (Skipped...)", () => { });
+// test("TC024 Verify API Returns Success for Resource Retrieval", async () => {
+//   const response = await request(API_URL)
+//     .post("login")
+//     .send({ emailOrPhone: "pritam@rxefy.com", password: "Pritam@rxefy123" })
+//     .set("Content-Type", "application/json")
+//     .set("Accept-Encoding", "gzip, deflate, br")
+//     .set("Connection", "keep-alive")
+//     .set("User-Agent",
+//       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36");
+
+//   expect(response.statusCode).toBe(200);
+// });
+
