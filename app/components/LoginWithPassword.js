@@ -42,12 +42,12 @@ const LoginWithPassword = () => {
   const GoBack = () => {
     dispatch(
       saveAuthData({
-        authNextPage                  : ModuleRoute.LOGIN_ROUTE,
-        checkLoginOrRegisterError     : false,
-        checkLoginOrRegisterLoading   : false,
-        checkLoginOrRegisterMsg       : false,
-        checkLoginOrRegisterSuccess   : false,
-        navigateToOtpSuccess          : false,
+        authNextPage: ModuleRoute.LOGIN_ROUTE,
+        checkLoginOrRegisterError: false,
+        checkLoginOrRegisterLoading: false,
+        checkLoginOrRegisterMsg: false,
+        checkLoginOrRegisterSuccess: false,
+        navigateToOtpSuccess: false,
         navigateToResetPasswordSuccess: false,
       })
     );
@@ -102,7 +102,7 @@ const LoginWithPassword = () => {
               <CoreBox
                 styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.MARGIN.MB1]}
               >
-                <CoreTextButton OnClick={GoBack} label="Not you" />
+                <CoreTextButton onClick={GoBack} label="Not you" />
               </CoreBox>
 
               <CoreForm
