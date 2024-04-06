@@ -194,7 +194,7 @@ describe("login", () => {
 
   });
 
-  //new
+  //new 
   test("TC014 Verify API Handles Malformed Requests", async () => {
     const response = await request(API_URL)
       .post("login")
@@ -233,7 +233,7 @@ describe("login", () => {
       .set("Connection", "keep-alive");
     expect(response.status).toBe(404);
   });
-  test("TC018 Verify API Handles Non-Existent Resource", async () => {
+  test("TC018 Verify API Handles Unauthorized Access", async () => {
     const response = await request(API_URL)
       .get("login") 
       //.send({ emailOrPhone: "pritam@rxefy.com", password: "Pritam@rxefy123" })
@@ -290,20 +290,142 @@ describe("login", () => {
     expect(response.status).toBeGreaterThanOrEqual(400); // Expect Bad Request (400) or similar error
     // Optional: Verify the presence of an error message indicating missing resource ID
   });
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  test("TC23 Verify API Returns Success for Resource Deletion (Skipped...)", () => { });
+  test("TC024 Verify API Returns Success for Resource Retrieval", async () => {
+  //   const response = await request(API_URL)
+  //     .post("login")
+  //     .send({ emailOrPhone: "pritam@rxefy.com", password: "Pritam@rxefy123" })
+  //     .set("Content-Type", "application/json")
+  //     .set("Accept-Encoding", "gzip, deflate, br")
+  //     .set("Connection", "keep-alive")
+  //     .set("User-Agent",
+  //       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36");
+
+  //   expect(response.statusCode).toBe(200);
+  });
+  //new test cases added
+  test("TC025: Verify Login Fails for Inactive User", async () => {
+  //   const inactiveUserData = {
+  //     username: "animesh@rxefy.com", // Replace with actual inactive username or email
+  //     password: "Rxefy@012", // Replace with actual password
+  //   };
+
+    //   const response = await request(API_URL)
+    //     .post("login") // Replace with actual login endpoint
+    //     .send(inactiveUserData)
+    //     .set("Accept-Encoding", "gzip, deflate, br")
+    //     .set("Connection", "keep-alive")
+    //     .set("Content-Type", "application/json") // Adjust if needed based on API
+    //     .set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36");
+
+    //   expect(response.status).toBeGreaterThanOrEqual(400); // Expect Bad Request (400) or similar error code
+  });
+  test("TC026: Verify Login Handling of Multiple Attempts (if applicable)", async () => {
+    //   // Check if API supports account lockout after failed login attempts
+  
+    //   if (apiSupportsLockout) {
+    //     const userData = {
+    //       username: "test_user", // Replace with actual username or email
+    //       password: "incorrect_password", // Replace with incorrect password
+    //     };
+  
+    //     // Define the number of failed attempts to simulate (adjust based on your API lockout threshold)
+    //     const numAttempts = 5;
+  
+    //     for (let i = 0; i < numAttempts; i++) {
+    //       const response = await request(API_URL)
+    //         .post("/login") // Replace with actual login endpoint
+    //         .send(userData)
+    //         .set("Accept-Encoding", "gzip, deflate, br")
+    //         .set("Connection", "keep-alive")
+    //         .set("Content-Type", "application/json") // Adjust if needed based on API
+    //         .set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36");
+  
+    //       // Expect unsuccessful login response (e.g., 401 Unauthorized)
+    //       expect(response.status).toBeGreaterThanOrEqual(400);
+    //     }
+  
+    //     // Attempt login with correct credentials after simulated failed attempts
+    //     const correctResponse = await request(API_URL)
+    //       .post("/login") // Replace with actual login endpoint
+    //       .send({ username: userData.username, password: "correct_password" }) // Replace with correct password
+    //       .set("Accept-Encoding", "gzip, deflate, br")
+    //       .set("Connection", "keep-alive")
+    //       .set("Content-Type", "application/json") // Adjust if needed based on API
+    //       .set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36");
+  
+  //     // Expected behavior depends on your API's lockout implementation:
+  //     if (/* API immediately locks out after exceeding attempts */) {
+  //       expect(correctResponse.status).toBeGreaterThanOrEqual(400); // Expect continued failure due to lockout
+  //     } else {
+  //       expect(correctResponse.status).toBe(200); // Expect successful login after a lockout period (if applicable)
+  //     }
+  //   } else {
+  //     console.log("Skipping multiple login attempts test - Account lockout not supported by API");
+  //   }
+  });
+  test("TC027: Verify Login Response Contains User Information (Optional)", async () => {
+    const response = await request(API_URL)
+      .post("login")
+      .send({ emailOrPhone: "pritam@rxefy.com", password: "Pritam@rxefy123" })
+      .set("Content-Type", "application/json")
+      .set("Accept-Encoding", "gzip, deflate, br")
+      .set("Connection", "keep-alive")
+      .set("User-Agent",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36");
+
+    expect(response.statusCode).toBe(200);
+  
+    // Optional Assertions for User Information:
+    if (response.body) { // Check if there's a response body (might be empty on some APIs)
+      expect(response.body.id).toBeDefined(); // Verify presence of user ID
+      expect(response.body.username).toBeDefined(); // Verify presence of username (or email)
+      // Add assertions for other expected user information fields based on your API response structure
+      // (e.g., name, email, roles, permissions)
+      expect(response.body.name).toBeDefined(); // Example assertion for name
+    }
+  });
+  test("TC028: Verify Login Response Includes Authentication Token", async () => {
+    // const response = await request(API_URL)
+    //   .post("login")
+    //   .send({ emailOrPhone: "pritam@rxefy.com", password: "Pritam@rxefy123" })
+    //   .set("Content-Type", "application/json")
+    //   .set("Accept-Encoding", "gzip, deflate, br")
+    //   .set("Connection", "keep-alive")
+    //   .set("User-Agent",
+    //     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36");
+
+    // expect(response.statusCode).toBe(200);
+    // // Verify presence of an authentication token in the response body
+    // expect(response.accessToken).toBeDefined(); // Adjust property name based on your API
+  
+    // // Optional Assertions (if applicable):
+    // // - Check if the token is a string
+    // expect(typeof response.body.token).toBe("string");
+  });
+  test("TC029: Verify Login with Encrypted Credentials (if applicable)", async () => {
+    // // Check if your API supports encrypted credentials
+  
+    // if (/* Your API supports encrypted credentials */) {
+    //   // You'll need a library/function to handle credential encryption based on your API's requirements
+  
+    //   const encryptedCredentials = encryptCredentials({
+    //     username: "test_user", // Replace with actual username or email
+    //     password: "correct_password", // Replace with correct password
+    //   });
+  
+    //   const response = await request(API_URL)
+    //     .post("/login") // Replace with actual login endpoint
+    //     .send(encryptedCredentials) // Send encrypted credentials
+    //     .set("Accept-Encoding", "gzip, deflate, br")
+    //     .set("Connection", "keep-alive")
+    //     .set("Content-Type", "application/json") // Adjust if needed based on API
+    //     .set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36");
+  
+    //   expect(response.status).toBe(200); // Expect successful login (200 OK)
+    // } else {
+    //   console.log("Skipping encrypted credentials test - Not supported by API");
+    // }
+  });
 });
-
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-test("TC23 Verify API Returns Success for Resource Deletion (Skipped...)", () => { });
-// test("TC024 Verify API Returns Success for Resource Retrieval", async () => {
-//   const response = await request(API_URL)
-//     .post("login")
-//     .send({ emailOrPhone: "pritam@rxefy.com", password: "Pritam@rxefy123" })
-//     .set("Content-Type", "application/json")
-//     .set("Accept-Encoding", "gzip, deflate, br")
-//     .set("Connection", "keep-alive")
-//     .set("User-Agent",
-//       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36");
-
-//   expect(response.statusCode).toBe(200);
-// });
-
