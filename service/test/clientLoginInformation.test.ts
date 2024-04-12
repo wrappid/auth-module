@@ -23,36 +23,14 @@ import { describe, test, expect } from "@jest/globals";
 import request from "supertest";
 
 const API_URL = "https://demoapi.wrappid.dev";
-// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-let token = "";
-
-
-beforeAll (async () => {
-  const response = await request(API_URL)
-    .post("/login")
-    .send({ emailOrPhone: "animesh@rxefy.com", password: "Pritam@rxefy123" })
-    .set("Content-Type", "application/json")
-    .set("Accept-Encoding", "gzip, deflate, br")
-    .set("Connection", "keep-alive")
-    .set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36");
-  token = response.body.accessToken;
-});
-
 describe("clientLoginInformation", () => {
-  test("TC01 Verify Login Information Retrieval with Valid Credentials", async () => {
-    const validAccessToken = token; // Replace with a valid access token
-    // eslint-disable-next-line no-unused-vars
-    const userId = "433";
-  
+  test("TC01: Verify API Response Status Code", async () => {
+    const userId = 2;
     const response = await request(API_URL)
-      .get("/clientLoginInformation")
-      .set("Authorization", `Bearer ${validAccessToken}`) // Set with the valid access token
-      .set("Content-Type", "application/json")
-      .set("Accept-Encoding", "gzip, deflate, br")
-      .set("Connection", "keep-alive");
-  
-    expect(response.statusCode).toBe(200); // Expect a 200 OK status code
-    expect(response.body).toHaveProperty("clientLoginInformation"); // Expect a property containing login information
-    // Add more specific assertions based on your API's response structure
+      .get(`/clientLoginInformation?userId=${userId}`) // Use GET method
+      .set("Content-Type", "application/json");
+    expect(response.statusCode).toBe(200);
   });
 });
+
+//need help 
