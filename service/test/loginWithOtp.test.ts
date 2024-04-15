@@ -387,24 +387,7 @@ describe("loginWithOtp", () => {
       expect(response.body.name).toBeDefined(); // Example assertion for name
     }
   });
-  test("TC028: Verify loginWithOtp Response Includes Authentication Token", async () => {
-    // const response = await request(API_URL)
-    //   .post("loginWithOtp")
-    //   .send({ emailOrPhone: "pritam@rxefy.com", otp: "666001" })
-    //   .set("Content-Type", "application/json")
-    //   .set("Accept-Encoding", "gzip, deflate, br")
-    //   .set("Connection", "keep-alive")
-    //   .set("User-Agent",
-    //     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36");
-
-    // expect(response.statusCode).toBe(200);
-    // // Verify presence of an authentication token in the response body
-    // expect(response.accessToken).toBeDefined(); // Adjust property name based on your API
   
-    // // Optional Assertions (if applicable):
-    // // - Check if the token is a string
-    // expect(typeof response.body.token).toBe("string");
-  });
   test("TC029: Verify loginWithOtp with Encrypted Credentials (if applicable)", async () => {
     // // Check if your API supports encrypted credentials
   
