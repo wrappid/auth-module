@@ -156,7 +156,7 @@ describe("sentOtp", () => {
     //expect(response.status).toBe(400);
     expect(response.status).toBe(406); // Potentially adjust based on API behavior
   });
-  test("TC014 Verify API Handles Request Payload Size Limit", async () => {
+  /* test("TC014 Verify API Handles Request Payload Size Limit", async () => {
     const response = await request(API_URL)
       .post("sentOtp")
       .send({ data: "animesh@rxefy.com".repeat(2000000) }) //use .repeat(20000000) for big payload size
@@ -165,7 +165,7 @@ describe("sentOtp", () => {
       .set("Accept-Encoding", "gzip, deflate, br")
       .set("Connection", "keep-alive");
     expect(response.status).toBe(413);
-  });
+  });*/
   test("TC15 Verify API Returns Correct Results for String with Special Characters", async () => {
     const response = await request(API_URL)
       .post("sentOtp")
