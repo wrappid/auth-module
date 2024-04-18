@@ -42,12 +42,12 @@ const LoginWithPassword = () => {
   const GoBack = () => {
     dispatch(
       saveAuthData({
-        authNextPage: ModuleRoute.LOGIN_ROUTE,
-        checkLoginOrRegisterError: false,
-        checkLoginOrRegisterLoading: false,
-        checkLoginOrRegisterMsg: false,
-        checkLoginOrRegisterSuccess: false,
-        navigateToOtpSuccess: false,
+        authNextPage                  : ModuleRoute.LOGIN_ROUTE,
+        checkLoginOrRegisterError     : false,
+        checkLoginOrRegisterLoading   : false,
+        checkLoginOrRegisterMsg       : false,
+        checkLoginOrRegisterSuccess   : false,
+        navigateToOtpSuccess          : false,
         navigateToResetPasswordSuccess: false,
       })
     );
