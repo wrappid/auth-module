@@ -732,7 +732,7 @@ const refreshTokenHelper = async (req: any, res: any) => {
 const clientLoginInformationHelper = async (req: any, res: any) => {
   try {
     console.log(res);
-    const userID = req.body.userId;
+    const userID = req.user.userId;
 
     // ip
     const ip = req?.socket?.remoteAddress || req?.ip || "Not found";
