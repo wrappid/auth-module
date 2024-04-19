@@ -1,5 +1,5 @@
 
-import { describe, test, expect } from "@jest/globals";
+import { describe, test, expect, beforeAll } from "@jest/globals";
 import request from "supertest";
 
 const API_URL = "https://demoapi.wrappid.dev";
