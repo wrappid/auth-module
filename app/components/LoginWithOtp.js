@@ -36,12 +36,12 @@ const LoginWithOtp = () => {
 
   const GoBack = () => {
     dispatch(saveAuthData({
-      authNextPage: ModuleRoute.LOGIN_ROUTE,
-      checkLoginOrRegisterError: false,
-      checkLoginOrRegisterLoading: false,
-      checkLoginOrRegisterSuccess: false,
-      navigateToOtpLoading: false,
-      navigateToOtpSuccess: false,
+      authNextPage                  : ModuleRoute.LOGIN_ROUTE,
+      checkLoginOrRegisterError     : false,
+      checkLoginOrRegisterLoading   : false,
+      checkLoginOrRegisterSuccess   : false,
+      navigateToOtpLoading          : false,
+      navigateToOtpSuccess          : false,
       navigateToResetPasswordSuccess: false,
     }));
     // eslint-disable-next-line etc/no-commented-out-code

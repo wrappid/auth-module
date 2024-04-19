@@ -83,7 +83,6 @@ export const clientLoginInformation = async (req: any, res: any) => {
     const data = await authFunctions.clientLoginInformationHelper(req, res);
     res.status(data?.status).json(data);
   } catch (error: any) {
-    console.error("refreshToken Error:: ", error);
     res.status(500).json({ message: error.message });
   }
 };

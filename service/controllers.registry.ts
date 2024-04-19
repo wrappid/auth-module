@@ -10,7 +10,7 @@ import {
   getIpSchema,
   refreshTokenSchema,
   postLoginWithUrl,
-  getClientLoginInfo,
+  // getClientLoginInfo,
   sentOtp,
   postChangePassword,
   postVerifyOtp,
@@ -39,8 +39,7 @@ const ControllersRegistry = {
     authController.loginWithUrl,
   ],
   clientLoginInformation: [
-    CoreMiddlewaresRegistry.validation(getClientLoginInfo),
-    authController.clientLoginInformation,
+    authController.clientLoginInformation
   ],
   refreshToken: [
     CoreMiddlewaresRegistry.validation(refreshTokenSchema),

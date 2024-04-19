@@ -35,12 +35,12 @@ const RegisterOrResetPassword = () => {
 
   const GoBack = () => {
     dispatch(saveAuthData({
-      authNextPage: ModuleRoute.LOGIN_ROUTE,
-      checkLoginOrRegisterError: false,
-      checkLoginOrRegisterLoading: false,
-      checkLoginOrRegisterMsg: false,
-      checkLoginOrRegisterSuccess: false,
-      navigateToOtpSuccess: false,
+      authNextPage                  : ModuleRoute.LOGIN_ROUTE,
+      checkLoginOrRegisterError     : false,
+      checkLoginOrRegisterLoading   : false,
+      checkLoginOrRegisterMsg       : false,
+      checkLoginOrRegisterSuccess   : false,
+      navigateToOtpSuccess          : false,
       navigateToResetPasswordSuccess: false,
     }));
   };
@@ -63,7 +63,7 @@ const RegisterOrResetPassword = () => {
 
         <CoreTypographyBody2 component="span">
           {`. Please enter the One Time Password (OTP) to verify your ${isNaN(navData?.emailOrPhone) ? " email." : " phone."
-            }`}
+          }`}
         </CoreTypographyBody2>
       </CoreTypographyBody2>
     );
@@ -82,64 +82,64 @@ const RegisterOrResetPassword = () => {
       {(!checkLoginOrRegisterSuccess &&
         (authNextPage.toLowerCase() !== ModuleRoute.REGISTER_ROUTE ||
           authNextPage.toLowerCase() !== ModuleRoute.RESET_PASSWORD_ROUTE)) ? <CoreDomNavigate to={`/${authNextPage}`} /> : (
-        <CoreLayoutItem id={AuthLayout.PLACEHOLDER.CONTENT}>
-          <CoreH1 variant="h5" styleClasses={[CoreClasses.TEXT.TEXT_CENTER]}>
-            {`Verify your${isNaN(navData?.emailOrPhone) ? " email" : " phone"
+          <CoreLayoutItem id={AuthLayout.PLACEHOLDER.CONTENT}>
+            <CoreH1 variant="h5" styleClasses={[CoreClasses.TEXT.TEXT_CENTER]}>
+              {`Verify your${isNaN(navData?.emailOrPhone) ? " email" : " phone"
               }`}
-          </CoreH1>
+            </CoreH1>
 
-          {authNextPage === routeRegistry.register ? (
-            showEmailOrPhone()
-          ) : (
-            <>
-              <CoreTypographyBody1 styleClasses={[CoreClasses.TEXT.TEXT_CENTER]}>
+            {authNextPage === routeRegistry.register ? (
+              showEmailOrPhone()
+            ) : (
+              <>
+                <CoreTypographyBody1 styleClasses={[CoreClasses.TEXT.TEXT_CENTER]}>
                 Reset Password through OTP
-              </CoreTypographyBody1>
+                </CoreTypographyBody1>
 
-              {showEmailOrPhone()}
-            </>
-          )}
+                {showEmailOrPhone()}
+              </>
+            )}
 
-          <CoreBox
-            styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.MARGIN.MB1]}>
-            <CoreTextButton onClick={GoBack} label="Not You" />
-          </CoreBox>
+            <CoreBox
+              styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.MARGIN.MB1]}>
+              <CoreTextButton onClick={GoBack} label="Not You" />
+            </CoreBox>
 
-          <CoreForm
-            styleClasses={CoreClasses.LAYOUT.AUTH_FORM_CONTAINER}
-            formId="loginWithResetPassword"
-            mode="edit"
-            authenticated={false}
-            initProps={{ otp: { to: navData?.emailOrPhone } }}
-          />
+            <CoreForm
+              styleClasses={CoreClasses.LAYOUT.AUTH_FORM_CONTAINER}
+              formId="loginWithResetPassword"
+              mode="edit"
+              authenticated={false}
+              initProps={{ otp: { to: navData?.emailOrPhone } }}
+            />
 
-          {authNextPage === routeRegistry?.register && (
-            <CoreTypographyBody2>
+            {authNextPage === routeRegistry?.register && (
+              <CoreTypographyBody2>
               By signing up you agree to our{" "}
 
-              <CoreLink
-                href={
-                  appConfig?.wrappid?.privacyLink ||
+                <CoreLink
+                  href={
+                    appConfig?.wrappid?.privacyLink ||
                   "#"
-                }>
+                  }>
                 Privacy Policy
-              </CoreLink>{" "}
+                </CoreLink>{" "}
 
-              <CoreTypographyBody2 component="span">&</CoreTypographyBody2>{" "}
+                <CoreTypographyBody2 component="span">&</CoreTypographyBody2>{" "}
 
-              <CoreLink
-                href={
-                  appConfig?.wrappid?.termsLink ||
+                <CoreLink
+                  href={
+                    appConfig?.wrappid?.termsLink ||
                   "#"
-                }>
+                  }>
                 Terms
-              </CoreLink>
+                </CoreLink>
 
-              {"."}
-            </CoreTypographyBody2>
-          )}
+                {"."}
+              </CoreTypographyBody2>
+            )}
 
-        </CoreLayoutItem>)
+          </CoreLayoutItem>)
       }
     </>
   );
