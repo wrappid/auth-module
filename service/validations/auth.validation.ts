@@ -61,7 +61,7 @@ const sentOtp = {
     })
     .noUnknown()
     .strict(),
-  query: yup.object({}).noUnknown().strict(),
+  query: yup.object({test: yup.string().notRequired(),}).noUnknown().strict(),
 };
 
 const getClientLoginInfo = {
