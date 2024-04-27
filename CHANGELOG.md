@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.10](https://https//github.com/wrappid/wrappid-module/compare/v0.0.9...v0.0.10) (2024-04-27)
+
+
+### Features
+
+* **global:** :sparkles: a default otp sent for test sent otp ([35880d4](https://https//github.com/wrappid/wrappid-module/commit/35880d411afe30ddcf230051bc621ccdd6d7754d)), closes [#65](https://https//github.com/wrappid/wrappid-module/issues/65)
+
 ### [0.0.9](https://https//github.com/wrappid/wrappid-module/compare/v0.0.8...v0.0.9) (2024-04-19)
 
 
