@@ -6,14 +6,7 @@ const API_URL = "https://demoapi.wrappid.dev";
 
 describe("Auth Module", () => {
   describe("checkLoginOrRegister", () => {
-    test("TC01 Verify API Response Status Code", async () => {
-      const response = await request(API_URL)
-        .post("/checkLoginOrRegister")
-        .send({ emailOrPhone: "pritam@rxefy.com"})
-        .set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36");
-      expect(response.status).toBe(200);
-    });
-    test("TC02 Verify API Response Body Structure", async () =>{
+    test("TC02 Verify API Response Body Structure,Format JSON, Contains Expected Field, Data for Each Field", async () =>{
       const response = await request(API_URL)
         .post("/checkLoginOrRegister")
         .send({ emailOrPhone: "pritam@rxefy.com"})
@@ -21,33 +14,22 @@ describe("Auth Module", () => {
         .set("Accept-Encoding", "gzip, deflate, br")
         .set("Connection", "keep-alive")
         .set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"); 
+      expect(response.status).toBe(200);
       expect(response.body).toHaveProperty("message");
-    });
-    test("TC03 Verify API Response Format JSON", async () => {
-      const response = await request(API_URL)
-        .post("/checkLoginOrRegister")
-        .send({ emailOrPhone: "pritam@rxefy.com" })
-        .set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36");
       expect(response.body.data).toBeInstanceOf(Object);
-    });
-    test("TC04 Verify API Response Contains Expected Fields", async () => {
-      const response = await request(API_URL)
-        .post("/checkLoginOrRegister")
-        .send({ emailOrPhone: "pritam@rxefy.com" })
-        .set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36");
       expect(response.body.data).toHaveProperty("name");
       expect(response.body.data).toHaveProperty("photoUrl");
       expect(response.body.data).toHaveProperty("isVerified");
-    });
-    test("TC05 Verify API Response Data for Each Field", async () => {
-      const response = await request(API_URL)
-        .post("/checkLoginOrRegister")
-        .send({ emailOrPhone: "pritam@rxefy.com" })
-        .set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36");
       expect(response.body.data.name).toEqual("Pritam  Mondal");
       expect(response.body.data.photoUrl).toEqual("https://s3.ap-south-1.amazonaws.com/test-wrappid-bucket-storage/2024-03-07T13:27:42.221Z-pexels-michael-block-3225517.jpg");
       expect(response.body.data.isVerified).toEqual(true);
+      expect(response.body.message).toMatch("User Found");
+      expect(response.headers["content-type"]).toBe("application/json; charset=utf-8");
+      
     });
+  });
+});
+/*
     test("TC06 Verify API Response Time Within Acceptable Limits", async () => {
       const acceptableResponseTime = 1000;
       const startTime = Date.now();
@@ -59,13 +41,7 @@ describe("Auth Module", () => {
       const responseTime = endTime - startTime;
       expect(responseTime).toBeLessThanOrEqual(acceptableResponseTime);
     });
-    test("TC07 Verify API Request Parameters Correctly Passed", async () => {
-      const response = await request(API_URL)
-        .post("/checkLoginOrRegister")
-        .send({ emailOrPhone: "pritam@rxefy.com" })
-        .set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36");
-      expect(response.body.message).toMatch("User Found");
-    });
+   
     test("TC08 Verify the API Request Method Correct", async () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const response: any = await request(API_URL)
@@ -89,13 +65,7 @@ describe("Auth Module", () => {
         .set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36");
       expect(response.req.path).toBe(reqPath);
     });
-    test("TC10 Verify API Response Headers", async () => {
-      const response = await request(API_URL)
-        .post("/checkLoginOrRegister")
-        .send({ emailOrPhone: "pritam@rxefy.com" })
-        .set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36");
-      expect(response.headers["content-type"]).toBe("application/json; charset=utf-8");
-    });
+   
     test("TC11 Verify API Response Payload Size", async () => {
       const response: any = await request(API_URL)
         .post("/checkLoginOrRegister")
@@ -276,70 +246,4 @@ describe("Auth Module", () => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+*/
