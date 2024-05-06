@@ -1,6 +1,6 @@
 import {
+  ApplicationContext,
   communicate,
-  configProvider,
   coreConstant,
   databaseActions,
   databaseProvider,
@@ -12,12 +12,7 @@ import DeviceDetector from "node-device-detector";
 import otpGenerator from "otp-generator";
 import constant from "../constants/constants";
 
-const {
-  accessTokenSecret,
-  refreshAccessTokenSecret,
-  expTime,
-  expTimeRefreshToken,
-} = configProvider().jwt;
+
 
 import {
   clearValidatePhoneEmail,
@@ -32,6 +27,9 @@ import {
  */
 const checkLoginOrRegisterUtil = async (req: any) => {
   try {
+    const dataa = ApplicationContext.getContext("config");
+    console.log(dataa);
+  
     // let iWsValidJOI = await authenticateJOI(req,"checkLoginOrRegisterPOST",["body","query"])
     const emailOrPhone = req.body.emailOrPhone;
     const ob: any = clearValidatePhoneEmail(emailOrPhone);
@@ -88,7 +86,7 @@ const checkLoginOrRegisterUtil = async (req: any) => {
               "application",
               "Roles",
               {
-                where: { role: configProvider().wrappid.defaultUserRole || constant.userRoles.ROLE_DEVELOPER },
+                where: { role: ApplicationContext.getContext("config").wrappid.defaultUserRole || constant.userRoles.ROLE_DEVELOPER },
               }
             );
             const userData = await databaseActions.create(
@@ -590,6 +588,13 @@ function genarateAccessToken(
   personData: any,
   userDetails: any
 ) {
+  const {
+    accessTokenSecret,
+    refreshAccessTokenSecret,
+    expTime,
+    expTimeRefreshToken,
+  } = ApplicationContext.getContext("config").jwt;
+  
   const accessToken = jwt.sign(
     {
       userId: userId,
@@ -647,6 +652,12 @@ const getIPHelper = async (req: any, res: any) => {
 // eslint-disable-next-line no-unused-vars
 const refreshTokenHelper = async (req: any, res: any) => {
   try {
+    const {
+      accessTokenSecret,
+      refreshAccessTokenSecret,
+      expTime,
+    } = ApplicationContext.getContext("config").jwt;
+    
     return jwt.verify(
       req.body.refreshToken,
       refreshAccessTokenSecret,
@@ -835,7 +846,7 @@ const sentOtp = async (req: any, res: any) => {
     }
     
     let genetatedOTP = otpGenerator.generate(
-      configProvider().wrappid.otpLength,
+      ApplicationContext.getContext("config").wrappid.otpLength,
       {
         specialChars: false,
         lowerCaseAlphabets: false,
