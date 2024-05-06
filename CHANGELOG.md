@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.11](https://https//github.com/wrappid/wrappid-module/compare/v0.0.10...v0.0.11) (2024-05-06)
+
+
+### Bug Fixes
+
+* **global:** :ambulance: impact handling for change in configprovider ([1bce1a0](https://https//github.com/wrappid/wrappid-module/commit/1bce1a01d99a3a4db7b3edf1003f2a7cda0fbe46)), closes [#68](https://https//github.com/wrappid/wrappid-module/issues/68)
+
 ### [0.0.10](https://https//github.com/wrappid/wrappid-module/compare/v0.0.9...v0.0.10) (2024-04-27)
 
 
