@@ -1,12 +1,11 @@
 import {
-  configProvider,
+  ApplicationContext,
   coreConstant,
   databaseActions,
 } from "@wrappid/service-core";
 import DeviceDetector from "node-device-detector";
 import otpGenerator from "otp-generator";
 
-const otpLength = configProvider().wrappid.otpLength;
 
 const COMMUNICATION_EMAIL = coreConstant.commType.EMAIL;
 const COMMUNICATION_SMS = coreConstant.commType.SMS;
@@ -80,6 +79,8 @@ async function communicate(
   requesterId: any = null
 ) {
   try {
+    const otpLength = ApplicationContext.getContext("config").wrappid.otpLength;
+
     //   console.log("IN COMMUNICATE", transaction, otpFlag);
     let templateId: any = null;
     let templateName: any = null;
