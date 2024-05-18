@@ -1,0 +1,77 @@
+{
+    "table": "SessionManagers",
+    "database": "application",
+    "attributes": {
+        "id": {
+            "type": "INTEGER",
+            "primaryKey": true,
+            "autoIncrement": true
+        },
+        "refreshToken": {
+            "type": "TEXT",
+            "defaultValue": ""
+        },
+        "deviceId": {
+            "type": "STRING",
+            "defaultValue": ""
+        },
+        "name": {
+            "type": "STRING",
+            "defaultValue": ""
+        },
+        "extraInfo": {
+            "type": "JSONB",
+            "defaultValue": null
+        },
+        "isActive": {
+            "type": "BOOLEAN",
+            "defaultValue": true
+        },
+        "_status": {
+            "type": "STRING"
+        },
+        "deletedAt": {
+            "type": "DATE",
+            "allowNull": true
+        },
+        "associations": [
+            {
+                "data": [
+                    {
+                        "data": {
+                            "as": "Owner",
+                            "sourceKey": "id",
+                            "foreignKey": "createdBy"
+                        },
+                        "type": "belongsTo"
+                    },
+                    {
+                        "data": {
+                            "as": "Updater",
+                            "sourceKey": "id",
+                            "foreignKey": "updatedBy"
+                        },
+                        "type": "belongsTo"
+                    },
+                    {
+                        "data": {
+                            "as": "Destroyer",
+                            "sourceKey": "id",
+                            "foreignKey": "deletedBy"
+                        },
+                        "type": "belongsTo"
+                    },
+                    {
+                        "data": {
+                            "as": "User",
+                            "sourceKey": "id",
+                            "foreignKey": "userID"
+                        },
+                        "type": "belongsTo"
+                    }
+                ],
+                "model": "Users"
+            }
+        ]
+    }
+}
