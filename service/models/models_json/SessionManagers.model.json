@@ -33,45 +33,45 @@
         "deletedAt": {
             "type": "DATE",
             "allowNull": true
-        },
-        "associations": [
-            {
-                "data": [
-                    {
-                        "data": {
-                            "as": "Owner",
-                            "sourceKey": "id",
-                            "foreignKey": "createdBy"
-                        },
-                        "type": "belongsTo"
+        }
+    },
+    "associations": [
+        {
+            "data": [
+                {
+                    "data": {
+                        "as": "Owner",
+                        "sourceKey": "id",
+                        "foreignKey": "createdBy"
                     },
-                    {
-                        "data": {
-                            "as": "Updater",
-                            "sourceKey": "id",
-                            "foreignKey": "updatedBy"
-                        },
-                        "type": "belongsTo"
+                    "type": "belongsTo"
+                },
+                {
+                    "data": {
+                        "as": "Updater",
+                        "sourceKey": "id",
+                        "foreignKey": "updatedBy"
                     },
-                    {
-                        "data": {
-                            "as": "Destroyer",
-                            "sourceKey": "id",
-                            "foreignKey": "deletedBy"
-                        },
-                        "type": "belongsTo"
+                    "type": "belongsTo"
+                },
+                {
+                    "data": {
+                        "as": "Destroyer",
+                        "sourceKey": "id",
+                        "foreignKey": "deletedBy"
                     },
-                    {
-                        "data": {
-                            "as": "User",
-                            "sourceKey": "id",
-                            "foreignKey": "userID"
-                        },
-                        "type": "belongsTo"
-                    }
-                ],
-                "model": "Users"
-            }
-        ]
-    }
+                    "type": "belongsTo"
+                },
+                {
+                    "data": {
+                        "as": "User",
+                        "sourceKey": "id",
+                        "foreignKey": "userId"
+                    },
+                    "type": "belongsTo"
+                }
+            ],
+            "model": "Users"
+        }
+    ]
 }
