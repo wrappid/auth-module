@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.12](https://https//github.com/wrappid/wrappid-module/compare/v0.0.11...v0.0.12) (2024-05-18)
+
+
+### Features
+
+* **core:** :wrench: model registry file to json file ([058cb2c](https://https//github.com/wrappid/wrappid-module/commit/058cb2c198f48960f69e0c7c9dce215b2af91727)), closes [#71](https://https//github.com/wrappid/wrappid-module/issues/71)
+
 ### [0.0.11](https://https//github.com/wrappid/wrappid-module/compare/v0.0.10...v0.0.11) (2024-05-06)
 
 
