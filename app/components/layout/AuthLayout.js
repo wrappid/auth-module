@@ -38,7 +38,7 @@ export default function AuthLayout() {
   //       refreshToken
   //     ) {
   //       let path = sessionDetail?.location?.pathname;
-  
+
   //       navigate("/", { state: { recalledPath: path } });
   //     }
   //   }
@@ -62,7 +62,7 @@ export default function AuthLayout() {
           [ModuleClasses.AUTH.CONTENT]
         }>
           <CoreLayoutPlaceholder
-            gridProps={{ gridSize: { md: 3 } }}
+            gridProps={{ gridSize: { md: 3, sm: 6 } }}
             key="authlayoutplaceholder"
             id={AuthLayout.PLACEHOLDER.CONTENT}
           >
