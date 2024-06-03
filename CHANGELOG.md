@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.15](https://https//github.com/wrappid/wrappid-module/compare/v0.0.14...v0.0.15) (2024-06-03)
+
+
+### Bug Fixes
+
+* :bug: auth page footer version and privacy update ([76d26c0](https://https//github.com/wrappid/wrappid-module/commit/76d26c073d5e03866fbc26d7da2f15105f3fced7)), closes [#77](https://https//github.com/wrappid/wrappid-module/issues/77)
+* **global:** :recycle: code lint fix ([4edbc78](https://https//github.com/wrappid/wrappid-module/commit/4edbc7874dbbcca6b238da945e3c1b256a8c9dbe)), closes [#77](https://https//github.com/wrappid/wrappid-module/issues/77)
+
 ### [0.0.14](https://https//github.com/wrappid/wrappid-module/compare/v0.0.13...v0.0.14) (2024-06-03)
 
 
