@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.14](https://https//github.com/wrappid/wrappid-module/compare/v0.0.13...v0.0.14) (2024-06-03)
+
+
+### Bug Fixes
+
+* :bug: fix model json ([330932d](https://https//github.com/wrappid/wrappid-module/commit/330932d0e8411f3c6da79f4d3ed05a616452417c)), closes [#71](https://https//github.com/wrappid/wrappid-module/issues/71)
+* **core:** :bug: checkUserExists username input field correction ([7bb2acc](https://https//github.com/wrappid/wrappid-module/commit/7bb2acce937f86d74eb28d4d2c7a1fb63b9cd712)), closes [#75](https://https//github.com/wrappid/wrappid-module/issues/75)
+
 ### [0.0.13](https://https//github.com/wrappid/wrappid-module/compare/v0.0.12...v0.0.13) (2024-05-21)
 
 
