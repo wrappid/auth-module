@@ -7,32 +7,32 @@
             "primaryKey": true,
             "autoIncrement": true
         },
-        "refreshToken": {
-            "type": "TEXT",
+        "name": {
+            "type": "STRING",
             "defaultValue": ""
+        },
+        "_status": {
+            "type": "STRING"
         },
         "deviceId": {
             "type": "STRING",
             "defaultValue": ""
         },
-        "name": {
-            "type": "STRING",
-            "defaultValue": ""
+        "isActive": {
+            "type": "BOOLEAN",
+            "defaultValue": true
+        },
+        "deletedAt": {
+            "type": "DATE",
+            "allowNull": true
         },
         "extraInfo": {
             "type": "JSONB",
             "defaultValue": null
         },
-        "isActive": {
-            "type": "BOOLEAN",
-            "defaultValue": true
-        },
-        "_status": {
-            "type": "STRING"
-        },
-        "deletedAt": {
-            "type": "DATE",
-            "allowNull": true
+        "refreshToken": {
+            "type": "TEXT",
+            "defaultValue": ""
         }
     },
     "associations": [
