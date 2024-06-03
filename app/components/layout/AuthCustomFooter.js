@@ -1,4 +1,5 @@
 import React from "react";
+
 import { CoreBox, CoreClasses, CoreGrid, CoreLink, CoreTypographyBody1 } from "@wrappid/core";
 import { WrappidDataContext } from "@wrappid/styles";
 
@@ -6,6 +7,7 @@ import ModuleClasses from "../../styles/ModuleClasses";
 
 export default function AuthCustomFooter() {
   const { config: appConfig } = React.useContext(WrappidDataContext);
+
   return (
     <CoreBox>
       <CoreGrid
@@ -16,20 +18,26 @@ export default function AuthCustomFooter() {
         </CoreBox>
 
         <CoreBox gridProps={{ gridSize: 6 }} styleClasses={[CoreClasses.TEXT.TEXT_END]}>
-          <CoreLink href={
-            appConfig?.wrappid?.helpLink ||
+          <CoreLink
+            href={
+              appConfig?.wrappid?.helpLink ||
             "#"
-          } styleClasses={[CoreClasses.COLOR.TEXT_WHITE, CoreClasses.PADDING.PL1]}>Help</CoreLink>
+            }
+            styleClasses={[CoreClasses.COLOR.TEXT_WHITE, CoreClasses.PADDING.PL1]}>Help</CoreLink>
 
-          <CoreLink href={
-            appConfig?.wrappid?.privacyLink ||
+          <CoreLink
+            href={
+              appConfig?.wrappid?.privacyLink ||
             "#"
-          } styleClasses={[CoreClasses.COLOR.TEXT_WHITE, CoreClasses.PADDING.PL1]}>Privacy</CoreLink>
+            }
+            styleClasses={[CoreClasses.COLOR.TEXT_WHITE, CoreClasses.PADDING.PL1]}>Privacy</CoreLink>
 
-          <CoreLink href={
-            appConfig?.wrappid?.termsLink ||
+          <CoreLink
+            href={
+              appConfig?.wrappid?.termsLink ||
             "#"
-          } styleClasses={[CoreClasses.COLOR.TEXT_WHITE, CoreClasses.PADDING.PL1]}>Terms</CoreLink>
+            }
+            styleClasses={[CoreClasses.COLOR.TEXT_WHITE, CoreClasses.PADDING.PL1]}>Terms</CoreLink>
         </CoreBox>
       </CoreGrid>
     </CoreBox>
