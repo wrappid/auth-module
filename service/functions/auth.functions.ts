@@ -808,7 +808,7 @@ const sentOtp = async (req: any, res: any) => {
       commType = type;
     }
     let templateID = req.body?.templateID;
-    // const serviceName = req.body?.service;
+    const serviceName = req.body?.service;
    
 
     /**
@@ -830,21 +830,18 @@ const sentOtp = async (req: any, res: any) => {
     //   }
     // }
 
-    // if(commType === constant.communication.EMAIL){
-    //   switch (serviceName) {
-    //     case "loginWithOtp":
-    //       templateID = constant.communication.SENT_OTP_LOGIN_WITH_OTP_SMS_EN;
-    //       break;
-    //     case "reset":
-    //       templateID = constant.communication.SENT_OTP_RESET_PASSWORD_OTP_SMS_EN;
-    //       break;
-    //     case "forgotpwd":
-    //       templateID = constant.communication.SENT_OTP_LOGIN_WITH_OTP_SMS_EN;
-    //       break;  
-    //     default:
-    //       break;
-    //   }
-    // }
+    if(commType === constant.communication.EMAIL){
+      switch (serviceName) {
+        case "loginWithOtp":
+          templateID = constant.communication.SENT_OTP_LOGIN_WITH_OTP_MAIL_EN;
+          break;
+        case "loginWithResetPassword":
+          templateID = constant.communication.SENT_OTP_RESET_PASSWORD_MAIL_EN;
+          break;
+        default:
+          break;
+      }
+    }
    
 
     if (!userId) {
