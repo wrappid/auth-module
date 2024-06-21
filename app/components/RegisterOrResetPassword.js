@@ -8,7 +8,7 @@ import {
   CoreH1,
   CoreLayoutItem,
   CoreLink,
-  CoreRouteRegistryContext,
+  CoreRoutesContext,
   CoreTextButton,
   CoreTypographyBody1,
   CoreTypographyBody2,
@@ -29,7 +29,7 @@ const RegisterOrResetPassword = () => {
   const { config: appConfig } = React.useContext(WrappidDataContext);
 
   const auth = useSelector(state => state.auth);
-  const routeRegistry = React.useContext(CoreRouteRegistryContext);
+  const routeRegistry = React.useContext(CoreRoutesContext);
 
   const { checkLoginOrRegisterSuccess, authNextPage, navData } = auth;
 
@@ -88,13 +88,22 @@ const RegisterOrResetPassword = () => {
               }`}
             </CoreH1>
 
-            {authNextPage === routeRegistry.register ? (
-              showEmailOrPhone()
+            {authNextPage === routeRegistry.register?.url ? (<>
+              <CoreTypographyBody1 styleClasses={[CoreClasses.TEXT.TEXT_CENTER]}>
+                {`Verify your${isNaN(navData?.emailOrPhone) ? " email" : " phone"
+                } through OTP`}
+              </CoreTypographyBody1>
+
+              {showEmailOrPhone()}
+            </>
             ) : (
               <>
-                <CoreTypographyBody1 styleClasses={[CoreClasses.TEXT.TEXT_CENTER]}>
-                Reset Password through OTP
-                </CoreTypographyBody1>
+                {
+
+                  <CoreTypographyBody1 styleClasses={[CoreClasses.TEXT.TEXT_CENTER]}>
+                    {"Reset your account"}
+                  </CoreTypographyBody1>
+                }
 
                 {showEmailOrPhone()}
               </>
@@ -113,7 +122,7 @@ const RegisterOrResetPassword = () => {
               initProps={{ otp: { to: navData?.emailOrPhone } }}
             />
 
-            {authNextPage === routeRegistry?.register && (
+            {authNextPage === routeRegistry?.register?.url && (
               <CoreTypographyBody2>
               By signing up you agree to our{" "}
 
@@ -139,7 +148,7 @@ const RegisterOrResetPassword = () => {
               </CoreTypographyBody2>
             )}
 
-          </CoreLayoutItem>)
+          </CoreLayoutItem >)
       }
     </>
   );
