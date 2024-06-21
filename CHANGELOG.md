@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.16](https://https//github.com/wrappid/wrappid-module/compare/v0.0.15...v0.0.16) (2024-06-21)
+
+
+### Features
+
+* **global:** :sparkles: sent mail for specific service ([47fa170](https://https//github.com/wrappid/wrappid-module/commit/47fa170b9aaac815dff0b5fbcc84d24a6a7ae946)), closes [#81](https://https//github.com/wrappid/wrappid-module/issues/81)
+* **global:** :sparkles: work in progress: support mutple message template ([65362c7](https://https//github.com/wrappid/wrappid-module/commit/65362c769e76fee92fe10dea7576fd17b9cd68f4)), closes [#81](https://https//github.com/wrappid/wrappid-module/issues/81)
+
+
+### Bug Fixes
+
+* **utils:** :bug: rest and register page information ([a8d8efb](https://https//github.com/wrappid/wrappid-module/commit/a8d8efb327695f93d21b4276b9d73c8b995beccf)), closes [#81](https://https//github.com/wrappid/wrappid-module/issues/81)
+
 ### [0.0.15](https://https//github.com/wrappid/wrappid-module/compare/v0.0.14...v0.0.15) (2024-06-03)
 
 
