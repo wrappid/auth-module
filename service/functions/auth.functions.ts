@@ -802,12 +802,48 @@ const sentOtp = async (req: any, res: any) => {
     const commData: any = {};
     let userId = req?.user?.userId;
     const emailOrPhone = req.body.data;
-    let commType = req.body.type;
+    let commType = req.body?.type;
     if (!commType) {
       const { type }: any = clearValidatePhoneEmail(emailOrPhone);
       commType = type;
     }
-    let templateID = req.body.templateID;
+    let templateID = req.body?.templateID;
+    const serviceName = req.body?.service;
+   
+
+    /**
+     * @todo need to add template kit19
+     */
+    // if(commType === constant.communication.SMS){
+    //   switch (serviceName) {
+    //     case "loginWithOtp":
+    //       templateID = constant.communication.SENT_OTP_LOGIN_WITH_OTP_SMS_EN;
+    //       break;
+    //     case "reset":
+    //       templateID = constant.communication.SENT_OTP_RESET_PASSWORD_OTP_SMS_EN;
+    //       break;
+    //     case "forgotpwd":
+    //       templateID = constant.communication.SENT_OTP_LOGIN_WITH_OTP_SMS_EN;
+    //       break;  
+    //     default:
+    //       break;
+    //   }
+    // }
+
+    if(commType === constant.communication.EMAIL){
+      switch (serviceName) {
+        case "loginWithOtp":
+          templateID = constant.communication.SENT_OTP_LOGIN_WITH_OTP_MAIL_EN;
+          break;
+        case "loginWithResetPassword":
+          templateID = constant.communication.SENT_OTP_RESET_PASSWORD_MAIL_EN;
+          break;
+        default:
+          break;
+      }
+    }
+   
+
     if (!userId) {
       const user = await databaseActions.findOne("application", "Users", {
         where:

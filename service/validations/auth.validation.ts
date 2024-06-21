@@ -58,6 +58,7 @@ const sentOtp = {
       // Type: yup.string().required("Please enter Type!!"),
       type: yup.string().notRequired(),
       templateID: yup.string().notRequired(),
+      service: yup.string().notRequired(),
     })
     .noUnknown()
     .strict(),
