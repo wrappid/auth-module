@@ -47,7 +47,7 @@ const RegisterOrResetPassword = () => {
 
   const showEmailOrPhone = () => {
     return (
-      <CoreTypographyBody2 styleClasses={[CoreClasses.TEXT.TEXT_JUSTIFY]}>
+      <CoreTypographyBody2 styleClasses={[CoreClasses.TEXT.TEXT_JUSTIFY, CoreClasses.COLOR.TEXT_PRIMARY]}>
         <CoreTypographyBody2 component="span">
           We have sent you a verification code on
         </CoreTypographyBody2>
@@ -83,13 +83,13 @@ const RegisterOrResetPassword = () => {
         (authNextPage.toLowerCase() !== ModuleRoute.REGISTER_ROUTE ||
           authNextPage.toLowerCase() !== ModuleRoute.RESET_PASSWORD_ROUTE)) ? <CoreDomNavigate to={`/${authNextPage}`} /> : (
           <CoreLayoutItem id={AuthLayout.PLACEHOLDER.CONTENT}>
-            <CoreH1 variant="h5" styleClasses={[CoreClasses.TEXT.TEXT_CENTER]}>
+            <CoreH1 variant="h5" styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.COLOR.TEXT_PRIMARY]}>
               {`Verify your${isNaN(navData?.emailOrPhone) ? " email" : " phone"
               }`}
             </CoreH1>
 
             {authNextPage === routeRegistry.register?.url ? (<>
-              <CoreTypographyBody1 styleClasses={[CoreClasses.TEXT.TEXT_CENTER]}>
+              <CoreTypographyBody1 styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.COLOR.TEXT_PRIMARY]}>
                 {`Verify your${isNaN(navData?.emailOrPhone) ? " email" : " phone"
                 } through OTP`}
               </CoreTypographyBody1>
@@ -100,7 +100,7 @@ const RegisterOrResetPassword = () => {
               <>
                 {
 
-                  <CoreTypographyBody1 styleClasses={[CoreClasses.TEXT.TEXT_CENTER]}>
+                  <CoreTypographyBody1 styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.COLOR.TEXT_PRIMARY]}>
                     {"Reset your account"}
                   </CoreTypographyBody1>
                 }
@@ -123,7 +123,7 @@ const RegisterOrResetPassword = () => {
             />
 
             {authNextPage === routeRegistry?.register?.url && (
-              <CoreTypographyBody2>
+              <CoreTypographyBody2 styleClasses={[CoreClasses.COLOR.TEXT_PRIMARY]}>
               By signing up you agree to our{" "}
 
                 <CoreLink

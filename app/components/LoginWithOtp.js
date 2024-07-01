@@ -39,8 +39,8 @@ const LoginWithOtp = () => {
       authNextPage                  : ModuleRoute.LOGIN_ROUTE,
       checkLoginOrRegisterError     : false,
       checkLoginOrRegisterLoading   : false,
+      checkLoginOrRegisterMsg       : false,
       checkLoginOrRegisterSuccess   : false,
-      navigateToOtpLoading          : false,
       navigateToOtpSuccess          : false,
       navigateToResetPasswordSuccess: false,
     }));
@@ -69,9 +69,9 @@ const LoginWithOtp = () => {
     <>
       <CoreLayoutItem id={AuthLayout.PLACEHOLDER.CONTENT}>
         {(!checkLoginOrRegisterSuccess && authNextPage.toLowerCase() !== ModuleRoute.LOGIN_ROUTE) ? <CoreDomNavigate to={`/${authNextPage}`} /> : <>
-          <CoreH1 styleClasses={[CoreClasses.TEXT.TEXT_CENTER]} variant="h5">
+          <CoreH1 styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.COLOR.TEXT_PRIMARY]} variant="h5">
             Enter OTP
-          </CoreH1><CoreTypographyBody2>
+          </CoreH1><CoreTypographyBody2 styleClasses={[CoreClasses.COLOR.TEXT_PRIMARY]}>
             {`We have sent you a verification code on your ${isNaN(navData?.emailOrPhone) ? " email " : " phone "} ${stringUtils.maskEmailOrPhone(
               navData?.emailOrPhone
                 ? navData?.emailOrPhone

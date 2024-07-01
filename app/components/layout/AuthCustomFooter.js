@@ -14,7 +14,7 @@ export default function AuthCustomFooter() {
         coreId="authFooterGrid"
         styleClasses={[ModuleClasses.AUTH.FOOTER]}>
         <CoreBox gridProps={{ gridSize: 6 }}>
-          <CoreTypographyBody1 styleClasses={[CoreClasses.COLOR.TEXT_WHITE]}>{appConfig.packageInfo.version}</CoreTypographyBody1>
+          <CoreTypographyBody1 styleClasses={[CoreClasses.COLOR.TEXT_PRIMARY]}>{appConfig.packageInfo.version}</CoreTypographyBody1>
         </CoreBox>
 
         <CoreBox gridProps={{ gridSize: 6 }} styleClasses={[CoreClasses.TEXT.TEXT_END]}>
@@ -23,21 +23,21 @@ export default function AuthCustomFooter() {
               appConfig?.wrappid?.helpLink ||
             "#"
             }
-            styleClasses={[CoreClasses.COLOR.TEXT_WHITE, CoreClasses.PADDING.PL1]}>Help</CoreLink>
+            styleClasses={[CoreClasses.COLOR.TEXT_PRIMARY, CoreClasses.PADDING.PL1]}>Help</CoreLink>
 
           <CoreLink
             href={
               appConfig?.wrappid?.privacyLink ||
             "#"
             }
-            styleClasses={[CoreClasses.COLOR.TEXT_WHITE, CoreClasses.PADDING.PL1]}>Privacy</CoreLink>
+            styleClasses={[CoreClasses.COLOR.TEXT_PRIMARY, CoreClasses.PADDING.PL1]}>Privacy</CoreLink>
 
           <CoreLink
             href={
               appConfig?.wrappid?.termsLink ||
             "#"
             }
-            styleClasses={[CoreClasses.COLOR.TEXT_WHITE, CoreClasses.PADDING.PL1]}>Terms</CoreLink>
+            styleClasses={[CoreClasses.COLOR.TEXT_PRIMARY, CoreClasses.PADDING.PL1]}>Terms</CoreLink>
         </CoreBox>
       </CoreGrid>
     </CoreBox>
