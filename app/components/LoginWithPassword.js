@@ -82,7 +82,7 @@ const LoginWithPassword = () => {
               </CoreBox>
 
               <CoreH6
-                styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.MARGIN.MB1]}
+                styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.MARGIN.MB1, CoreClasses.COLOR.TEXT_PRIMARY]}
               >
                 {name && name?.trim() !== "" ? name : "Unknown User"}
               </CoreH6>
@@ -90,7 +90,7 @@ const LoginWithPassword = () => {
               <CoreTypographyBody2
                 limitChars={42}
                 hideSeeMore={true}
-                styleClasses={[CoreClasses.TEXT.TEXT_CENTER]}
+                styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.COLOR.TEXT_PRIMARY]}
               >
                 {stringUtils.maskEmailOrPhone(
                   navData?.emailOrPhone
