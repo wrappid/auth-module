@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.17](https://https//github.com/wrappid/wrappid-module/compare/v0.0.16...v0.0.17) (2024-07-03)
+
+
+### Bug Fixes
+
+* **global:** :lipstick: auth specific color driven from theme ([2e99eaf](https://https//github.com/wrappid/wrappid-module/commit/2e99eaf1730b89d6e3b97c2f15bdefe285d328c2)), closes [#84](https://https//github.com/wrappid/wrappid-module/issues/84)
+
 ### [0.0.16](https://https//github.com/wrappid/wrappid-module/compare/v0.0.15...v0.0.16) (2024-06-21)
 
 
