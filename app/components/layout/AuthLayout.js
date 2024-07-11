@@ -1,15 +1,30 @@
+/* eslint-disable etc/no-commented-out-code */
 // eslint-disable-next-line unused-imports/no-unused-imports, no-unused-vars
 import React, { useContext } from "react";
 
 import {
-  CoreBox, CoreClasses, CoreGrid, CoreImage, CoreImageBackground, CoreLayoutPlaceholder, CoreResourceContext, CoreTypographyBody1
+  CoreBox, CoreClasses, CoreGrid, CoreImage, CoreImageBackground, CoreLayoutPlaceholder, CoreResourceContext, CoreTypographyBody1,
+  coreUseLocation,
+  coreUseNavigate
 } from "@wrappid/core";
+import { useSelector } from "react-redux";
 
 // eslint-disable-next-line import/order
 import AuthCustomFooter from "./AuthCustomFooter";
 import ModuleClasses from "../../styles/ModuleClasses";
 
 export default function AuthLayout() {
+  let { pathname: currentPage } = coreUseLocation();
+
+  const navigate = coreUseNavigate();
+  const auth = useSelector(state => state.auth);
+  const {
+    // checkLoginOrRegisterSuccess,
+    authNextPage,
+    // navData,
+    // uid,
+    // accessToken
+  } = auth;
   /**
    * @todo
    * commented code will help us handle redirect url post login
@@ -50,6 +65,16 @@ export default function AuthLayout() {
   //   accessToken,
   //   refreshToken
   // ]);
+
+  React.useEffect(() => {
+    let currPage = currentPage.toLowerCase();
+    let authPage = authNextPage.toLowerCase();
+
+    if(!currPage.includes(authPage)){
+      navigate(`/${authNextPage}`);
+    }
+
+  }, [authNextPage]);
 
   return (
     <>

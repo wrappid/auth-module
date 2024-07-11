@@ -1,3 +1,4 @@
+import { WrappidLogger } from "@wrappid/service-core";
 import * as authFunctions from "../functions/auth.functions";
 
 /**
@@ -8,113 +9,194 @@ import * as authFunctions from "../functions/auth.functions";
  */
 export const checkLoginOrRegister = async (req: any, res: any) => {
   try {
-    const data = await authFunctions.checkLoginOrRegisterUtil(req);
-    // console.log("API Call sucessfully");
-    const { status, ...restData } = data;
+    WrappidLogger.logFunctionStart("checkLoginOrRegister");
+    const { status, ...restData } = await authFunctions.checkLoginOrRegisterUtil(req);
     res.status(status).json(restData);
   } catch (error: any) {
-    console.error("checkLoginOrRegister Error:: ", error);
+    WrappidLogger.error("checkLoginOrRegister Error:: " + error);
     res.status(500).json({ message: error.message });
+  } finally {
+    WrappidLogger.logFunctionEnd("checkLoginOrRegister");
   }
 };
 
+/**
+ * 
+ * @param req 
+ * @param res 
+ */
 export const login = async (req: any, res: any) => {
   try {
-    const data = await authFunctions.loginHelper(req, { otpLogin: false });
-    res.status(data?.status).json(data);
+    WrappidLogger.logFunctionStart("login");
+    const { status, ...restData } = await authFunctions.loginHelper(req, { otpLogin: false });
+    res.status(status).json(restData);
   } catch (error: any) {
-    console.error("login Error:: ", error);
+    WrappidLogger.error("login Error:: " + error);
     res.status(500).json({ message: error.message });
+  } finally {
+    WrappidLogger.logFunctionEnd("login");
   }
 };
+/**
+ * 
+ * @param req 
+ * @param res 
+ */
 export const loginWithOtp = async (req: any, res: any) => {
   try {
-    const data = await authFunctions.loginHelper(req, { otpLogin: true });
-    res.status(data?.status).json(data);
+    WrappidLogger.logFunctionStart("loginWithOtp");
+    const { status, ...restData } = await authFunctions.loginHelper(req, { otpLogin: true });
+    res.status(status).json(restData);
   } catch (error: any) {
-    console.error("loginWithOtp Error:: ", error);
+    WrappidLogger.error("loginWithOtp Error:: " + error);
     res.status(500).json({ message: error.message });
+  } finally {
+    WrappidLogger.logFunctionEnd("loginWithOtp");
+
   }
 };
 
+/**
+ * 
+ * @param req 
+ * @param res 
+ */
 export const loginWithUrl = async (req: any, res: any) => {
   try {
-    const data = await authFunctions.loginHelper(req, { urlLogin: true });
-    res.status(data?.status).json(data);
+    WrappidLogger.logFunctionStart("loginWithUrl");
+    const { status, ...restData } = await authFunctions.loginHelper(req, { urlLogin: true });
+    res.status(status).json(restData);
   } catch (error: any) {
-    console.error("loginWithUrl Error:: ", error);
+    WrappidLogger.error("loginWithUrl Error:: " + error);
     res.status(500).json({ message: error.message });
+  } finally {
+    WrappidLogger.logFunctionEnd("loginWithUrl");
   }
 };
 
+/**
+ * 
+ * @param req 
+ * @param res 
+ */
 export const logout = async (req: any, res: any) => {
   try {
-    const data: any = await authFunctions.logoutHelper(req, res);
-    res.status(data?.status).json(data);
+    WrappidLogger.logFunctionStart("logout");
+    const { status, ...restData } = await authFunctions.logoutHelper(req);
+    res.status(status).json(restData);
   } catch (error: any) {
-    console.error("logout Error:: ", error);
+    WrappidLogger.error("logout Error:: " + error);
     res.status(500).json({ message: error.message });
+  } finally {
+    WrappidLogger.logFunctionEnd("logout");
+
   }
 };
 
+/**
+ * 
+ * @param req 
+ * @param res 
+ */
 export const getIP = async (req: any, res: any) => {
   try {
-    const data = await authFunctions.getIPHelper(req, res);
-    const devId = req.devId;
-    res.status(data?.status).json({ devId: devId });
+    WrappidLogger.logFunctionStart("getIP");
+    const { status, ...restData } = await authFunctions.getIPHelper(req, res);
+    res.status( status).json(restData);
   } catch (error: any) {
-    console.error("getIP Error:: ", error);
+    WrappidLogger.error("getIP Error:: " + error);
     res.status(500).json({ message: error.message });
+  } finally {
+    WrappidLogger.logFunctionEnd("getIP");
   }
 };
 
+/**
+ * 
+ * @param req 
+ * @param res 
+ */
 export const refreshToken = async (req: any, res: any) => {
   try {
+    WrappidLogger.logFunctionStart("refreshToken");
     const data: any = await authFunctions.refreshTokenHelper(req, res);
     res.status(data?.status).json(data);
   } catch (error: any) {
-    console.error("refreshToken Error:: ", error);
+    WrappidLogger.error("refreshToken Error:: " + error);
     res.status(500).json({ message: error.message });
+  } finally {
+    WrappidLogger.logFunctionEnd("refreshToken");
   }
 };
 
+/**
+ * 
+ * @param req 
+ * @param res 
+ */
 export const clientLoginInformation = async (req: any, res: any) => {
   try {
-    const data = await authFunctions.clientLoginInformationHelper(req, res);
-    res.status(data?.status).json(data);
+    WrappidLogger.logFunctionStart("clientLoginInformation");
+    const { status, ...restData } = await authFunctions.clientLoginInformationHelper(req, res);
+    res.status(status).json(restData);
   } catch (error: any) {
     res.status(500).json({ message: error.message });
+  } finally {
+    WrappidLogger.logFunctionEnd("clientLoginInformation");
+
   }
 };
 
+/**
+ * 
+ * @param req 
+ * @param res 
+ */
 export const sentOtp = async (req: any, res: any) => {
   try {
-    const data = await authFunctions.sentOtp(req, res);
-    res.status(data?.status).json({ message: data?.message });
+    WrappidLogger.logFunctionStart("sentOtp");
+    const { status, ...restData } = await authFunctions.sentOtp(req, res);
+    res.status(status).json(restData);
   } catch (error: any) {
-    console.error("refreshToken Error:: ", error);
+    WrappidLogger.error("refreshToken Error:: " + error);
     res.status(500).json({ message: error.message });
+  } finally {
+    WrappidLogger.logFunctionEnd("sentOtp");
   }
 };
 
+/**
+ * 
+ * @param req 
+ * @param res 
+ */
 export const postChangePassword = async (req: any, res: any) => {
   try {
-    const data = await authFunctions.postChangePasswordFunc(req, res);
-    res.status(data?.status).json({ message: data?.message });
+    WrappidLogger.logFunctionStart("postChangePassword");
+    const { status, ...restData } = await authFunctions.postChangePasswordFunc(req, res);
+    res.status(status).json(restData);
   } catch (error: any) {
-    console.error("Error:: ", error);
+    WrappidLogger.error("Error:: " + error);
     res.status(500).json({ message: error.message });
+  } finally {
+    WrappidLogger.logFunctionEnd("postChangePassword");
   }
 };
 
+/**
+ * 
+ * @param req 
+ * @param res 
+ */
 export const postVerifyOtp = async (req: any, res: any) => {
   try {
-    // res.status(200).json({message: "API call sucessfully!!"});
-    const data = await authFunctions.postVerifyOtpFunc(req, res);
-    const { status, ...resData } = data;
-    res.status(status).json({ ...resData });
-  } catch (err: any) {
-    console.log(err);
-    res.status(500).json({ message: err });
+    WrappidLogger.logFunctionStart("postVerifyOtp");
+    const  { status, ...restData } = await authFunctions.postVerifyOtpFunc(req, res);
+    res.status(status).json(restData);
+  } catch (error: any) {
+    WrappidLogger.error("postVerifyOtp Error:: " + error);
+    res.status(500).json({ message: error.message });
+  } finally {
+    WrappidLogger.logFunctionEnd("postVerifyOtp");
   }
 };
