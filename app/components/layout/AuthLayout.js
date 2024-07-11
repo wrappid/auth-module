@@ -56,7 +56,7 @@ export default function AuthLayout() {
       <CoreImageBackground
         source={authBackground}
         resizeMode="cover"
-        styleClasses={[CoreClasses.HEIGHT.VH_100]}>
+        styleClasses={[CoreClasses.HEIGHT.VH_100, CoreClasses.OVERFLOW.OVERFLOW_HIDDEN]}>
 
         <CoreGrid styleClasses={
           [ModuleClasses.AUTH.CONTENT]
