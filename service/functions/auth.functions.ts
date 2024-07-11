@@ -858,6 +858,26 @@ const sentOtp = async (req: any, res: any) => {
       userId = user?.id;
       commData.id = user?.id;
     }
+    /**
+ * suggested by @pritamIT2024
+ */
+    if (!userId) {
+      const person = await databaseActions.findOne("application", "PersonContacts", {
+        where:{
+          data: req.body.data,
+          isActive: true,
+          _status : constant.entityStatus.ACTIVE
+        }
+      });
+      const user = await databaseActions.findOne("application", "Persons", {
+        where: {
+          id: person?.personId,
+
+        }
+      }); 
+      userId = user?.userId;
+      commData.id = user?.userId;
+    }
 
     const contactType =
       commType === coreConstant.commType.SMS
