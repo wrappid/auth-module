@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.18](https://https//github.com/wrappid/wrappid-module/compare/v0.0.17...v0.0.18) (2024-07-11)
+
+
+### Bug Fixes
+
+* **core:** :bug: verify otp ([51bc3f6](https://https//github.com/wrappid/wrappid-module/commit/51bc3f669378f70730f3fd4fbea6d8ba57caa514)), closes [#88](https://https//github.com/wrappid/wrappid-module/issues/88)
+* **core:** auth bottom white line ([83d5ce2](https://https//github.com/wrappid/wrappid-module/commit/83d5ce207c3fdc196a861a1c7943e9db786945db))
+
 ### [0.0.17](https://https//github.com/wrappid/wrappid-module/compare/v0.0.16...v0.0.17) (2024-07-03)
 
 
