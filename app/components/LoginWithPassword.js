@@ -1,4 +1,5 @@
 /* eslint-disable etc/no-commented-out-code */
+import React from "react";
 
 import {
   CoreAvatar,
@@ -10,6 +11,7 @@ import {
   CoreTextButton,
   CoreTypographyBody2,
   // coreUseNavigate,
+  coreUseNavigate,
   stringUtils
 } from "@wrappid/core";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,6 +22,8 @@ import AuthLayout from "./layout/AuthLayout";
 import { ModuleRoute } from "../constants/app.constants";
 
 const LoginWithPassword = () => {
+  const navigate = coreUseNavigate();
+
   const dispatch = useDispatch();
   // const navigate = coreUseNavigate();
   const auth = useSelector(state => state.auth);
@@ -31,9 +35,11 @@ const LoginWithPassword = () => {
     name,
     navData,
     photo,
-    // uid,
-    // accessToken
+    uid,
+    accessToken
   } = auth;
+
+  let authenticated = uid && accessToken ? true : false;
 
   // let authenticated = uid && accessToken ? true : false;
 
@@ -52,6 +58,12 @@ const LoginWithPassword = () => {
 
     dispatch(clearAuthState());
   };
+
+  React.useEffect(() => {
+    if (authenticated) {
+      navigate("/");
+    }
+  }, [authenticated]);
 
   const changeAuthNextPage = (routeName) => {
     // if((routeName === ModuleRoute.RESET_PASSWORD_ROUTE && (navigateToResetPasswordSuccess ||
@@ -135,11 +147,11 @@ const LoginWithPassword = () => {
                   * fix required: email or phone getting removed from store auth.navData
                   */}
           <CoreTextButton onClick={() => changeAuthNextPage(ModuleRoute.RESET_PASSWORD_ROUTE)}>
-                  Reset Password
+            Reset Password
           </CoreTextButton>
 
           <CoreTextButton onClick={() => changeAuthNextPage(ModuleRoute.LOGIN_OTP_ROUTE)}>
-                  Login with OTP
+            Login with OTP
           </CoreTextButton>
         </CoreBox>
 

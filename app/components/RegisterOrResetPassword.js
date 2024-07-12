@@ -11,7 +11,8 @@ import {
   CoreTextButton,
   CoreTypographyBody1,
   CoreTypographyBody2,
-  stringUtils
+  stringUtils,
+  coreUseNavigate
 } from "@wrappid/core";
 import { WrappidDataContext } from "@wrappid/styles";
 import { useDispatch, useSelector } from "react-redux";
@@ -22,6 +23,7 @@ import AuthLayout from "./layout/AuthLayout";
 import { ModuleRoute } from "../constants/app.constants";
 
 const RegisterOrResetPassword = () => {
+  const navigate = coreUseNavigate();
   const dispatch = useDispatch();
   // eslint-disable-next-line etc/no-commented-out-code
   // const navigate = coreUseNavigate();
@@ -30,7 +32,9 @@ const RegisterOrResetPassword = () => {
   const auth = useSelector(state => state.auth);
   const routeRegistry = React.useContext(CoreRoutesContext);
 
-  const { authNextPage, navData } = auth;
+  const { authNextPage, navData, uid, accessToken } = auth;
+
+  let authenticated = uid && accessToken ? true : false;
 
   const GoBack = () => {
     dispatch(saveAuthData({
@@ -43,6 +47,12 @@ const RegisterOrResetPassword = () => {
       navigateToResetPasswordSuccess: false,
     }));
   };
+
+  React.useEffect(() => {
+    if (authenticated) {
+      navigate("/");
+    }
+  }, [authenticated]);
 
   const showEmailOrPhone = () => {
     return (

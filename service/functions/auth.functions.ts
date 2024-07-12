@@ -214,7 +214,7 @@ const loginHelper = async (req: any, otherLogin: any) => {
       WrappidLogger.info("Person details fetched");
 
       if (otpLogin) {
-        const otpCheck = await checkOtp(userId, req.body.otp);
+        const otpCheck = await checkOtp(userId, req.body.otp, ob.type);
         if (!otpCheck) {
           WrappidLogger.info("OTP match fail");
           return { status: 500, message: "OTP does not match" };
@@ -520,17 +520,21 @@ const logoutHelper = async (req: any) => {
  * @param otp 
  * @returns 
  */
-async function checkOtp(userId: any, otp: any) {
+async function checkOtp(userId: any, otp: any, type: string) {
   WrappidLogger.logFunctionStart("checkOtp");
   try {
-    const dbOtp = await databaseActions.findOne("application", "Otps", {
+    const dbData = await databaseActions.findAll("application", "Otps", {
       where: {
         userId: userId,
+        type: type,
         _status: coreConstant.entityStatus.ACTIVE,
       },
-    });
-  
-    if (Number(dbOtp.otp) === Number(otp)) {
+      limit: 1,
+      order: [["id", "DESC"]]
+    }
+    );
+    const dbOtp = dbData[0].dataValues.otp;
+    if (Number(dbOtp ) === Number(otp)) {
       return true;
     } else {
       return false;
