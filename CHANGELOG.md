@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.20](https://https//github.com/wrappid/wrappid-module/compare/v0.0.19...v0.0.20) (2024-07-12)
+
+
+### Bug Fixes
+
+* **global:** :bug: otp missmatch fix ([9f1f1f8](https://https//github.com/wrappid/wrappid-module/commit/9f1f1f8c13784a993f24b27be0ca9ace0cf57de5)), closes [#86](https://https//github.com/wrappid/wrappid-module/issues/86)
+
 ### [0.0.19](https://https//github.com/wrappid/wrappid-module/compare/v0.0.18...v0.0.19) (2024-07-12)
 
 
