@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.19](https://https//github.com/wrappid/wrappid-module/compare/v0.0.18...v0.0.19) (2024-07-12)
+
+
+### Bug Fixes
+
+* **global:** :bug: fix Not You and logger added in service ([79fab94](https://https//github.com/wrappid/wrappid-module/commit/79fab9465552329597c99f0b703443c9895b7daa)), closes [#86](https://https//github.com/wrappid/wrappid-module/issues/86)
+
 ### [0.0.18](https://https//github.com/wrappid/wrappid-module/compare/v0.0.17...v0.0.18) (2024-07-11)
 
 
