@@ -4,6 +4,7 @@ import {
   coreConstant,
   databaseActions,
   databaseProvider,
+  WrappidLogger,
 } from "@wrappid/service-core";
 // eslint-disable-next-line import/no-unresolved
 import bcrypt from "bcrypt";
@@ -22,14 +23,13 @@ import {
 } from "./auth.helper.functions";
 
 /**
- *
- * @returns
+ * 
+ * @param req 
+ * @returns 
  */
 const checkLoginOrRegisterUtil = async (req: any) => {
   try {
-    const dataa = ApplicationContext.getContext("config");
-    console.log(dataa);
-  
+    WrappidLogger.logFunctionStart("checkLoginOrRegisterUtil");
     // let iWsValidJOI = await authenticateJOI(req,"checkLoginOrRegisterPOST",["body","query"])
     const emailOrPhone = req.body.emailOrPhone;
     const ob: any = clearValidatePhoneEmail(emailOrPhone);
@@ -37,27 +37,26 @@ const checkLoginOrRegisterUtil = async (req: any) => {
     if (ob.type === COMMUNICATION_EMAIL) whereOb = { email: emailOrPhone };
     else if (ob.type === COMMUNICATION_SMS) whereOb = { phone: emailOrPhone };
     else {
-      console.log("Not a valid email or phone");
+      WrappidLogger.info("Not a valid email or phone");
       return { staus: 500, message: "Not a valid email or phone" };
     }
-
     const data = await databaseActions.findOne("application", "Users", {
       where: whereOb,
     });
 
     if (data) {
       if (data.firstLogin) {
-        console.log("User found, first time login", data.id);
+        WrappidLogger.info("User found, first time login " + data.id);
         return { status: 201, message: "First login for created user" };
       } else {
-        console.log("User found", data.id);
+        WrappidLogger.info("User found " + data.id);
         const personData = await databaseActions.findOne(
           "application",
           "Persons",
           {
             where: {
               userId: data.id,
-            },
+            }
           }
         );
 
@@ -65,15 +64,12 @@ const checkLoginOrRegisterUtil = async (req: any) => {
           status: 200,
           message: "User Found",
           data: {
-            name:
-              personData.firstName +
-              " " +
-              personData.middleName +
-              " " +
-              personData.lastName,
-            photoUrl: personData.photoUrl,
-            isVerified: personData.isVerified,
-          },
+            name: personData?.firstName +
+              " " + personData?.middleName +
+              " " + personData?.lastName,
+            photoUrl: personData?.photoUrl,
+            isVerified: personData?.isVerified,
+          }
         };
       }
     } else {
@@ -84,27 +80,23 @@ const checkLoginOrRegisterUtil = async (req: any) => {
             //Changed
             const rolesData = await databaseActions.findOne(
               "application",
-              "Roles",
-              {
+              "Roles",{
                 where: { role: ApplicationContext.getContext("config").wrappid.defaultUserRole || constant.userRoles.ROLE_DEVELOPER },
-              }
-            );
+              });
             const userData = await databaseActions.create(
               "application",
-              "Users",
-              {
+              "Users",{
                 ...userBody,
                 roleId: rolesData.id,
                 firstLogin: true,
               },
               { transaction: t }
             );
-            console.log("User Created", userData.id);
+            WrappidLogger.info("User Created " + userData.id);
 
             const personData = await databaseActions.create(
               "application",
-              "Persons",
-              {
+              "Persons",{
                 ...userBody,
                 profileId: Date.now(),
                 userId: userData.id,
@@ -116,12 +108,11 @@ const checkLoginOrRegisterUtil = async (req: any) => {
               },
               { transaction: t }
             );
-            console.log("Person Created", personData.id);
+            WrappidLogger.info("Person Created " + personData.id);
 
             const person = await databaseActions.create(
               "application",
-              "PersonContacts",
-              {
+              "PersonContacts",{
                 data: emailOrPhone,
                 type:
                   ob.type === coreConstant.commType.EMAIL
@@ -132,12 +123,11 @@ const checkLoginOrRegisterUtil = async (req: any) => {
               },
               { transaction: t }
             );
-            console.log("Person contact Created", person.id);
-
+            WrappidLogger.info("Person contact Created " + person.id);
             return { status: 201, message: "New User created" };
           }
         );
-        console.log("New User created");
+        WrappidLogger.info("New User created");
         return result;
       } else {
         console.error("Not a valid mail or phone:", emailOrPhone);
@@ -145,13 +135,22 @@ const checkLoginOrRegisterUtil = async (req: any) => {
       }
     }
   } catch (err: any) {
-    console.log("Error in check register", err);
+    WrappidLogger.info("Error in check register " + err);
     throw err;
+  }finally{
+    WrappidLogger.logFunctionEnd("checkLoginOrRegisterUtil");
   }
 };
 
+/**
+ * 
+ * @param req 
+ * @param otherLogin 
+ * @returns 
+ */
 const loginHelper = async (req: any, otherLogin: any) => {
   try {
+    WrappidLogger.logFunctionStart("loginHelper");
     let otpLogin = false;
     let urlLogin = false;
     const emailOrPhone = req.body.emailOrPhone;
@@ -174,19 +173,19 @@ const loginHelper = async (req: any, otherLogin: any) => {
 
       whereOb = { phone: emailOrPhone };
     } else {
-      console.log("Not a valid email or phone");
+      WrappidLogger.info("Not a valid email or phone");
       return { status: 500, message: "Not a valid email or phone" };
     }
 
     //check if it is a reset password request
     if (req.query.reset) {
-      console.log("Login with password reset mode");
+      WrappidLogger.info("Login with password reset mode");
       if (req.query.reset === "true") {
         resetPassword = true;
       } else {
-        console.log("*********************************");
-        console.log("RESET NOT IN CORRECT FORMAT");
-        console.log("*********************************");
+        WrappidLogger.info("*********************************");
+        WrappidLogger.info("RESET NOT IN CORRECT FORMAT");
+        WrappidLogger.info("*********************************");
         return { status: 401, message: "Reset not in correct format" };
       }
     }
@@ -196,10 +195,10 @@ const loginHelper = async (req: any, otherLogin: any) => {
     });
 
     if (!userDetails) {
-      console.log("User does not exist");
+      WrappidLogger.info("User does not exist");
       return { status: 400, message: "User does not exist" };
     } else if (!userDetails.isActive) {
-      console.error("User not active");
+      WrappidLogger.error("User not active");
       return { status: 401, message: "User not active...Contact admin" };
     } else {
       const userId = userDetails.id;
@@ -207,37 +206,35 @@ const loginHelper = async (req: any, otherLogin: any) => {
       const phone = userDetails.phone;
       const userUpdateOb: any = {};
 
-      // console.log("i am in >>>>>>>>>>>>>>>>>>>>>>>>>>>",userId)
       const personData = await databaseActions.findOne("application", "Persons", {
         attributes: ["id", "userInvitationToken"],
         where: { userId: userId },
       });
       const personId = personData.id;
-      console.log("Person details fetched");
+      WrappidLogger.info("Person details fetched");
 
       if (otpLogin) {
         const otpCheck = await checkOtp(userId, req.body.otp);
         if (!otpCheck) {
-          console.log("OTP match fail");
+          WrappidLogger.info("OTP match fail");
           return { status: 500, message: "OTP does not match" };
         } else {
-          console.log("OTP match passed");
+          WrappidLogger.info("OTP match passed");
           await databaseActions.update(
             "application",
             "Otps",
             { _status: coreConstant.entityStatus.INACTIVE },
-            {
-              where: {
-                userId: userId,
-                otp: req.body.otp,
-              },
-            }
-          );
+            { where: {
+              userId: userId,
+              otp: req.body.otp,
+            }});
+
           if (resetPassword) {
             const passwordValid = resetPasswordCheck(
               req.body.password,
               userDetails
             );
+
             if (passwordValid?.success) {
               updatePassword = true;
               userUpdateOb["password"] = passwordValid.password;
@@ -252,9 +249,9 @@ const loginHelper = async (req: any, otherLogin: any) => {
       } else if (urlLogin) {
         const check = checkUrlLoginValidation(req, personData);
         if (check) {
-          console.log("Validation done");
+          WrappidLogger.info("Validation done");
         } else {
-          console.log("Validation failed");
+          WrappidLogger.info("Validation failed");
           return { status: 401, message: "Invalid url token" };
         }
       } else if (!checkPassword(req.body.password, userDetails.password)) {
@@ -263,7 +260,7 @@ const loginHelper = async (req: any, otherLogin: any) => {
       }
 
       const deviceId = await getDeviceId(req);
-      console.log("Device id fetched");
+      WrappidLogger.info("Device id fetched");
 
       const { refreshToken, accessToken } = genarateAccessToken(
         userId,
@@ -272,7 +269,7 @@ const loginHelper = async (req: any, otherLogin: any) => {
         personData,
         userDetails
       );
-      console.log("Tokens generate done");
+      WrappidLogger.info("Tokens generate done");
 
       const sessions = await databaseActions.findAll(
         "application",
@@ -284,15 +281,14 @@ const loginHelper = async (req: any, otherLogin: any) => {
         }
       );
 
-      console.log("All sessions fetchd:", sessions.length);
-
+      WrappidLogger.info("All sessions fetchd: " + sessions.length);
       let found = false;
 
       const result = await databaseProvider.application.sequelize.transaction(
         async (t: any) => {
           //check first time login
           if (userDetails.firstLogin) {
-            console.log("First time login detected");
+            WrappidLogger.info("First time login detected");
             userUpdateOb["firstLogin"] = false;
           }
 
@@ -300,36 +296,28 @@ const loginHelper = async (req: any, otherLogin: any) => {
             const [checkUser] = await databaseActions.update(
               "application",
               "Users",
-              {
-                ...userUpdateOb,
-              },
+              {   ...userUpdateOb },
               {
                 where: {
                   id: userId,
                 },
-              },
-              {
-                transaction: t,
-              }
+              },{ transaction: t }
             );
             if (checkUser == 0) {
+              WrappidLogger.error("DB update error");
               throw "DB update error";
             } else {
-              console.log("First time login updated");
+              WrappidLogger.info("First time login updated");
             }
           }
 
           //for otplogin update personContact verfication status
           if (otpLogin || urlLogin) {
-            console.log("PersonContacts updating due to otplogin or urllogin");
-
+            WrappidLogger.info("PersonContacts updating due to otplogin or urllogin");
             const [checkContacts] = await databaseActions.update(
               "application",
               "PersonContacts",
-
-              {
-                verified: true,
-              },
+              { verified: true },
               {
                 where: {
                   personId: personId,
@@ -340,15 +328,10 @@ const loginHelper = async (req: any, otherLogin: any) => {
             );
 
             if (checkContacts == 0) {
-              console.error(
-                "Person contact update not made, user id:",
-                userId,
-                ", contact:",
-                emailOrPhone
-              );
+              WrappidLogger.error("Person contact update not made, user id:" + userId+ " contact: " + emailOrPhone );
               throw "DB update error";
             } else {
-              console.log("PersonContacts updated");
+              WrappidLogger.info("PersonContacts updated");
             }
           }
 
@@ -356,9 +339,8 @@ const loginHelper = async (req: any, otherLogin: any) => {
           if (
             userDetails.firstLogin ||
             (verificationOb.emailVerified && !personData.emailVerified) ||
-            (verificationOb.phoneVerified && !personData.phoneVerified)
-          ) {
-            console.log("Persons table updating:", verificationOb);
+            (verificationOb.phoneVerified && !personData.phoneVerified)) {
+            WrappidLogger.info("Persons table updating: " + verificationOb);
             if (urlLogin) {
               verificationOb["userInvitationToken"] = null;
             }
@@ -366,7 +348,6 @@ const loginHelper = async (req: any, otherLogin: any) => {
             const [checkPerson] = await databaseActions.update(
               "application",
               "Persons",
-
               verificationOb,
               {
                 where: {
@@ -376,24 +357,24 @@ const loginHelper = async (req: any, otherLogin: any) => {
               }
             );
             if (checkPerson == 0) {
+              WrappidLogger.error("DB update error");
               throw "DB update error";
             } else {
-              console.log("Persons table updated");
+              WrappidLogger.info("Persons table updated");
             }
           }
 
           for (let session = 0; session < sessions.length; session++) {
             const currSession = sessions[session];
             if (bcrypt.compareSync(deviceId, currSession.deviceId)) {
-              console.log("*****************************");
-              console.log("session found", currSession.id);
-              console.log("*****************************");
+              WrappidLogger.info("*****************************");
+              WrappidLogger.info("session found " + currSession.id);
+              WrappidLogger.info("*****************************");
               found = true;
 
               const [nrows] = await databaseActions.update(
                 "application",
                 "SessionManagers",
-
                 { refreshToken: refreshToken },
                 {
                   where: {
@@ -404,7 +385,7 @@ const loginHelper = async (req: any, otherLogin: any) => {
               );
 
               if (nrows > 0) {
-                console.log("Login Success");
+                WrappidLogger.info("Login Success");
                 // get person id
                 const person = await databaseActions.findOne(
                   "application",
@@ -426,7 +407,7 @@ const loginHelper = async (req: any, otherLogin: any) => {
                   sessionId: currSession.id,
                 };
               } else {
-                console.error("Can not save refresh token", nrows);
+                WrappidLogger.error("Can not save refresh token " + nrows);
                 return { status: 500, message: "Database error" };
               }
             }
@@ -436,7 +417,6 @@ const loginHelper = async (req: any, otherLogin: any) => {
             const newSession = await databaseActions.create(
               "application",
               "SessionManagers",
-
               {
                 refreshToken: refreshToken,
                 userId: userId,
@@ -446,10 +426,7 @@ const loginHelper = async (req: any, otherLogin: any) => {
                 transaction: t,
               }
             );
-            console.log(
-              "Login Success with New Device, session id: ",
-              newSession.id
-            );
+            WrappidLogger.info( "Login Success with New Device, session id: " + newSession.id);
             createLoginLogs(req.originalUrl, userId, req.body?.devInfo);
 
             // get person id
@@ -479,13 +456,21 @@ const loginHelper = async (req: any, otherLogin: any) => {
       return result;
     }
   } catch (err: any) {
-    console.log("Error in login", err);
+    WrappidLogger.info("Error in login: " + err);
     throw err;
+  }finally{
+    WrappidLogger.logFunctionEnd("loginHelper");
   }
 };
 
-const logoutHelper = async (req: any, res: any) => {
+/**
+ * 
+ * @param req 
+ * @param res 
+ */
+const logoutHelper = async (req: any) => {
   try {
+    WrappidLogger.logFunctionStart("logoutHelper");
     console.error("user:: ", req.user);
     const deviceId = await getDeviceId(req);
     const sessions = await databaseActions.findAll(
@@ -511,76 +496,122 @@ const logoutHelper = async (req: any, res: any) => {
           }
         );
         if (nrows > 0) {
-          console.log("Successfully logged out");
-          res.status(200).json({ message: "Successfully logged out" });
+          WrappidLogger.info("Successfully logged out");
+          return { status:200, message: "Successfully logged out" };
         } else {
           console.error("Database error in logout");
-          res.status(500).json({ message: "Database error" });
+          return { status:500,  message: "Database error" };
         }
         break;
       }
     }
+    return { staus:204, message: "No session found!!" };
   } catch (err: any) {
-    console.error("Database error in logout", err);
+    WrappidLogger.error("Database error in logout" + err);
     throw err;
+  }finally{
+    WrappidLogger.logFunctionEnd("logoutHelper");
   }
 };
 
+/**
+ * 
+ * @param userId 
+ * @param otp 
+ * @returns 
+ */
 async function checkOtp(userId: any, otp: any) {
-  const dbOtp = await databaseActions.findOne("application", "Otps", {
-    where: {
-      userId: userId,
-      _status: coreConstant.entityStatus.ACTIVE,
-    },
-  });
-  // console.log("DB OTP:", dbOtp.otp, Number(dbOtp.otp));
-  // console.log("REQ OTP:", otp, Number(otp));
-  // console.log("CHECK", Number(dbOtp.otp) === Number(otp));
-
-  if (Number(dbOtp.otp) === Number(otp)) {
-    return true;
-  } else {
-    return false;
+  WrappidLogger.logFunctionStart("checkOtp");
+  try {
+    const dbOtp = await databaseActions.findOne("application", "Otps", {
+      where: {
+        userId: userId,
+        _status: coreConstant.entityStatus.ACTIVE,
+      },
+    });
+  
+    if (Number(dbOtp.otp) === Number(otp)) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    WrappidLogger.error("Error: " + error);
+    throw error;
+  }finally{
+    WrappidLogger.logFunctionEnd("checkOtp");
   }
+
 }
 
+/**
+ * 
+ * @param password 
+ * @param userDetails 
+ * @returns 
+ */
 function resetPasswordCheck(password: any, userDetails: any) {
-  const samePasswordCheck = checkPassword(password, userDetails.password);
+  try {
+    WrappidLogger.logFunctionStart("resetPasswordCheck");
+    const samePasswordCheck = checkPassword(password, userDetails.password);
 
-  if (samePasswordCheck) {
-    console.log("Password can not be same as previous password");
-    return {
-      success: false,
-      message: "Password can not be same as previous password",
-    };
-  } else
-    return {
-      success: true,
-      password: bcrypt.hashSync(password, 9),
-      message: "Password reset can be done",
-    };
+    if (samePasswordCheck) {
+      WrappidLogger.info("Password can not be same as previous password");
+      return {
+        success: false,
+        message: "Password can not be same as previous password",
+      };
+    } else
+      return {
+        success: true,
+        password: bcrypt.hashSync(password, 9),
+        message: "Password reset can be done",
+      };
+  } catch (error) {
+    WrappidLogger.error("Error: " + error);
+    throw error;
+  }finally{
+    WrappidLogger.logFunctionEnd("resetPasswordCheck");
+  }
+  
 }
 
+/**
+ * 
+ * @param req 
+ * @param personData 
+ * @returns 
+ */
 function checkUrlLoginValidation(req: any, personData: any) {
-  console.log(
-    "DB TOKEN: ",
-    personData,
-    "req token: ",
-    req.body.userInvitationToken
-  );
+  WrappidLogger.info("DB TOKEN: " + personData + " req token: " + req.body.userInvitationToken );
   if (personData.userInvitationToken === req.body.userInvitationToken) {
-    console.log("Url login token vvalidation succssfull");
+    WrappidLogger.info("Url login token vvalidation succssfull");
     return true;
   } else {
-    console.log("Url login token vvalidation failed");
+    WrappidLogger.info("Url login token vvalidation failed");
     return false;
   }
 }
 
+/**
+ * 
+ * @param reqPassword 
+ * @param dbPassword 
+ * @returns 
+ */
 function checkPassword(reqPassword: any, dbPassword: any) {
   return bcrypt.compareSync(reqPassword, dbPassword);
 }
 
+/**
+ * 
+ * @param userId 
+ * @param mail 
+ * @param phone 
+ * @param personData 
+ * @param userDetails 
+ * @returns 
+ */
 function genarateAccessToken(
   userId: any,
   mail: any,
@@ -588,52 +619,83 @@ function genarateAccessToken(
   personData: any,
   userDetails: any
 ) {
-  const {
-    accessTokenSecret,
-    refreshAccessTokenSecret,
-    expTime,
-    expTimeRefreshToken,
-  } = ApplicationContext.getContext("config").jwt;
-  
-  const accessToken = jwt.sign(
-    {
-      userId: userId,
-      email: mail,
-      phone: phone,
-      personId: personData?.id,
-      roleId: userDetails.roleId,
-    },
-    accessTokenSecret,
-    { expiresIn: expTime }
-  );
-  const refreshToken = jwt.sign(
-    {
-      userId: userId,
-      email: mail,
-      phone: phone,
-      personId: personData?.id,
-      roleId: userDetails.roleId,
-    },
-    refreshAccessTokenSecret,
-    { expiresIn: expTimeRefreshToken }
-  );
-  console.log("Tokens generated");
-  return { accessToken, refreshToken };
+  try {
+    WrappidLogger.logFunctionStart("genarateAccessToken");
+
+    const {
+      accessTokenSecret,
+      refreshAccessTokenSecret,
+      expTime,
+      expTimeRefreshToken,
+    } = ApplicationContext.getContext("config").jwt;
+
+    const accessToken = jwt.sign(
+      {
+        userId: userId,
+        email: mail,
+        phone: phone,
+        personId: personData?.id,
+        roleId: userDetails.roleId,
+      },
+      accessTokenSecret,
+      { expiresIn: expTime }
+    );
+    const refreshToken = jwt.sign(
+      {
+        userId: userId,
+        email: mail,
+        phone: phone,
+        personId: personData?.id,
+        roleId: userDetails.roleId,
+      },
+      refreshAccessTokenSecret,
+      { expiresIn: expTimeRefreshToken }
+    );
+    WrappidLogger.info("Tokens generated");
+    return { accessToken, refreshToken };
+  } catch (error) {
+    WrappidLogger.error("Error: " + error);
+    throw error;
+  }finally{
+    WrappidLogger.logFunctionEnd("genarateAccessToken");
+  }
 }
 
+/**
+ * 
+ * @param path 
+ * @param userId 
+ * @param extraInfo 
+ */
 async function createLoginLogs(path: any, userId: any, extraInfo: any = "{}") {
-  console.log("Login logs created", userId, path);
-  await databaseActions.create("application", "LoginLogs", {
-    userId: userId,
-    route: path,
-    message: "Login Success",
-    status: 200,
-    extraInfo: JSON.parse(extraInfo),
-  });
+  try {
+    WrappidLogger.logFunctionStart("createLoginLogs");
+    WrappidLogger.info("Login logs created" + userId + path);
+    await databaseActions.create("application", "LoginLogs", {
+      userId: userId,
+      route: path,
+      message: "Login Success",
+      status: 200,
+      extraInfo: JSON.parse(extraInfo),
+    });
+  } catch (error) {
+    WrappidLogger.error("Error: " + error);
+    throw error;
+  }finally{
+    WrappidLogger.logFunctionEnd("createLoginLogs");
+  }
+ 
 }
+/**
+ * 
+ * @param req 
+ * @param res 
+ * @returns 
+ */
 const getIPHelper = async (req: any, res: any) => {
   try {
-    console.log(res);
+    WrappidLogger.logFunctionStart("getIPHelper");
+    WrappidLogger.info(res);
     const detector = new DeviceDetector({
       clientIndexes: true,
       deviceIndexes: true,
@@ -644,28 +706,36 @@ const getIPHelper = async (req: any, res: any) => {
     req.devId = devId;
     return { status: 200, devId: devId };
   } catch (err: any) {
-    console.error("internal error", err);
+    WrappidLogger.error("internal error" + err);
     throw err;
+  }finally{
+    WrappidLogger.logFunctionEnd("getIPHelper");
   }
 };
 
+/**
+ * 
+ * @param req 
+ * @param res 
+ * @returns 
+ */
 // eslint-disable-next-line no-unused-vars
 const refreshTokenHelper = async (req: any, res: any) => {
   try {
+    WrappidLogger.logFunctionStart("refreshTokenHelper");
     const {
       accessTokenSecret,
       refreshAccessTokenSecret,
       expTime,
     } = ApplicationContext.getContext("config").jwt;
-    
+
     return jwt.verify(
       req.body.refreshToken,
       refreshAccessTokenSecret,
       async (err: any, user: any) => {
         if (err) {
-          console.error("Refresh token expired", err);
-
-          return{status:401, message: "Refresh token expired" };
+          WrappidLogger.error("Refresh token expired " + err);
+          return { status: 401, message: "Refresh token expired" };
         }
         const userId = user.userId;
         // let isValidJOI = await authenticateJOI(req,"refreshtokenPOST",["body"])
@@ -682,30 +752,27 @@ const refreshTokenHelper = async (req: any, res: any) => {
             },
           }
         );
-        console.log("Sessions available:", sessions.length);
+        WrappidLogger.info("Sessions available:" + sessions.length);
         for (let session = 0; session < sessions.length; session++) {
           const currSession = sessions[session];
           if (bcrypt.compareSync(deviceId, currSession.deviceId)) {
             const token = req.body.refreshToken;
             const refreshToken = currSession.refreshToken;
-            console.log("Session:", currSession.id);
+            WrappidLogger.info("Session:" + currSession.id);
             if (!token) {
-              return {status:401, message: "Invalid request" };
+              return { status: 401, message: "Invalid request" };
             }
             if (refreshToken != token) {
-              console.error("Wrong refresh token");
-              return {status:401, message: "unauthorised access" };
-
-              // return res.status(401).json({ message: "unauthorised access" });
+              WrappidLogger.error("Wrong refresh token");
+              return { status: 401, message: "unauthorised access" };
             }
-
             const userDetails = await databaseActions.findOne(
               "application",
               "Users",
               {
                 where: {
                   id: userId,
-                },
+                }
               }
             );
             const accessToken = jwt.sign(
@@ -718,31 +785,38 @@ const refreshTokenHelper = async (req: any, res: any) => {
               accessTokenSecret,
               { expiresIn: expTime }
             );
-            console.log("Access token refreshed");
+            WrappidLogger.info("Access token refreshed");
             return {
-              status:200,
+              status: 200,
               accessToken: accessToken,
             };
-            // return res.status(200).json({
-            //   accessToken: accessToken,
-            // });
           }
         }
-        console.log("session not found");
-        return ({status:401,
+        WrappidLogger.info("session not found");
+        return {
+          status: 401,
           message: "session not found",
-        });
+        };
       }
     );
   } catch (err: any) {
-    console.error("Database error in refresh token", err);
+    WrappidLogger.error("Database error in refresh token: " + err);
     throw err;
+  }finally{
+    WrappidLogger.logFunctionEnd("refreshTokenHelper");
   }
 };
 
+/**
+ * 
+ * @param req 
+ * @param res 
+ * @returns 
+ */
 const clientLoginInformationHelper = async (req: any, res: any) => {
   try {
-    console.log(res);
+    WrappidLogger.logFunctionStart("clientLoginInformationHelper");
+    WrappidLogger.info(res);
     const userID = req.user.userId;
 
     // ip
@@ -774,7 +848,7 @@ const clientLoginInformationHelper = async (req: any, res: any) => {
     });
     const userAgent = req.headers["user-agent"];
     const result = detector.detect(userAgent);
-    // console.log('result parse', result);
+    WrappidLogger.info("result parse" + result);
     return {
       status: 200,
       deviceInfo: deviceInfo,
@@ -783,11 +857,11 @@ const clientLoginInformationHelper = async (req: any, res: any) => {
       result: result,
       userAgent: userAgent,
     };
-    // .status(200)
-    // .json({ deviceInfo, ip, lastLoginDetails, result, userAgent });
   } catch (err: any) {
-    console.log("Error : ", err);
+    WrappidLogger.info("Error : " + err);
     throw err;
+  }finally{
+    WrappidLogger.logFunctionEnd("clientLoginInformationHelper");
   }
 };
 
@@ -798,7 +872,8 @@ const clientLoginInformationHelper = async (req: any, res: any) => {
  */
 const sentOtp = async (req: any, res: any) => {
   try {
-    console.log(res);
+    WrappidLogger.logFunctionStart("sentOtp");
+    WrappidLogger.info(res);
     const commData: any = {};
     let userId = req?.user?.userId;
     const emailOrPhone = req.body.data;
@@ -809,7 +884,7 @@ const sentOtp = async (req: any, res: any) => {
     }
     let templateID = req.body?.templateID;
     const serviceName = req.body?.service;
-   
+
 
     /**
      * @todo need to add template kit19
@@ -830,7 +905,7 @@ const sentOtp = async (req: any, res: any) => {
     //   }
     // }
 
-    if(commType === constant.communication.EMAIL){
+    if (commType === constant.communication.EMAIL) {
       switch (serviceName) {
         case "loginWithOtp":
           templateID = constant.communication.SENT_OTP_LOGIN_WITH_OTP_MAIL_EN;
@@ -842,7 +917,7 @@ const sentOtp = async (req: any, res: any) => {
           break;
       }
     }
-   
+
 
     if (!userId) {
       const user = await databaseActions.findOne("application", "Users", {
@@ -885,12 +960,12 @@ const sentOtp = async (req: any, res: any) => {
         : commType;
     const personContact = await databaseActions.findOne(
       "application",
-      "PersonContacts",
-      {
+      "PersonContacts",{
         where: { data: emailOrPhone, type: contactType },
       }
     );
     if (personContact == null) {
+      WrappidLogger.error("Email or phone not exist");
       throw new Error("Email or phone not exist");
     }
 
@@ -900,7 +975,7 @@ const sentOtp = async (req: any, res: any) => {
           ? coreConstant.communication.SENT_OTP_MAIL_EN
           : coreConstant.communication.SENT_OTP_SMS_EN;
     }
-    
+
     let genetatedOTP = otpGenerator.generate(
       ApplicationContext.getContext("config").wrappid.otpLength,
       {
@@ -909,7 +984,7 @@ const sentOtp = async (req: any, res: any) => {
         upperCaseAlphabets: false,
       }
     );
-    if(req.query.test === true){
+    if (req.query.test === true) {
       genetatedOTP = "000000";
     }
 
@@ -940,26 +1015,37 @@ const sentOtp = async (req: any, res: any) => {
           },
         }
       );
+
       await databaseActions.create("application", "Otps", {
         otp: genetatedOTP,
         type: commType,
         _status: coreConstant.entityStatus.ACTIVE,
         userId: userId,
       });
-      console.log(`OTP ${commType} sent successfully.`);
+
+      WrappidLogger.info(`OTP ${commType} sent successfully.`);
       return { status: 200, message: `OTP ${commType} sent successfully.` };
     } else {
       throw new Error(`OTP ${commType} sent failed.`);
     }
   } catch (err: any) {
-    console.error(err);
+    WrappidLogger.error("Error: " + err);
     throw err;
+  }finally{
+    WrappidLogger.logFunctionEnd("sentOtp");
   }
 };
 
+/**
+ * 
+ * @param req 
+ * @param res 
+ * @returns 
+ */
 const postChangePasswordFunc = async (req: any, res: any) => {
   try {
-    console.log(res);
+    WrappidLogger.logFunctionStart("postChangePasswordFunc");
+    WrappidLogger.info("res:" + res);
     const { password, newPassword, confirmPassword } = req.body;
 
     const user = await databaseActions.findOne("application", "Users", {
@@ -970,43 +1056,50 @@ const postChangePasswordFunc = async (req: any, res: any) => {
     const oldPassExist = checkPassword(password, user.password);
 
     if (password === newPassword) {
+      WrappidLogger.error("Password can't be same.");
       throw new Error("Password can't be same.");
     }
 
     if (oldPassExist && newPassword === confirmPassword) {
-      //
       const result = await databaseActions.update(
         "application",
         "Users",
-        {
-          password: bcrypt.hashSync(newPassword, 9),
-        },
+        { password: bcrypt.hashSync(newPassword, 9) },
         {
           where: {
             id: req.user.userId,
-          },
+          }
         }
       );
 
       if (result) {
         return { status: 200, message: "Password changed successfully." };
-        // res.status(200).json({message: "Password changed successfully."})
       } else {
+        WrappidLogger.error("Something went wrong.");
         throw new Error("Something went wrong.");
       }
     } else {
+      WrappidLogger.error("Old password is wrong.");
       throw new Error("Old password is wrong.");
     }
   } catch (err: any) {
-    console.log(err);
+    WrappidLogger.error("Error: " + err);
     return { status: 500, message: err?.message || "Something went wrong." };
-    // res.status(500).json({ message: err?.message || "Something went wrong." });
+  }finally{
+    WrappidLogger.logFunctionEnd("postChangePasswordFunc");
   }
 };
 
+/**
+ * 
+ * @param req 
+ * @param res 
+ * @returns 
+ */
 const postVerifyOtpFunc = async (req: any, res: any) => {
   try {
-    console.log(res);
+    WrappidLogger.logFunctionStart("postVerifyOtpFunc");
+    WrappidLogger.info("res: " + res);
     const userId = req.user.userId;
 
     const person = await databaseActions.findOne("application", "Persons", {
@@ -1024,11 +1117,11 @@ const postVerifyOtpFunc = async (req: any, res: any) => {
       order: [["id", "desc"]],
     });
 
-    console.log("OTP in db", otpInDb.otp);
-    console.log("OTP by user", req.body.otp);
+    // WrappidLogger.info("OTP in db" + otpInDb.otp);
+    // WrappidLogger.info("OTP by user" + req.body.otp);
 
     if (req.body.otp == otpInDb.otp) {
-      console.log("OTP matched");
+      WrappidLogger.info("OTP matched");
       const [nrows] = await databaseActions.update(
         "application",
         "PersonContacts",
@@ -1041,29 +1134,22 @@ const postVerifyOtpFunc = async (req: any, res: any) => {
         }
       );
       if (nrows > 0) {
-        console.log("Person contact updated.");
-        console.log("OTP verified");
+        WrappidLogger.info("Person contact updated.");
+        WrappidLogger.info("OTP verified");
         return { status: 200, message: "OTP verified" };
-        // res.status(200).json({ message: "OTP verified" });
       } else {
-        console.log("Person contact not updated");
+        WrappidLogger.info("Person contact not updated");
         return { status: 500, message: "Internal error" };
-        // res.status(500).json({ message: "Internal error" });
       }
     } else {
-      console.log(
-        "OTP mismatch, dbOtp: ",
-        otpInDb.otp,
-        ",user given otp:",
-        req.body.otp
-      );
+      // WrappidLogger.info("OTP mismatch, dbOtp: " + otpInDb.otp + " user given otp: " + req.body.otp );
       return { status: 500, message: "OTP mismatch" };
-      // res.status(500).json({ message: "OTP mismatch" });
     }
   } catch (err: any) {
-    console.log(err);
+    WrappidLogger.info("Error: " + err);
     return { status: 500, message: "Error to fetch Contacts data" };
-    // res.status(500).json({ message: "Error to fetch Contacts data" });
+  }finally{
+    WrappidLogger.logFunctionEnd("postVerifyOtpFunc");
   }
 };
 

@@ -3,7 +3,6 @@ import React from "react";
 import {
   CoreBox,
   CoreClasses,
-  CoreDomNavigate,
   CoreForm,
   CoreH1,
   CoreLayoutItem,
@@ -12,7 +11,6 @@ import {
   CoreTextButton,
   CoreTypographyBody1,
   CoreTypographyBody2,
-  coreUseNavigate,
   stringUtils
 } from "@wrappid/core";
 import { WrappidDataContext } from "@wrappid/styles";
@@ -25,13 +23,14 @@ import { ModuleRoute } from "../constants/app.constants";
 
 const RegisterOrResetPassword = () => {
   const dispatch = useDispatch();
-  const navigate = coreUseNavigate();
+  // eslint-disable-next-line etc/no-commented-out-code
+  // const navigate = coreUseNavigate();
   const { config: appConfig } = React.useContext(WrappidDataContext);
 
   const auth = useSelector(state => state.auth);
   const routeRegistry = React.useContext(CoreRoutesContext);
 
-  const { checkLoginOrRegisterSuccess, authNextPage, navData } = auth;
+  const { authNextPage, navData } = auth;
 
   const GoBack = () => {
     dispatch(saveAuthData({
@@ -69,87 +68,89 @@ const RegisterOrResetPassword = () => {
     );
   };
 
-  if (
-    !checkLoginOrRegisterSuccess &&
-    (authNextPage.toLowerCase() !== ModuleRoute.REGISTER_ROUTE ||
-      authNextPage.toLowerCase() !== ModuleRoute.RESET_PASSWORD_ROUTE)
-  ) {
-    navigate(`/${authNextPage}`);
-  }
+  // eslint-disable-next-line etc/no-commented-out-code
+  // if (
+  //   !checkLoginOrRegisterSuccess &&
+  //   (authNextPage.toLowerCase() !== ModuleRoute.REGISTER_ROUTE ||
+  //     authNextPage.toLowerCase() !== ModuleRoute.RESET_PASSWORD_ROUTE)
+  // ) {
+  //   navigate(`/${authNextPage}`);
+  // }
+
+  // {(!checkLoginOrRegisterSuccess &&
+  //   (authNextPage.toLowerCase() !== ModuleRoute.REGISTER_ROUTE ||
+  //     authNextPage.toLowerCase() !== ModuleRoute.RESET_PASSWORD_ROUTE)) ? <CoreDomNavigate to={`/${authNextPage}`} /> : ()
+  // }
 
   return (
     <>
-      {(!checkLoginOrRegisterSuccess &&
-        (authNextPage.toLowerCase() !== ModuleRoute.REGISTER_ROUTE ||
-          authNextPage.toLowerCase() !== ModuleRoute.RESET_PASSWORD_ROUTE)) ? <CoreDomNavigate to={`/${authNextPage}`} /> : (
-          <CoreLayoutItem id={AuthLayout.PLACEHOLDER.CONTENT}>
-            <CoreH1 variant="h5" styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.COLOR.TEXT_PRIMARY]}>
-              {`Verify your${isNaN(navData?.emailOrPhone) ? " email" : " phone"
-              }`}
-            </CoreH1>
+      <CoreLayoutItem id={AuthLayout.PLACEHOLDER.CONTENT}>
+        <CoreH1 variant="h5" styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.COLOR.TEXT_PRIMARY]}>
+          {`Verify your${isNaN(navData?.emailOrPhone) ? " email" : " phone"
+          }`}
+        </CoreH1>
 
-            {authNextPage === routeRegistry.register?.url ? (<>
+        {authNextPage === routeRegistry.register?.url ? (<>
+          <CoreTypographyBody1 styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.COLOR.TEXT_PRIMARY]}>
+            {`Verify your${isNaN(navData?.emailOrPhone) ? " email" : " phone"
+            } through OTP`}
+          </CoreTypographyBody1>
+
+          {showEmailOrPhone()}
+        </>
+        ) : (
+          <>
+            {
+
               <CoreTypographyBody1 styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.COLOR.TEXT_PRIMARY]}>
-                {`Verify your${isNaN(navData?.emailOrPhone) ? " email" : " phone"
-                } through OTP`}
+                {"Reset your account"}
               </CoreTypographyBody1>
+            }
 
-              {showEmailOrPhone()}
-            </>
-            ) : (
-              <>
-                {
+            {showEmailOrPhone()}
+          </>
+        )}
 
-                  <CoreTypographyBody1 styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.COLOR.TEXT_PRIMARY]}>
-                    {"Reset your account"}
-                  </CoreTypographyBody1>
-                }
+        <CoreBox
+          styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.MARGIN.MB1]}>
+          <CoreTextButton onClick={GoBack} label="Not You" />
+        </CoreBox>
 
-                {showEmailOrPhone()}
-              </>
-            )}
+        <CoreForm
+          styleClasses={CoreClasses.LAYOUT.AUTH_FORM_CONTAINER}
+          formId="loginWithResetPassword"
+          mode="edit"
+          authenticated={false}
+          initProps={{ otp: { to: navData?.emailOrPhone } }}
+        />
 
-            <CoreBox
-              styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.MARGIN.MB1]}>
-              <CoreTextButton onClick={GoBack} label="Not You" />
-            </CoreBox>
-
-            <CoreForm
-              styleClasses={CoreClasses.LAYOUT.AUTH_FORM_CONTAINER}
-              formId="loginWithResetPassword"
-              mode="edit"
-              authenticated={false}
-              initProps={{ otp: { to: navData?.emailOrPhone } }}
-            />
-
-            {authNextPage === routeRegistry?.register?.url && (
-              <CoreTypographyBody2 styleClasses={[CoreClasses.COLOR.TEXT_PRIMARY]}>
+        {authNextPage === routeRegistry?.register?.url && (
+          <CoreTypographyBody2 styleClasses={[CoreClasses.COLOR.TEXT_PRIMARY]}>
               By signing up you agree to our{" "}
 
-                <CoreLink
-                  href={
-                    appConfig?.wrappid?.privacyLink ||
+            <CoreLink
+              href={
+                appConfig?.wrappid?.privacyLink ||
                   "#"
-                  }>
+              }>
                 Privacy Policy
-                </CoreLink>{" "}
+            </CoreLink>{" "}
 
-                <CoreTypographyBody2 component="span">&</CoreTypographyBody2>{" "}
+            <CoreTypographyBody2 component="span">&</CoreTypographyBody2>{" "}
 
-                <CoreLink
-                  href={
-                    appConfig?.wrappid?.termsLink ||
+            <CoreLink
+              href={
+                appConfig?.wrappid?.termsLink ||
                   "#"
-                  }>
+              }>
                 Terms
-                </CoreLink>
+            </CoreLink>
 
-                {"."}
-              </CoreTypographyBody2>
-            )}
+            {"."}
+          </CoreTypographyBody2>
+        )}
 
-          </CoreLayoutItem >)
-      }
+      </CoreLayoutItem >
     </>
   );
 };

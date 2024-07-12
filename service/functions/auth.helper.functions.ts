@@ -2,6 +2,7 @@ import {
   ApplicationContext,
   coreConstant,
   databaseActions,
+  WrappidLogger,
 } from "@wrappid/service-core";
 import DeviceDetector from "node-device-detector";
 import otpGenerator from "otp-generator";
@@ -12,63 +13,114 @@ const COMMUNICATION_SMS = coreConstant.commType.SMS;
 const COMMUNICATION_WHATSAPP = coreConstant.commType.WHATSAPP;
 const COMMUNICATION_PUSH_NOTIFICATION = coreConstant.commType.NOTIFICATION;
 
+/**
+ * 
+ * @param text 
+ * @returns 
+ */
 function clearValidatePhoneEmail(text: any) {
-  let t = text;
-  if (t[0] == "'") {
-    t = t.slice(1);
-    t = t.toLowerCase();
-  }
-  let f = String(t).match(
-    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-  );
-
-  if (f) {
-    return { valid: f, type: COMMUNICATION_EMAIL };
-  } else if (!f) {
-    f = String(t).match(
-      /((\+*)((0[ -]*)*|((91 )*))((\d{12})+|(\d{10})+))|\d{5}([- ]*)\d{6}/
-    );
-    if (f) {
-      return { valid: f, type: COMMUNICATION_SMS };
-    } else {
-      return { valid: f, type: "" };
+  try {
+    WrappidLogger.logFunctionStart("clearValidatePhoneEmail");
+    let t = text;
+    if (t[0] == "'") {
+      t = t.slice(1);
+      t = t.toLowerCase();
     }
-  }
+    let f = String(t).match(
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    );
 
-  return [f, t];
+    if (f) {
+      return { valid: f, type: COMMUNICATION_EMAIL };
+    } else if (!f) {
+      f = String(t).match(
+        /((\+*)((0[ -]*)*|((91 )*))((\d{12})+|(\d{10})+))|\d{5}([- ]*)\d{6}/
+      );
+      if (f) {
+        return { valid: f, type: COMMUNICATION_SMS };
+      } else {
+        return { valid: f, type: "" };
+      }
+    }
+
+    return [f, t];
+  } catch (error) {
+    WrappidLogger.error("Error: " + error);
+    throw error;
+  }finally{
+    WrappidLogger.logFunctionEnd("clearValidatePhoneEmail");
+  }
+  
 }
 
+/**
+ * 
+ * @param req 
+ * @returns 
+ */
 async function getDeviceId(req: any) {
-  // console.log("mac_ip", mac_ip)
-  const detector = new DeviceDetector({
-    clientIndexes: true,
-    deviceIndexes: true,
-    deviceAliasCode: true,
-  });
-  const result = detector.detect(req.headers["user-agent"]);
-  console.log("Result:: ", result);
-  const ip = await getIP(req);
-  // console.log('ip:: ', ip)
-  let con = result.device.id + ip;
-  con = con.trim();
-  // hashedId =  await bcrypt.hashSync(con, 10)
-  return con;
-}
-
-async function getIP(req: any) {
-  let ip;
-  if (req.headers["x-forwarded-for"]) {
-    ip = req.headers["x-forwarded-for"].split(",")[0];
-  } else if (req.socket && req.socket.remoteAddress) {
-    ip = req.socket.remoteAddress;
-  } else if (req.connection && req.connection.remoteAddress) {
-    ip = req.connection.remoteAddress;
-  } else {
-    ip = req.ip;
+  try {
+    WrappidLogger.logFunctionStart("getDeviceId");
+    // WrappidLogger.info("mac_ip" + mac_ip)
+    const detector = new DeviceDetector({
+      clientIndexes: true,
+      deviceIndexes: true,
+      deviceAliasCode: true,
+    });
+    const result = detector.detect(req.headers["user-agent"]);
+    WrappidLogger.info("Result:: " + result);
+    const ip = await getIP(req);
+    // WrappidLogger.info('ip:: ', ip)
+    let con = result.device.id + ip;
+    con = con.trim();
+    // hashedId =  await bcrypt.hashSync(con, 10)
+    return con;
+  } catch (error) {
+    WrappidLogger.error("Error: " + error);
+    throw error;
+  }finally{
+    WrappidLogger.logFunctionEnd("getDeviceId");
   }
-  return ip;
 }
 
+/**
+ * 
+ * @param req 
+ * @returns 
+ */
+async function getIP(req: any) {
+  try {
+    let ip;
+    WrappidLogger.logFunctionStart("getIP");
+    if (req.headers["x-forwarded-for"]) {
+      ip = req.headers["x-forwarded-for"].split(",")[0];
+    } else if (req.socket && req.socket.remoteAddress) {
+      ip = req.socket.remoteAddress;
+    } else if (req.connection && req.connection.remoteAddress) {
+      ip = req.connection.remoteAddress;
+    } else {
+      ip = req.ip;
+    }
+    return ip;
+  } catch (error) {
+    WrappidLogger.error("Error: " + error);
+    throw error;
+  }finally{
+    WrappidLogger.logFunctionEnd("getIP");
+  }
+}
+
+/**
+ * 
+ * @param reciepients 
+ * @param type 
+ * @param template 
+ * @param dataList 
+ * @param otpFlag 
+ * @param transaction 
+ * @param requesterId 
+ * @returns 
+ */
 async function communicate(
   reciepients: any = [],
   type: any = COMMUNICATION_EMAIL,
@@ -79,9 +131,10 @@ async function communicate(
   requesterId: any = null
 ) {
   try {
+    WrappidLogger.logFunctionStart("communicate");
     const otpLength = ApplicationContext.getContext("config").wrappid.otpLength;
 
-    //   console.log("IN COMMUNICATE", transaction, otpFlag);
+    //   WrappidLogger.info("IN COMMUNICATE", transaction, otpFlag);
     let templateId: any = null;
     let templateName: any = null;
     let templateOb: any = null;
@@ -121,10 +174,10 @@ async function communicate(
       };
     }
 
-    console.log("Template found", templateOb.id);
+    WrappidLogger.info("Template found " + templateOb.id);
 
     if (!Array.isArray(reciepients)) {
-      console.log("Reciepient object turned into array");
+      WrappidLogger.info("Reciepient object turned into array");
       reciepients = [reciepients];
     }
 
@@ -142,9 +195,9 @@ async function communicate(
             ...dataList[i],
             variable: { otp },
           };
-          console.log("OTP AUTO GENERATED", otp);
+          WrappidLogger.info("OTP AUTO GENERATED" + otp);
         } else {
-          console.log("OTP :", dataOb);
+          WrappidLogger.info("OTP :" +  dataOb);
           otp = dataList[i]?.variable?.otp;
         }
       }
@@ -171,7 +224,7 @@ async function communicate(
             transaction: transaction ? transaction : null,
           }
         );
-        console.log("Mail com created");
+        WrappidLogger.info("Mail com created");
       } else if (type == COMMUNICATION_SMS) {
         dataObFinal = {
           ...dataObFinal,
@@ -186,7 +239,7 @@ async function communicate(
             transaction: transaction ? transaction : null,
           }
         );
-        console.log("SMS com created");
+        WrappidLogger.info("SMS com created");
       } else if (type == COMMUNICATION_WHATSAPP) {
         if (reciepients[i]?.id) {
           dataObFinal["userId"] = reciepients[i].id;
@@ -203,7 +256,7 @@ async function communicate(
             transaction: transaction ? transaction : null,
           }
         );
-        console.log("Whatsapp com created");
+        WrappidLogger.info("Whatsapp com created");
       }
       if (otpFlag) {
         await databaseActions.update(
@@ -217,7 +270,7 @@ async function communicate(
             transaction: transaction ? transaction : null,
           }
         );
-        console.log("Old otp entries updated");
+        WrappidLogger.info("Old otp entries updated");
 
         const entry: any = { otp, userId: reciepients[i].id };
         if (type === COMMUNICATION_EMAIL) {
@@ -241,7 +294,7 @@ async function communicate(
         await databaseActions.create("application", "Otps", entry, {
           transaction: transaction ? transaction : null,
         });
-        console.log("New  otp entry created");
+        WrappidLogger.info("New  otp entry created");
       }
 
       /**
@@ -251,8 +304,10 @@ async function communicate(
       return { success: true, otp: otp };
     }
   } catch (error) {
-    console.log(error);
+    WrappidLogger.error("Error: " + error);
     throw error;
+  }finally{
+    WrappidLogger.logFunctionEnd("communicate");
   }
 }
 
