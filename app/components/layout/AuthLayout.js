@@ -71,6 +71,10 @@ export default function AuthLayout() {
     let authPage = authNextPage.toLowerCase();
 
     if(!currPage.includes(authPage)){
+      /**
+       * @todo
+       * Call getProfileBasic here, not working
+       */
       navigate(`/${authNextPage}`);
     }
 
