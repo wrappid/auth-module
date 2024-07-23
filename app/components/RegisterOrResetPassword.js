@@ -54,6 +54,10 @@ const RegisterOrResetPassword = () => {
 
   React.useEffect(() => {
     if (authenticated) {
+      /**
+       * @todo
+       * Must be driven from AuthLayout
+       */
       GetProfileBasic({ _defaultFilter: encodeURIComponent(JSON.stringify({ userId: auth.uid })) });
       navigate("/");
     }
