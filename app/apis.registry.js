@@ -1,1 +1,1 @@
-export const ApiRegistry = {};
+export const ApiRegistry = { GET_PROFILE_BASIC_API: "/business/individual/ProfileBasic" };

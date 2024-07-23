@@ -12,7 +12,9 @@ import {
   CoreTypographyBody1,
   CoreTypographyBody2,
   stringUtils,
-  coreUseNavigate
+  coreUseNavigate,
+  apiRequestAction,
+  HTTP
 } from "@wrappid/core";
 import { WrappidDataContext } from "@wrappid/styles";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,7 +22,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { saveAuthData } from "../actions/authActions";
 // eslint-disable-next-line import/order
 import AuthLayout from "./layout/AuthLayout";
+import { ApiRegistry } from "../apis.registry";
 import { ModuleRoute } from "../constants/app.constants";
+import { GET_PROFILE_BASIC_ERROR, GET_PROFILE_BASIC_SUCCESS } from "../types/authTypes";
 
 const RegisterOrResetPassword = () => {
   const navigate = coreUseNavigate();
@@ -50,9 +54,23 @@ const RegisterOrResetPassword = () => {
 
   React.useEffect(() => {
     if (authenticated) {
+      GetProfileBasic({ _defaultFilter: encodeURIComponent(JSON.stringify({ userId: auth.uid })) });
       navigate("/");
     }
   }, [authenticated]);
+
+  const GetProfileBasic = (query) => {
+    dispatch(
+      apiRequestAction(
+        HTTP.GET,
+        ApiRegistry.GET_PROFILE_BASIC_API,
+        true,
+        query,
+        GET_PROFILE_BASIC_SUCCESS,
+        GET_PROFILE_BASIC_ERROR
+      )
+    );
+  };
 
   const showEmailOrPhone = () => {
     return (

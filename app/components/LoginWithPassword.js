@@ -2,6 +2,7 @@
 import React from "react";
 
 import {
+  apiRequestAction,
   CoreAvatar,
   CoreBox,
   CoreClasses,
@@ -12,6 +13,7 @@ import {
   CoreTypographyBody2,
   // coreUseNavigate,
   coreUseNavigate,
+  HTTP,
   stringUtils
 } from "@wrappid/core";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,7 +21,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { clearAuthState, saveAuthData } from "../actions/authActions";
 // eslint-disable-next-line import/order
 import AuthLayout from "./layout/AuthLayout";
+import { ApiRegistry } from "../apis.registry";
 import { ModuleRoute } from "../constants/app.constants";
+import { GET_PROFILE_BASIC_ERROR, GET_PROFILE_BASIC_SUCCESS } from "../types/authTypes";
 
 const LoginWithPassword = () => {
   const navigate = coreUseNavigate();
@@ -61,9 +65,23 @@ const LoginWithPassword = () => {
 
   React.useEffect(() => {
     if (authenticated) {
+      GetProfileBasic({ _defaultFilter: encodeURIComponent(JSON.stringify({ userId: auth.uid })) });
       navigate("/");
     }
   }, [authenticated]);
+
+  const GetProfileBasic = (query) => {
+    dispatch(
+      apiRequestAction(
+        HTTP.GET,
+        ApiRegistry.GET_PROFILE_BASIC_API,
+        true,
+        query,
+        GET_PROFILE_BASIC_SUCCESS,
+        GET_PROFILE_BASIC_ERROR
+      )
+    );
+  };
 
   const changeAuthNextPage = (routeName) => {
     // if((routeName === ModuleRoute.RESET_PASSWORD_ROUTE && (navigateToResetPasswordSuccess ||
