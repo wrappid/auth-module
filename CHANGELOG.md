@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.21](https://https//github.com/wrappid/wrappid-module/compare/v0.0.20...v0.0.21) (2024-07-23)
+
+
+### Features
+
+* **utils:** :zap: call ProfileBasic after successful login ([9341554](https://https//github.com/wrappid/wrappid-module/commit/93415542135090b4a8ed5e09526b6d9d3834918d)), closes [#92](https://https//github.com/wrappid/wrappid-module/issues/92)
+
 ### [0.0.20](https://https//github.com/wrappid/wrappid-module/compare/v0.0.19...v0.0.20) (2024-07-12)
 
 
