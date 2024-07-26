@@ -6,7 +6,7 @@ const emailOrPhone = yup
 
 const otp = yup.string().min(0o0).max(999999);
 
-const checkLoginOrRegister = {
+const CheckUserExist = {
   body: yup
     .object({
       emailOrPhone: emailOrPhone.required(),
@@ -113,7 +113,7 @@ const validatePhone = yup
   .matches(/^[0-9]{10}$/, "Phone number must contains 10 digits")
   .required();
 export {
-  checkLoginOrRegister,
+  CheckUserExist,
   login,
   postLoginWithOtp,
   postLogoutSchema,
