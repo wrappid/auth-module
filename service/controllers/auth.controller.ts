@@ -178,7 +178,8 @@ export const sentOtp = async (req: any, res: Response) => {
     const userId = req?.user?.userId;
     const emailOrPhone = req.body.data;
     const commType = req.body?.type;
-    const { status, ...restData } = await authFunctions.sentOtp(templateID, serviceName, emailOrPhone, commType, userId);
+    const test = true;
+    const { status, ...restData } = await authFunctions.sentOtp(emailOrPhone, serviceName, templateID, commType, userId, test);
     res.status(status).json(restData);
   } catch (error: any) {
     WrappidLogger.error("sentOtp Error:: " + error);
@@ -196,7 +197,7 @@ export const sentOtp = async (req: any, res: Response) => {
 export const register = async (req:Request, res:Response) => {
   try {
     WrappidLogger.logFunctionStart("register");
-    const {emailOrPhone, otp, confirmPassword, password } = req.body;
+    const { emailOrPhone, otp, confirmPassword, password } = req.body;
     const deviceId: string = await getDeviceId(req);
     const { status, ...restData } = await authFunctions.register(emailOrPhone, otp, confirmPassword, password, deviceId);
     res.status(status).json(restData);

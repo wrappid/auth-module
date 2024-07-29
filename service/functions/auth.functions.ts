@@ -86,7 +86,6 @@ const loginwithPassWord = async (emailOrPhone: string, passWord: string, deviceI
       whereOb = { email: emailOrPhone };
     } else if (ob.type == COMMUNICATION_SMS) {
       whereOb = { phone: emailOrPhone };
-
     } else {
       WrappidLogger.info("Not a valid email or phone");
       return { status: 500, message: "Not a valid email or phone" };
@@ -174,7 +173,6 @@ const loginwithPassWord = async (emailOrPhone: string, passWord: string, deviceI
                     },
                   }
                 );
-                // createLoginLogs(req.originalUrl, userId, req.body?.devInfo);
                 return {
                   status: 200,
                   message: "Successfully login",
@@ -191,6 +189,7 @@ const loginwithPassWord = async (emailOrPhone: string, passWord: string, deviceI
             }
           }
 
+          // Creating new session
           if (!found) {
             const newSession = await databaseActions.create(
               "ums",
@@ -205,24 +204,11 @@ const loginwithPassWord = async (emailOrPhone: string, passWord: string, deviceI
               }
             );
             WrappidLogger.info( "Login Success with New Device, session id: " + newSession.id);
-            // createLoginLogs(req.originalUrl, userId, req.body?.devInfo);
-
-            // get person id
-            const person = await databaseActions.findOne(
-              "ums",
-              "Persons",
-              {
-                where: {
-                  userID: userId,
-                },
-              }
-            );
-
             return {
               status: 200,
               message: "Successfully login with New Device",
               id: userId,
-              personId: person.id,
+              personId: personData.id,
               accessToken: accessToken,
               refreshToken: refreshToken,
               sessionId: newSession.id,
@@ -230,12 +216,11 @@ const loginwithPassWord = async (emailOrPhone: string, passWord: string, deviceI
           }
         }
       );
-
       return result;
     }
-  } catch (err: any) {
-    WrappidLogger.info("Error in login: " + err);
-    throw err;
+  } catch (error: any) {
+    WrappidLogger.info("Error in login: " + error);
+    throw error;
   }finally{
     WrappidLogger.logFunctionEnd("loginHelper");
   }
@@ -302,7 +287,6 @@ const loginWithOtp = async (emailOrPhone:string, otp:string, deviceId:string) =>
           }});
       }
       
-
       const { refreshToken, accessToken } = genarateAccessToken(
         userId,
         mail,
@@ -391,22 +375,12 @@ const loginWithOtp = async (emailOrPhone:string, otp:string, deviceId:string) =>
 
               if (nrows > 0) {
                 WrappidLogger.info("Login Success");
-                // get person id
-                const person = await databaseActions.findOne(
-                  "ums",
-                  "Persons",
-                  {
-                    where: {
-                      userId: userId,
-                    },
-                  }
-                );
                 // createLoginLogs(req.originalUrl, userId, req.body?.devInfo);
                 return {
                   status: 200,
                   message: "Successfully login",
                   id: userId,
-                  personId: person.id,
+                  personId: personId,
                   accessToken: accessToken,
                   refreshToken: refreshToken,
                   sessionId: currSession.id,
@@ -433,22 +407,11 @@ const loginWithOtp = async (emailOrPhone:string, otp:string, deviceId:string) =>
             );
             WrappidLogger.info( "Login Success with New Device, session id: " + newSession.id);
 
-            // get person id
-            const person = await databaseActions.findOne(
-              "ums",
-              "Persons",
-              {
-                where: {
-                  userId: userId,
-                },
-              }
-            );
-
             return {
               status: 200,
               message: "Successfully login with New Device",
               id: userId,
-              personId: person.id,
+              personId: personId,
               accessToken: accessToken,
               refreshToken: refreshToken,
               sessionId: newSession.id,
@@ -511,7 +474,7 @@ const resetPassword = async (emailOrPhone: string, reqPassword: string,reqConfir
       const userId = userDetails.id;
       const mail = userDetails.email;
       const phone = userDetails.phone;
-      const userUpdateOb: any = {};
+      const userUpdateOb: GenericObject = {};
 
       const personData = await databaseActions.findOne("ums", "Persons", {
         attributes: ["id", "userInvitationToken"],
@@ -548,7 +511,6 @@ const resetPassword = async (emailOrPhone: string, reqPassword: string,reqConfir
           };
         }
       }
-
 
       const { refreshToken, accessToken } = genarateAccessToken(
         userId,
@@ -608,6 +570,28 @@ const resetPassword = async (emailOrPhone: string, reqPassword: string,reqConfir
             WrappidLogger.info("Persons table updated");
           }
 
+          //for otplogin update personContact verfication status
+          WrappidLogger.info("PersonContacts updating due to otplogin");
+          const [checkContacts] = await databaseActions.update(
+            "ums",
+            "PersonContacts",
+            { verified: true },
+            {
+              where: {
+                personId: personData.id,
+                data: emailOrPhone,
+              },
+              transaction: transaction,
+            }
+          );
+ 
+          if (checkContacts == 0) {
+            WrappidLogger.error("Person contact update not made, user id:" + userId+ " contact: " + emailOrPhone );
+            throw "DB update error";
+          } else {
+            WrappidLogger.info("PersonContacts updated");
+          }
+
           for (let session = 0; session < sessions.length; session++) {
             const currSession = sessions[session];
             if (bcrypt.compareSync(deviceId, currSession.deviceId)) {
@@ -630,21 +614,11 @@ const resetPassword = async (emailOrPhone: string, reqPassword: string,reqConfir
 
               if (nrows > 0) {
                 WrappidLogger.info("Login Success");
-                // get person id
-                const person = await databaseActions.findOne(
-                  "ums",
-                  "Persons",
-                  {
-                    where: {
-                      userId: userId,
-                    },
-                  }
-                );
                 return {
                   status: 200,
                   message: "Successfully login",
                   id: userId,
-                  personId: person.id,
+                  personId: personData.id,
                   accessToken: accessToken,
                   refreshToken: refreshToken,
                   sessionId: currSession.id,
@@ -670,23 +644,11 @@ const resetPassword = async (emailOrPhone: string, reqPassword: string,reqConfir
               }
             );
             WrappidLogger.info( "Login Success with New Device, session id: " + newSession.id);
-
-            // get person id
-            const person = await databaseActions.findOne(
-              "ums",
-              "Persons",
-              {
-                where: {
-                  userID: userId,
-                }
-              }
-            );
-
             return {
               status: 200,
               message: "Successfully login with New Device",
               id: userId,
-              personId: person.id,
+              personId: personData.id,
               accessToken: accessToken,
               refreshToken: refreshToken,
               sessionId: newSession.id,
@@ -694,12 +656,11 @@ const resetPassword = async (emailOrPhone: string, reqPassword: string,reqConfir
           }
         }
       );
-
       return result;
     }
-  } catch (err: any) {
-    WrappidLogger.info("Error in login: " + err);
-    throw err;
+  } catch (error: any) {
+    WrappidLogger.info("Error in login: " + error);
+    throw error;
   }finally{
     WrappidLogger.logFunctionEnd("loginHelper");
   }
@@ -718,6 +679,10 @@ const changePassword = async (password:string, newPassword:string, confirmPasswo
   try {
     WrappidLogger.logFunctionStart("postChangePasswordFunc");
 
+    if (password === newPassword) {
+      WrappidLogger.error("Password can't be same.");
+      throw new Error("Password can't be same.");
+    }
     const user = await databaseActions.findOne("ums", "Users", {
       where: {
         id: userId,
@@ -725,10 +690,6 @@ const changePassword = async (password:string, newPassword:string, confirmPasswo
     });
     const oldPassExist = checkPassword(password, user.password);
 
-    if (password === newPassword) {
-      WrappidLogger.error("Password can't be same.");
-      throw new Error("Password can't be same.");
-    }
 
     if (oldPassExist && newPassword === confirmPassword) {
       const result = await databaseActions.update(
@@ -841,6 +802,7 @@ const accessToken = async (reqRefreshToken:string, userId:number, deviceId: stri
     WrappidLogger.logFunctionEnd("accessToken");
   }
 };
+
 
 /**
  * Refresh token regenerate from refreshtoken
@@ -983,7 +945,7 @@ const logout = async (userId:number, deviceId: any) => {
  * @param test 
  * @returns 
  */
-const sentOtp = async ( serviceName:string, emailOrPhone:string, templateID?:string, commType?:string, userId?:number, test?:boolean) => {
+const sentOtp = async (  emailOrPhone:string,serviceName?:string, templateID?:string, commType?:string, userId?:number, test?:boolean) => {
   try {
     WrappidLogger.logFunctionStart("sentOtp");
     const commData: any = {};
@@ -1090,7 +1052,7 @@ const sentOtp = async ( serviceName:string, emailOrPhone:string, templateID?:str
       errorFlag: true,
     });
 
-    if (commResult) {
+    if (commResult) { 
       await databaseActions.update(
         "ums",
         "Otps",
@@ -1124,9 +1086,18 @@ const sentOtp = async ( serviceName:string, emailOrPhone:string, templateID?:str
 };
 
 
-
+/**
+ * Register 
+ * @param emailOrPhone 
+ * @param otp 
+ * @param confirmPassword 
+ * @param password 
+ * @param deviceId 
+ * @returns 
+ */
 const register = async (emailOrPhone:string, otp:string, confirmPassword:string, password:string, deviceId:string ) => {
   try {
+    const userUpdateOb: GenericObject = {};
     if(password !== confirmPassword){
       throw new Error ("password and confirmPassword missmatch!!");
     }
@@ -1148,6 +1119,8 @@ const register = async (emailOrPhone:string, otp:string, confirmPassword:string,
     const userDetails = await databaseActions.findOne("ums", "Users", {
       where: whereOb,
     });
+
+    //Check User exist or not
     if (!userDetails) {
       WrappidLogger.info("User does not exist");
       return { status: 400, message: "User does not exist" };
@@ -1176,27 +1149,22 @@ const register = async (emailOrPhone:string, otp:string, confirmPassword:string,
             userId: userId,
             otp: otp,
           }});
+
+        const passwordValid = resetPasswordCheck(
+          password,
+          userDetails.password
+        );
+  
+        if (passwordValid?.success) {
+          userUpdateOb["password"] = passwordValid.password;
+        } else {
+          return {
+            status: 500,
+            message: passwordValid.message,
+          };
+        }
       }
 
-      const [checkContacts] = await databaseActions.update(
-        "ums",
-        "PersonContacts",
-        { verified: true },
-        {
-          where: {
-            personId: personData.id,
-            data: emailOrPhone,
-          }
-        });
-
-      if (checkContacts == 0) {
-        WrappidLogger.error("Person contact update not made, user id:" + userId+ " contact: " + emailOrPhone );
-        throw "DB update error";
-      } else {
-        WrappidLogger.info("PersonContacts updated");
-      }
-
-    
 
       const { refreshToken, accessToken } = genarateAccessToken(
         userId,
@@ -1207,24 +1175,56 @@ const register = async (emailOrPhone:string, otp:string, confirmPassword:string,
       );
 
       WrappidLogger.info("Tokens generate done");
-
       const sessions = await databaseActions.findAll(
         "ums",
         "SessionManagers",
         {
           where: {
             userId: userId,
-          },
+          }
         }
       );
 
       WrappidLogger.info("All sessions fetchd: " + sessions.length);
       let found = false;
-
       const result = await databaseProvider.ums.sequelize.transaction(
         async (transaction: Sequelize.Transaction) => {
+          //Update password in db
+          const [checkUser] = await databaseActions.update(
+            "ums",
+            "Users",
+            {   ...userUpdateOb },
+            {
+              where: {
+                id: userId,
+              },
+            },{ transaction: transaction }
+          );
+          if (checkUser == 0) {
+            WrappidLogger.error("DB update error");
+            throw "DB update error";
+          }
+
+          const [checkPerson] = await databaseActions.update(
+            "ums",
+            "Persons",
+            verificationOb,
+            {
+              where: {
+                userId: userId,
+              },
+              transaction: transaction,
+            }
+          );
+          if (checkPerson == 0) {
+            WrappidLogger.error("DB update error");
+            throw "DB update error";
+          } else {
+            WrappidLogger.info("Persons table updated");
+          }
+
           //for otplogin update personContact verfication status
-          WrappidLogger.info("PersonContacts updating due to otplogin or urllogin");
+          WrappidLogger.info("PersonContacts updating due to otplogin");
           const [checkContacts] = await databaseActions.update(
             "ums",
             "PersonContacts",
@@ -1244,25 +1244,6 @@ const register = async (emailOrPhone:string, otp:string, confirmPassword:string,
           } else {
             WrappidLogger.info("PersonContacts updated");
           }
-         
-          const [checkPerson] = await databaseActions.update(
-            "ums",
-            "Persons",
-            verificationOb,
-            {
-              where: {
-                userId: userId,
-              },
-              transaction: transaction,
-            }
-          );
-          if (checkPerson == 0) {
-            WrappidLogger.error("DB update error");
-            throw "DB update error";
-          } else {
-            WrappidLogger.info("Persons table updated");
-          }
-          
 
           for (let session = 0; session < sessions.length; session++) {
             const currSession = sessions[session];
@@ -1327,7 +1308,6 @@ const register = async (emailOrPhone:string, otp:string, confirmPassword:string,
               }
             );
             WrappidLogger.info( "Login Success with New Device, session id: " + newSession.id);
-
             // get person id
             const person = await databaseActions.findOne(
               "ums",
@@ -1338,7 +1318,6 @@ const register = async (emailOrPhone:string, otp:string, confirmPassword:string,
                 },
               }
             );
-
             return {
               status: 200,
               message: "Successfully login with New Device",
@@ -1352,12 +1331,7 @@ const register = async (emailOrPhone:string, otp:string, confirmPassword:string,
         }
       );
       return result;
-
-
-
     }
-
-
   } catch (error:any) {
     WrappidLogger.error(error);
     throw error;
