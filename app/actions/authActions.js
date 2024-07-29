@@ -1,4 +1,4 @@
-import { LOGOUT_SUCCESS, SAVE_NAV_DATA } from "../types/authTypes";
+import { LOGOUT_SUCCESS, SAVE_NAV_DATA } from "../types/auth.types";
 
 export const saveData = (body) => {
   return (dispatch) => {

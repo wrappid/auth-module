@@ -23,7 +23,7 @@ import { clearAuthState, saveAuthData } from "../actions/authActions";
 import AuthLayout from "./layout/AuthLayout";
 import { ApiRegistry } from "../apis.registry";
 import { ModuleRoute } from "../constants/app.constants";
-import { GET_PROFILE_BASIC_ERROR, GET_PROFILE_BASIC_SUCCESS } from "../types/authTypes";
+import { GET_PROFILE_BASIC_ERROR, GET_PROFILE_BASIC_SUCCESS } from "../types/auth.types";
 
 const LoginWithPassword = () => {
   const navigate = coreUseNavigate();
@@ -50,12 +50,12 @@ const LoginWithPassword = () => {
   const GoBack = () => {
     dispatch(
       saveAuthData({
-        authNextPage                  : ModuleRoute.LOGIN_ROUTE,
-        checkLoginOrRegisterError     : false,
-        checkLoginOrRegisterLoading   : false,
-        checkLoginOrRegisterMsg       : false,
-        checkLoginOrRegisterSuccess   : false,
-        navigateToOtpSuccess          : false,
+        authNextPage: ModuleRoute.LOGIN_ROUTE,
+        checkLoginOrRegisterError: false,
+        checkLoginOrRegisterLoading: false,
+        checkLoginOrRegisterMsg: false,
+        checkLoginOrRegisterSuccess: false,
+        navigateToOtpSuccess: false,
         navigateToResetPasswordSuccess: false,
       })
     );
@@ -88,28 +88,8 @@ const LoginWithPassword = () => {
   };
 
   const changeAuthNextPage = (routeName) => {
-    // if((routeName === ModuleRoute.RESET_PASSWORD_ROUTE && (navigateToResetPasswordSuccess ||
-    //     navigateToOtpSuccess) ||
-    //     (!checkLoginOrRegisterSuccess &&
-    //       authNextPage.toLowerCase() !== ModuleRoute.PASSWORD_ROUTE)) || routeName === ModuleRoute.LOGIN_OTP_ROUTE){
-    //       }
     dispatch(saveAuthData({ authNextPage: routeName }));
   };
-
-  // React.useEffect(() => {
-  //   if (authenticated) {
-  //     navigate("/");
-  //   }
-  // }, [authenticated]);
-
-  // {(navigateToResetPasswordSuccess ||
-  //   navigateToOtpSuccess) ||
-  //   (!checkLoginOrRegisterSuccess &&
-  //     authNextPage.toLowerCase() !== ModuleRoute.PASSWORD_ROUTE)
-  //   ? (
-  //     <CoreDomNavigate to={`/${authNextPage}`} />
-  //   ) : (
-  //   )}
 
   return (
     <>

@@ -4,6 +4,6 @@ export const ModuleRoute = {
   LOGIN_ROUTE         : "checkuserexist",
   LOGOUT              : "logout",
   PASSWORD_ROUTE      : "enterpassword",
-  REGISTER_ROUTE      : "register",
-  RESET_PASSWORD_ROUTE: "resetpassword",
+  REGISTER_ROUTE      : "registrationPage",
+  RESET_PASSWORD_ROUTE: "resetPassword",
 };

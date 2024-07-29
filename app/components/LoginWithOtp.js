@@ -20,7 +20,7 @@ import { saveAuthData } from "../actions/authActions";
 import AuthLayout from "./layout/AuthLayout";
 import { ApiRegistry } from "../apis.registry";
 import { ModuleRoute } from "../constants/app.constants";
-import { GET_PROFILE_BASIC_ERROR, GET_PROFILE_BASIC_SUCCESS } from "../types/authTypes";
+import { GET_PROFILE_BASIC_ERROR, GET_PROFILE_BASIC_SUCCESS } from "../types/auth.types";
 
 const LoginWithOtp = () => {
   const dispatch = useDispatch();
