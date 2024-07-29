@@ -4,9 +4,10 @@ import {
   databaseActions,
   WrappidLogger,
 } from "@wrappid/service-core";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import DeviceDetector from "node-device-detector";
-import otpGenerator from "otp-generator";
-
+import constant from "../constants/constants";
 
 const COMMUNICATION_EMAIL = coreConstant.commType.EMAIL;
 const COMMUNICATION_SMS = coreConstant.commType.SMS;
@@ -110,212 +111,184 @@ async function getIP(req: any) {
   }
 }
 
+
+
+
+
 /**
  * 
- * @param reciepients 
- * @param type 
- * @param template 
- * @param dataList 
- * @param otpFlag 
- * @param transaction 
- * @param requesterId 
+ * @param userId 
+ * @param mail 
+ * @param phone 
+ * @param personData 
+ * @param userDetails 
  * @returns 
  */
-async function communicate(
-  reciepients: any = [],
-  type: any = COMMUNICATION_EMAIL,
-  template: any = null,
-  dataList: any = [],
-  otpFlag: any = false,
-  transaction: any = null,
-  requesterId: any = null
+function genarateAccessToken(
+  userId: any,
+  mail: any,
+  phone: any,
+  personData: any,
+  userDetails: any
 ) {
   try {
-    WrappidLogger.logFunctionStart("communicate");
-    const otpLength = ApplicationContext.getContext("config").wrappid.otpLength;
+    WrappidLogger.logFunctionStart("genarateAccessToken");
 
-    //   WrappidLogger.info("IN COMMUNICATE", transaction, otpFlag);
-    let templateId: any = null;
-    let templateName: any = null;
-    let templateOb: any = null;
-    if (typeof template === "string") {
-      templateName = template;
-    } else if (typeof template === "number") {
-      templateId = template;
+    const {
+      accessTokenSecret,
+      refreshAccessTokenSecret,
+      expTime,
+      expTimeRefreshToken,
+    } = ApplicationContext.getContext("config").jwt;
+
+    const accessToken = jwt.sign(
+      {
+        userId: userId,
+        email: mail,
+        phone: phone,
+        personId: personData?.id,
+        roleId: userDetails.roleId,
+      },
+      accessTokenSecret,
+      { expiresIn: expTime }
+    );
+    const refreshToken = jwt.sign(
+      {
+        userId: userId,
+        email: mail,
+        phone: phone,
+        personId: personData?.id,
+        roleId: userDetails.roleId,
+      },
+      refreshAccessTokenSecret,
+      { expiresIn: expTimeRefreshToken }
+    );
+    WrappidLogger.info("Tokens generated");
+    return { accessToken, refreshToken };
+  } catch (error) {
+    WrappidLogger.error("Error: " + error);
+    throw error;
+  }finally{
+    WrappidLogger.logFunctionEnd("genarateAccessToken");
+  }
+}
+
+/**
+ * 
+ * @param path 
+ * @param userId 
+ * @param extraInfo 
+ */
+async function createLoginLogs(path: any, userId: any, extraInfo: any = "{}") {
+  try {
+    WrappidLogger.logFunctionStart("createLoginLogs");
+    WrappidLogger.info("Login logs created" + userId + path);
+    await databaseActions.create("application", "LoginLogs", {
+      userId: userId,
+      route: path,
+      message: "Login Success",
+      status: 200,
+      extraInfo: JSON.parse(extraInfo),
+    });
+  } catch (error) {
+    WrappidLogger.error("Error: " + error);
+    throw error;
+  }finally{
+    WrappidLogger.logFunctionEnd("createLoginLogs");
+  }
+ 
+}
+
+
+
+/**
+ *  Check Password
+ * @param reqPassword 
+ * @param dbPassword 
+ * @returns 
+ */
+function checkPassword(reqPassword: string, dbPassword: string) {
+  const isMatch =  bcrypt.compareSync(reqPassword, dbPassword);
+  return isMatch;
+}
+
+
+/**
+ * Check DB otp with req OTP
+ * @param userId 
+ * @param otp 
+ * @returns 
+ */
+async function checkOtp(userId: number, otp: string, type: string) {
+  WrappidLogger.logFunctionStart("checkOtp");
+  try {
+    const dbData = await databaseActions.findAll("application", "Otps", {
+      where: {
+        userId: userId,
+        type: type,
+        _status: constant.entityStatus.ACTIVE,
+      },
+      limit: 1,
+      order: [["id", "DESC"]]
     }
-
-    if (templateId) {
-      let templateOb: any = await databaseActions.findByPk(
-        "application",
-        "CommunicationTemplates",
-        templateId
-      );
-      if (templateOb._status !== coreConstant.entityStatus.APPROVED) {
-        templateOb = null;
-      }
-    } else if (templateName) {
-      templateOb = await databaseActions.findOne(
-        "application",
-        "CommunicationTemplates",
-        {
-          where: {
-            name: templateName,
-            _status: coreConstant.entityStatus.APPROVED,
-          },
-        }
-      );
-    }
-
-    if (!templateOb) {
-      console.error("Template not found:", template);
-      return {
-        success: false,
-        error: "No template found",
-      };
-    }
-
-    WrappidLogger.info("Template found " + templateOb.id);
-
-    if (!Array.isArray(reciepients)) {
-      WrappidLogger.info("Reciepient object turned into array");
-      reciepients = [reciepients];
-    }
-
-    for (let i = 0; i < reciepients.length; i++) {
-      let otp;
-      let dataOb: any = dataList[i];
-      if (otpFlag) {
-        if (!dataList[i] || (dataList[i] && !dataList[i].otp)) {
-          otp = otpGenerator.generate(otpLength, {
-            specialChars: false,
-            lowerCaseAlphabets: false,
-            upperCaseAlphabets: false,
-          });
-          dataOb = {
-            ...dataList[i],
-            variable: { otp },
-          };
-          WrappidLogger.info("OTP AUTO GENERATED" + otp);
-        } else {
-          WrappidLogger.info("OTP :" +  dataOb);
-          otp = dataList[i]?.variable?.otp;
-        }
-      }
-
-      let dataObFinal = {
-        ...dataOb,
-        templateId: templateOb.id,
-        status: "pending",
-        _status: coreConstant.entityStatus.NEW,
-        createdBy: requesterId,
-      };
-      let newCom: any = null;
-      if (type === COMMUNICATION_EMAIL) {
-        dataObFinal = {
-          ...dataObFinal,
-          userId: reciepients[i].id,
-          to: reciepients[i].email,
-        };
-        newCom = await databaseActions.create(
-          "application",
-          "MailComms",
-          dataObFinal,
-          {
-            transaction: transaction ? transaction : null,
-          }
-        );
-        WrappidLogger.info("Mail com created");
-      } else if (type == COMMUNICATION_SMS) {
-        dataObFinal = {
-          ...dataObFinal,
-          userId: reciepients[i].id,
-          to: reciepients[i].phone,
-        };
-        newCom = await databaseActions.create(
-          "application",
-          "SmsComms",
-          dataObFinal,
-          {
-            transaction: transaction ? transaction : null,
-          }
-        );
-        WrappidLogger.info("SMS com created");
-      } else if (type == COMMUNICATION_WHATSAPP) {
-        if (reciepients[i]?.id) {
-          dataObFinal["userId"] = reciepients[i].id;
-        }
-        dataObFinal = {
-          ...dataObFinal,
-          to: reciepients[i].phone,
-        };
-        newCom = await databaseActions.create(
-          "application",
-          "WhatsAppComms",
-          dataObFinal,
-          {
-            transaction: transaction ? transaction : null,
-          }
-        );
-        WrappidLogger.info("Whatsapp com created");
-      }
-      if (otpFlag) {
-        await databaseActions.update(
-          "application",
-          "Otps",
-          { isActive: false },
-          {
-            where: {
-              userId: reciepients[i].id,
-            },
-            transaction: transaction ? transaction : null,
-          }
-        );
-        WrappidLogger.info("Old otp entries updated");
-
-        const entry: any = { otp, userId: reciepients[i].id };
-        if (type === COMMUNICATION_EMAIL) {
-          entry["mailCommId"] = newCom.id;
-        } else if (type === COMMUNICATION_SMS) {
-          entry["smsCommId"] = newCom.id;
-        } else if (type === COMMUNICATION_WHATSAPP) {
-          entry["whatsAppCommId"] = newCom.id;
-        } else {
-          console.error("Communication type not implemented:", type);
-          if (transaction) {
-            throw "Communication type not implemented";
-          } else {
-            return {
-              success: false,
-              error: "Communication type not implemented:",
-            };
-          }
-        }
-
-        await databaseActions.create("application", "Otps", entry, {
-          transaction: transaction ? transaction : null,
-        });
-        WrappidLogger.info("New  otp entry created");
-      }
-
-      /**
-       * @todo: should be removed and call directly form queue subscriber
-       */
-
-      return { success: true, otp: otp };
+    );
+    const dbOtp = dbData[0].dataValues.otp;
+    if (Number(dbOtp ) === Number(otp)) {
+      return true;
+    } else {
+      return false;
     }
   } catch (error) {
     WrappidLogger.error("Error: " + error);
     throw error;
   }finally{
-    WrappidLogger.logFunctionEnd("communicate");
+    WrappidLogger.logFunctionEnd("checkOtp");
   }
+
 }
 
+
+
+/**
+ * 
+ * @param password 
+ * @param userDetails 
+ * @returns 
+ */
+function resetPasswordCheck(password: string, userDetailsPassword: string) {
+  try {
+    WrappidLogger.logFunctionStart("resetPasswordCheck");
+    const samePasswordCheck = checkPassword(password, userDetailsPassword);
+
+    if (samePasswordCheck) {
+      WrappidLogger.info("Password can not be same as previous password");
+      return {
+        success: false,
+        message: "Password can not be same as previous password",
+      };
+    } else
+      return {
+        success: true,
+        password: bcrypt.hashSync(password, 9),
+        message: "Password reset can be done",
+      };
+  } catch (error) {
+    WrappidLogger.error("Error: " + error);
+    throw error;
+  }finally{
+    WrappidLogger.logFunctionEnd("resetPasswordCheck");
+  }
+  
+}
 export {
   clearValidatePhoneEmail,
   getDeviceId,
   getIP,
-  communicate,
+  genarateAccessToken,
+  createLoginLogs,
+  checkPassword,
+  checkOtp,
+  resetPasswordCheck,
   COMMUNICATION_EMAIL,
   COMMUNICATION_SMS,
   COMMUNICATION_WHATSAPP,

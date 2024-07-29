@@ -11,7 +11,15 @@ const ControllersRegistry = {
     CoreMiddlewaresRegistry.validation(CheckUserExist),
     authController.CheckUserExist
   ],
-  test: [authController.testDatabase]
+  loginwithPassword: [authController.loginWithPassword],
+  loginwithotp: [authController.loginWithOTP],
+  resetPassword: [authController.resetPassword],
+  changePassword: [authController.changePassword],
+  accessToken: [authController.accessToken],
+  newRefreshToken: [authController.refreshToken],
+  logout: [authController.logout],
+  sentOtp: [authController.sentOtp],
+  register: [authController.register]
 };
 
 export default ControllersRegistry;

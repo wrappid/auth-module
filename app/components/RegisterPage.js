@@ -67,6 +67,7 @@ const RegisterPage = () => {
     );
   };
 
+  // eslint-disable-next-line etc/no-commented-out-code
   // React.useEffect(() => {
   //   if (registerSuccess) {
   //     dispatch({
