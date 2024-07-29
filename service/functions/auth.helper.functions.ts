@@ -222,7 +222,7 @@ function checkPassword(reqPassword: string, dbPassword: string) {
 async function checkOtp(userId: number, otp: string, type: string) {
   WrappidLogger.logFunctionStart("checkOtp");
   try {
-    const dbData = await databaseActions.findAll("application", "Otps", {
+    const dbData = await databaseActions.findAll("ums", "Otps", {
       where: {
         userId: userId,
         type: type,
@@ -232,6 +232,9 @@ async function checkOtp(userId: number, otp: string, type: string) {
       order: [["id", "DESC"]]
     }
     );
+    if(dbData.length <= 0){
+      throw new Error ("No active OTP found!!");
+    }
     const dbOtp = dbData[0].dataValues.otp;
     if (Number(dbOtp ) === Number(otp)) {
       return true;

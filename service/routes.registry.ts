@@ -74,7 +74,7 @@ const RoutesRegistry = {
   register: {
     name: "",
     url: "register",
-    authRequired: true,
+    authRequired: false,
     entityRef: "",
     reqMethod: "post",
     controllerRef: "register",

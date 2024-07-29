@@ -34,7 +34,7 @@ export const loginWithPassword = async (req:Request, res:Response) => {
     const password: string = req.body.passWord;
     const deviceId: string = await getDeviceId(req);
     const { status, ...restData } = await authFunctions.loginwithPassWord(emailOrPhone, password, deviceId);
-    res.status(status).json({status: 200, restData});
+    res.status(status).json({status:status, restData});
   } catch (error:any) {
     WrappidLogger.error("loginWithPassword Error:: " + error);
     res.status(500).json({message: error.message});
@@ -52,7 +52,7 @@ export const loginWithOTP = async (req:Request, res:Response) => {
     const otp: string = req.body.otp;
     const deviceId: string = await getDeviceId(req);
     const { status, ...restData } = await authFunctions.loginWithOtp(emailOrPhone, otp, deviceId);
-    res.status(status).json(restData);
+    res.status(status).json({status:status, restData});
   } catch (error:any) {
     WrappidLogger.error("loginWithOTP Error:: " + error);
     res.status(500).json({message: error.message});
@@ -72,7 +72,7 @@ export const resetPassword = async(req:Request, res:Response) => {
     const deviceId: string = await getDeviceId(req);
     const otp: string =  req.body.otp;
     const { status, ...restData } = await authFunctions.resetPassword(emailOrPhone, reqPassword, reqConfirmPassword, otp,deviceId);
-    res.status(status).json(restData);
+    res.status(status).json({status:status, restData});
   } catch (error:any) {
     WrappidLogger.error("resetPassword:: " + error);
     res.status(500).json({message: error.message});
@@ -90,7 +90,7 @@ export const changePassword = async(req:any, res:Response) => {
     const { password, newPassword, confirmPassword } = req.body;
     const userId: number = req?.user.userId;
     const { status, ...restData } = await authFunctions.changePassword(password, newPassword, confirmPassword, userId);
-    res.status(status).json(restData);
+    res.status(status).json({status:status, restData});
   } catch (error:any) {
     WrappidLogger.error("changePassword:: " + error);
     res.status(500).json({message: error.message});
@@ -112,7 +112,7 @@ export const accessToken = async (req: any, res: any) => {
     const reqRefreshToken = req.body.reqRefreshToken;
     const deviceId: string = await getDeviceId(req);
     const { status, ...restData }  = await authFunctions.accessToken(reqRefreshToken, userId, deviceId);
-    res.status(status).json(restData);
+    res.status(status).json({status:status, restData});
   } catch (error: any) {
     WrappidLogger.error("accessToken Error:: " + error);
     res.status(500).json({ message: error.message });
@@ -134,7 +134,7 @@ export const refreshToken = async (req: any, res: any) => {
     const reqRefreshToken = req.body.reqRefreshToken;
     const deviceId: string = await getDeviceId(req);
     const { status, ...restData }  = await authFunctions.refreshToken(reqRefreshToken, userId, deviceId);
-    res.status(status).json(restData);
+    res.status(status).json({status:status, restData});
   } catch (error: any) {
     WrappidLogger.error("refreshToken Error:: " + error);
     res.status(500).json({ message: error.message });
@@ -156,7 +156,7 @@ export const logout = async (req: any, res: Response) => {
     const userId: number = req?.user.userId;
     const deviceId: string = await getDeviceId(req);
     const { status, ...restData } = await authFunctions.logout(userId, deviceId);
-    res.status(status).json(restData);
+    res.status(status).json({status:status, restData});
   } catch (error: any) {
     WrappidLogger.error("logout Error:: " + error);
     res.status(500).json({ message: error.message });
@@ -180,7 +180,7 @@ export const sentOtp = async (req: any, res: Response) => {
     const commType = req.body?.type;
     const test = true;
     const { status, ...restData } = await authFunctions.sentOtp(emailOrPhone, serviceName, templateID, commType, userId, test);
-    res.status(status).json(restData);
+    res.status(status).json({status:status, restData});
   } catch (error: any) {
     WrappidLogger.error("sentOtp Error:: " + error);
     res.status(500).json({ message: error.message });
@@ -200,7 +200,7 @@ export const register = async (req:Request, res:Response) => {
     const { emailOrPhone, otp, confirmPassword, password } = req.body;
     const deviceId: string = await getDeviceId(req);
     const { status, ...restData } = await authFunctions.register(emailOrPhone, otp, confirmPassword, password, deviceId);
-    res.status(status).json(restData);
+    res.status(status).json({status:status, restData});
   } catch (error:any) {
     WrappidLogger.error("register Error:: " + error);
     res.status(500).json({ message: error.message });

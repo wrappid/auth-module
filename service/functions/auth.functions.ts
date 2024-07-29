@@ -258,7 +258,7 @@ const loginWithOtp = async (emailOrPhone:string, otp:string, deviceId:string) =>
     if (!userDetails) {
       WrappidLogger.info("User does not exist");
       return { status: 400, message: "User does not exist" };
-    } else if (!userDetails.isActive) {
+    } else if (!userDetails.status) {
       WrappidLogger.error("User not active");
       return { status: 401, message: "User not active...Contact admin" };
     } else {
@@ -340,7 +340,7 @@ const loginWithOtp = async (emailOrPhone:string, otp:string, deviceId:string) =>
             verificationOb,
             {
               where: {
-                userId: userId,
+                userID: userId,
               },
               transaction: transaction,
             }
@@ -467,7 +467,7 @@ const resetPassword = async (emailOrPhone: string, reqPassword: string,reqConfir
     if (!userDetails) {
       WrappidLogger.info("User does not exist");
       return { status: 400, message: "User does not exist" };
-    } else if (!userDetails.isActive) {
+    } else if (!userDetails.status) {
       WrappidLogger.error("User not active");
       return { status: 401, message: "User not active...Contact admin" };
     } else {
@@ -477,8 +477,8 @@ const resetPassword = async (emailOrPhone: string, reqPassword: string,reqConfir
       const userUpdateOb: GenericObject = {};
 
       const personData = await databaseActions.findOne("ums", "Persons", {
-        attributes: ["id", "userInvitationToken"],
-        where: { userId: userId },
+        attributes: ["id",],
+        where: { userID: userId },
       });
       WrappidLogger.info("Person details fetched");
 
@@ -493,7 +493,7 @@ const resetPassword = async (emailOrPhone: string, reqPassword: string,reqConfir
           "Otps",
           { _status: constant.entityStatus.INACTIVE },
           { where: {
-            userID: userId,
+            userId: userId,
             otp: otp,
           }});
 
@@ -558,7 +558,7 @@ const resetPassword = async (emailOrPhone: string, reqPassword: string,reqConfir
             verificationOb,
             {
               where: {
-                userId: userId,
+                userID: userId,
               },
               transaction: transaction,
             }
@@ -1097,7 +1097,6 @@ const sentOtp = async (  emailOrPhone:string,serviceName?:string, templateID?:st
  */
 const register = async (emailOrPhone:string, otp:string, confirmPassword:string, password:string, deviceId:string ) => {
   try {
-    const userUpdateOb: GenericObject = {};
     if(password !== confirmPassword){
       throw new Error ("password and confirmPassword missmatch!!");
     }
@@ -1124,7 +1123,7 @@ const register = async (emailOrPhone:string, otp:string, confirmPassword:string,
     if (!userDetails) {
       WrappidLogger.info("User does not exist");
       return { status: 400, message: "User does not exist" };
-    } else if (!userDetails.isActive) {
+    } else if (!userDetails.status) {
       WrappidLogger.error("User not active");
       return { status: 401, message: "User not active...Contact admin" };
     } else {
@@ -1150,19 +1149,6 @@ const register = async (emailOrPhone:string, otp:string, confirmPassword:string,
             otp: otp,
           }});
 
-        const passwordValid = resetPasswordCheck(
-          password,
-          userDetails.password
-        );
-  
-        if (passwordValid?.success) {
-          userUpdateOb["password"] = passwordValid.password;
-        } else {
-          return {
-            status: 500,
-            message: passwordValid.message,
-          };
-        }
       }
 
 
@@ -1193,7 +1179,7 @@ const register = async (emailOrPhone:string, otp:string, confirmPassword:string,
           const [checkUser] = await databaseActions.update(
             "ums",
             "Users",
-            {   ...userUpdateOb },
+            { password: bcrypt.hashSync(password, 9) },
             {
               where: {
                 id: userId,
@@ -1211,7 +1197,7 @@ const register = async (emailOrPhone:string, otp:string, confirmPassword:string,
             verificationOb,
             {
               where: {
-                userId: userId,
+                userID: userId,
               },
               transaction: transaction,
             }
@@ -1267,22 +1253,12 @@ const register = async (emailOrPhone:string, otp:string, confirmPassword:string,
 
               if (nrows > 0) {
                 WrappidLogger.info("Login Success");
-                // get person id
-                const person = await databaseActions.findOne(
-                  "ums",
-                  "Persons",
-                  {
-                    where: {
-                      userId: userId,
-                    },
-                  }
-                );
                 // createLoginLogs(req.originalUrl, userId, req.body?.devInfo);
                 return {
                   status: 200,
                   message: "Successfully login",
                   id: userId,
-                  personId: person.id,
+                  personId: personData.id,
                   accessToken: accessToken,
                   refreshToken: refreshToken,
                   sessionId: currSession.id,
@@ -1308,21 +1284,11 @@ const register = async (emailOrPhone:string, otp:string, confirmPassword:string,
               }
             );
             WrappidLogger.info( "Login Success with New Device, session id: " + newSession.id);
-            // get person id
-            const person = await databaseActions.findOne(
-              "ums",
-              "Persons",
-              {
-                where: {
-                  userId: userId,
-                },
-              }
-            );
             return {
               status: 200,
               message: "Successfully login with New Device",
               id: userId,
-              personId: person.id,
+              personId: personData.id,
               accessToken: accessToken,
               refreshToken: refreshToken,
               sessionId: newSession.id,
