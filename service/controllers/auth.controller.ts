@@ -23,6 +23,7 @@ export const CheckUserExist = async (req:Request, res:Response) => {
   }
 };
 
+
 /**
  * login With Password
  * @param req 
@@ -30,6 +31,7 @@ export const CheckUserExist = async (req:Request, res:Response) => {
  */
 export const loginWithPassword = async (req:Request, res:Response) => {
   try {
+    WrappidLogger.logFunctionStart("loginWithPassword");
     const emailOrPhone: string = req.body.emailOrPhone;
     const password: string = req.body.passWord;
     const deviceId: string = await getDeviceId(req);
@@ -38,8 +40,11 @@ export const loginWithPassword = async (req:Request, res:Response) => {
   } catch (error:any) {
     WrappidLogger.error("loginWithPassword Error:: " + error);
     res.status(500).json({message: error.message});
+  }finally{
+    WrappidLogger.logFunctionEnd("loginWithPassword");
   }
 };
+
 
 /**
  * login With OTP
@@ -48,6 +53,7 @@ export const loginWithPassword = async (req:Request, res:Response) => {
  */
 export const loginWithOTP = async (req:Request, res:Response) => {
   try {
+    WrappidLogger.logFunctionStart("loginWithOTP");
     const emailOrPhone: string = req.body.emailOrPhone;
     const otp: string = req.body.otp;
     const deviceId: string = await getDeviceId(req);
@@ -56,8 +62,11 @@ export const loginWithOTP = async (req:Request, res:Response) => {
   } catch (error:any) {
     WrappidLogger.error("loginWithOTP Error:: " + error);
     res.status(500).json({message: error.message});
+  }finally{
+    WrappidLogger.logFunctionEnd("loginWithOTP");
   }
 };
+
 
 /**
  * Reset Password
@@ -66,6 +75,7 @@ export const loginWithOTP = async (req:Request, res:Response) => {
  */
 export const resetPassword = async(req:Request, res:Response) => {
   try {
+    WrappidLogger.logFunctionStart("resetPassword");
     const emailOrPhone: string = req.body.emailOrPhone;
     const reqPassword: string = req.body.password; 
     const reqConfirmPassword: string = req.body.confirmPassword; 
@@ -74,8 +84,10 @@ export const resetPassword = async(req:Request, res:Response) => {
     const { status, ...restData } = await authFunctions.resetPassword(emailOrPhone, reqPassword, reqConfirmPassword, otp,deviceId);
     res.status(status).json({status:status, restData});
   } catch (error:any) {
-    WrappidLogger.error("resetPassword:: " + error);
+    WrappidLogger.error("resetPassword Error:: " + error);
     res.status(500).json({message: error.message});
+  }finally{
+    WrappidLogger.logFunctionEnd("resetPassword");
   }
 };
 
@@ -87,17 +99,18 @@ export const resetPassword = async(req:Request, res:Response) => {
  */
 export const changePassword = async(req:any, res:Response) => {
   try {
+    WrappidLogger.logFunctionStart("changePassword");
     const { password, newPassword, confirmPassword } = req.body;
     const userId: number = req?.user.userId;
     const { status, ...restData } = await authFunctions.changePassword(password, newPassword, confirmPassword, userId);
     res.status(status).json({status:status, restData});
   } catch (error:any) {
-    WrappidLogger.error("changePassword:: " + error);
+    WrappidLogger.error("changePassword Error:: " + error);
     res.status(500).json({message: error.message});
+  }finally{
+    WrappidLogger.logFunctionEnd("changePassword");
   }
 };
-
-
 
 
 /**
@@ -105,7 +118,7 @@ export const changePassword = async(req:any, res:Response) => {
  * @param req 
  * @param res 
  */
-export const accessToken = async (req: any, res: any) => {
+export const accessToken = async (req: any, res: Response) => {
   try {
     WrappidLogger.logFunctionStart("accessToken");
     const userId: number = req?.user.userId;
@@ -127,7 +140,7 @@ export const accessToken = async (req: any, res: any) => {
  * @param req 
  * @param res 
  */
-export const refreshToken = async (req: any, res: any) => {
+export const refreshToken = async (req: any, res: Response) => {
   try {
     WrappidLogger.logFunctionStart("refreshToken");
     const userId: number = req?.user.userId;
@@ -142,7 +155,6 @@ export const refreshToken = async (req: any, res: any) => {
     WrappidLogger.logFunctionEnd("refreshToken");
   }
 };
-
 
 
 /**
@@ -164,6 +176,7 @@ export const logout = async (req: any, res: Response) => {
     WrappidLogger.logFunctionEnd("logout");
   }
 };
+
 
 /**
  * Sent Otp
@@ -188,6 +201,7 @@ export const sentOtp = async (req: any, res: Response) => {
     WrappidLogger.logFunctionEnd("sentOtp");
   }
 };
+
 
 /**
  * Register new user

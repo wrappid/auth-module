@@ -11,7 +11,6 @@ import constant from "../constants/constants";
 export   const createUser = async (userBody: GenericObject, emailOrPhone:string, ob: GenericObject) => {
   try {
     let responseObj: GenericObject  = {};
-    console.log(databaseProvider);
     await databaseProvider.ums.sequelize.transaction(
       async (transaction: Sequelize.Transaction) => {
         const userData = await databaseActions.create(
