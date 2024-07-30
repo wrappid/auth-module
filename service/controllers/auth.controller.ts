@@ -1,5 +1,6 @@
 import { WrappidLogger } from "@wrappid/service-core";
 import { Request, Response } from "express";
+import {google} from "googleapis";
 import * as authFunctions from "../functions/auth.functions";
 import { getDeviceId } from "../functions/auth.helper.functions";
 
@@ -221,4 +222,45 @@ export const register = async (req:Request, res:Response) => {
   } finally {
     WrappidLogger.logFunctionEnd("register");
   }
+};
+
+
+const oauth2Client = new google.auth.OAuth2(
+  "", //Client Id
+  "", //Secret ID
+  "" // Callback url
+);
+  
+const redirectUrl = oauth2Client.generateAuthUrl({
+  access_type: "offline",
+  prompt: "consent",
+  scope: ["email", "profile"]
+});
+  
+let auth = false;
+
+export const googleLogin =   async (req:Request, res:Response) => {
+  const oauth2 = google.oauth2({version: "v2", auth: oauth2Client});
+  if (auth) {
+    const userInfo = await oauth2.userinfo.v2.me.get();
+    res.render("index", {buttonSpan: "Sign out", url: "http://localhost:8080/goglelogout", userInfo: userInfo.data});
+  } else {
+    res.render("index", {buttonSpan: "Sign in", url: redirectUrl, userInfo: {}});
+  }
+};
+  
+export const googleCallback =   async (req:Request, res:Response) => {
+  const code = req.query.code as string;
+  if (code) {
+    const { tokens } = await oauth2Client.getToken(code);
+    oauth2Client.setCredentials(tokens);
+    auth = true;
+  }
+  res.redirect("/googleLogin");
+};
+  
+export const goglelogout = (req:Request, res:Response) => {
+  oauth2Client.revokeCredentials().then((r:any) => console.log("revoke ", r));
+  auth = false;
+  res.redirect("/googleLogin");
 };

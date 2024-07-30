@@ -537,11 +537,11 @@ const resetPassword = async (emailOrPhone: string, reqPassword: string,reqConfir
 
       const result = await databaseProvider.ums.sequelize.transaction(
         async (transaction: Sequelize.Transaction) => {
-          //Update password in db
+          //Update password in db and mark as verify email or phone
           const [checkUser] = await databaseActions.update(
             "ums",
             "Users",
-            {   ...userUpdateOb },
+            {   ...userUpdateOb, ...verificationOb },
             {
               where: {
                 id: userId,
@@ -551,24 +551,6 @@ const resetPassword = async (emailOrPhone: string, reqPassword: string,reqConfir
           if (checkUser == 0) {
             WrappidLogger.error("DB update error");
             throw "DB update error";
-          }
-
-          const [checkPerson] = await databaseActions.update(
-            "ums",
-            "Users",
-            verificationOb,
-            {
-              where: {
-                id: userId,
-              },
-              transaction: transaction,
-            }
-          );
-          if (checkPerson == 0) {
-            WrappidLogger.error("DB update error");
-            throw "DB update error";
-          } else {
-            WrappidLogger.info("Persons table updated");
           }
 
           //for otplogin update personContact verfication status
@@ -690,7 +672,6 @@ const changePassword = async (password:string, newPassword:string, confirmPasswo
       },
     });
     const oldPassExist = checkPassword(password, user.password);
-
 
     if (oldPassExist && newPassword === confirmPassword) {
       const result = await databaseActions.update(

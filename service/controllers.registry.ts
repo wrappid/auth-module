@@ -19,7 +19,10 @@ const ControllersRegistry = {
   newRefreshToken: [authController.refreshToken],
   logout: [authController.logout],
   sentOtp: [authController.sentOtp],
-  register: [authController.register]
+  register: [authController.register],
+  googleLogin: [authController.googleLogin],
+  googleCallback: [authController.googleCallback],
+  goglelogout: [authController.goglelogout],
 };
 
 export default ControllersRegistry;

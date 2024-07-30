@@ -79,6 +79,33 @@ const RoutesRegistry = {
     reqMethod: "post",
     controllerRef: "register",
     system: false
+  },
+  googleLogin:{
+    name: "",
+    url: "googleLogin",
+    authRequired: false,
+    entityRef: "",
+    reqMethod: "get",
+    controllerRef: "googleLogin",
+    system: false
+  },
+  googleCallback:{
+    name: "",
+    url: "auth/google/callback",
+    authRequired: false,
+    entityRef: "",
+    reqMethod: "get",
+    controllerRef: "googleCallback",
+    system: false
+  },
+  gogleLogout: {
+    name: "",
+    url: "goglelogout",
+    authRequired: false,
+    entityRef: "",
+    reqMethod: "get",
+    controllerRef: "goglelogout",
+    system: false
   }
 };
 
