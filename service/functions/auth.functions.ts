@@ -25,6 +25,7 @@ import {
 } from "./auth.helper.functions";
 import { createUser } from "./user.functions";
 
+
 /**
  * user ExistenceChecker function weather user exist 
  * @param emailOrPhone 
@@ -226,6 +227,7 @@ const loginwithPassWord = async (emailOrPhone: string, passWord: string, deviceI
   }
 };
 
+
 /**
  *  Login With OTP
  * @param emailOrPhone 
@@ -333,14 +335,13 @@ const loginWithOtp = async (emailOrPhone:string, otp:string, deviceId:string) =>
             WrappidLogger.info("PersonContacts updated");
           }
           
-          
           const [checkPerson] = await databaseActions.update(
             "ums",
-            "Persons",
+            "Users",
             verificationOb,
             {
               where: {
-                userID: userId,
+                id: userId,
               },
               transaction: transaction,
             }
@@ -351,7 +352,6 @@ const loginWithOtp = async (emailOrPhone:string, otp:string, deviceId:string) =>
           } else {
             WrappidLogger.info("Persons table updated");
           }
-          
 
           for (let session = 0; session < sessions.length; session++) {
             const currSession = sessions[session];
@@ -429,6 +429,7 @@ const loginWithOtp = async (emailOrPhone:string, otp:string, deviceId:string) =>
     WrappidLogger.logFunctionEnd("loginwithOtp");
   }
 };
+
 
 /**
  * Reset Password
@@ -554,11 +555,11 @@ const resetPassword = async (emailOrPhone: string, reqPassword: string,reqConfir
 
           const [checkPerson] = await databaseActions.update(
             "ums",
-            "Persons",
+            "Users",
             verificationOb,
             {
               where: {
-                userID: userId,
+                id: userId,
               },
               transaction: transaction,
             }
@@ -935,6 +936,7 @@ const logout = async (userId:number, deviceId: any) => {
   }
 };
 
+
 /**
  * Sent One Time Password
  * @param serviceName 
@@ -1193,11 +1195,11 @@ const register = async (emailOrPhone:string, otp:string, confirmPassword:string,
 
           const [checkPerson] = await databaseActions.update(
             "ums",
-            "Persons",
+            "Users",
             verificationOb,
             {
               where: {
-                userID: userId,
+                id: userId,
               },
               transaction: transaction,
             }
@@ -1303,6 +1305,7 @@ const register = async (emailOrPhone:string, otp:string, confirmPassword:string,
     throw error;
   }
 };
+
 
 export {
   userExistenceChecker,
