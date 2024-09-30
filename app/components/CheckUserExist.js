@@ -2,7 +2,8 @@
 import {
   CoreDomNavigate,
   CoreForm,
-  CoreLayoutItem
+  CoreLayoutItem,
+  LinkedInAuthComponent
 } from "@wrappid/core";
 import { useSelector } from "react-redux";
 
@@ -19,11 +20,15 @@ export default function CheckUserExist() {
         {checkLoginOrRegisterSuccess && authNextPage.toLowerCase() !== ModuleRoute.LOGIN_ROUTE ? (
           <CoreDomNavigate to={`/${authNextPage}`} />
         ) : (
-          <CoreForm
-            formId="checkUserExist"
-            mode="edit"
-            authenticated={false}
-          />
+          <>
+            <CoreForm
+              formId="checkUserExist"
+              mode="edit"
+              authenticated={false}
+            />
+
+            <LinkedInAuthComponent />
+          </>
         )}
       </CoreLayoutItem>
     </>

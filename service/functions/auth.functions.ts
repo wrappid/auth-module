@@ -10,6 +10,7 @@ import {
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import DeviceDetector from "node-device-detector";
+import fetch from "node-fetch-commonjs";
 import otpGenerator from "otp-generator";
 import constant from "../constants/constants";
 
@@ -1157,6 +1158,74 @@ const postVerifyOtpFunc = async (req: any, res: any) => {
   }
 };
 
+
+const getAccessCode = async (code: any)=>{
+  try {
+    if (!code) {
+      return {status:400, error: "Authorization code is required"};
+    }
+    console.log("Current Backend AuthCode: ",code);
+
+    const clientId = ApplicationContext.getContext("config")?.socialLogin?.linkedin?.apiKey;
+    const clientSecret = ApplicationContext.getContext("config")?.socialLogin?.linkedin?.apiKeySecret;
+    const redirectUri = ApplicationContext.getContext("config")?.socialLogin?.linkedin?.callbackURL;
+    const tokenUrl = "https://www.linkedin.com/oauth/v2/accessToken";
+
+    console.log(clientId);
+    console.log(clientSecret);
+    console.log(redirectUri);
+    // Fetch the access token from LinkedIn
+    const response = await fetch(
+      tokenUrl,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          grant_type: "authorization_code",
+          code,
+          client_id: clientId,
+          client_secret: clientSecret,
+          redirect_uri: redirectUri,
+        }),
+      }
+    );
+  
+    const data:any = await response.json();
+    const token = data.access_token;
+
+    const res = await fetch("https://api.linkedin.com/v2/userinfo", {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+
+    const data2:any = await res.json();
+
+    if (response.ok) {
+    // Return access token
+      return {status:200, data:data,data2:data2};
+    } else {
+    // Handle error response from LinkedIn
+      return {status:400, massage: "Error in response" };
+    }} catch (error:any) {
+    console.log(error);
+    throw error;
+  }
+};
+
+
+
+async function helloWorldFunc(){
+  // eslint-disable-next-line no-useless-catch
+  try{
+    return {status:200, message: "Hello World"};
+  }catch(error:any){
+    throw error;
+  }
+}
+
 export {
   checkLoginOrRegisterUtil,
   loginHelper,
@@ -1167,4 +1236,7 @@ export {
   sentOtp,
   postChangePasswordFunc,
   postVerifyOtpFunc,
+  helloWorldFunc,
+  getAccessCode
 };
+

@@ -57,6 +57,8 @@ const ControllersRegistry = {
     CoreMiddlewaresRegistry.validation(postVerifyOtp),
     authController.postVerifyOtp,
   ],
+  helloWorld:[authController.helloWorld],
+  linkedInAccessCode:[authController.linkedInAccessCode],
 };
 
 export default ControllersRegistry;
