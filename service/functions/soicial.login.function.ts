@@ -32,7 +32,7 @@ const checkuserFunc = async (userInfo: CheckUser) => {
     WrappidLogger.logFunctionStart("checkLoginOrRegisterUtil");
     // Get user data from db
     const data = await databaseActions.findOne("application", "Users", {
-      where: userInfo.email,
+      where:  {email :userInfo.email},
     });
     if (data) {
       // user found
@@ -89,7 +89,7 @@ const checkuserFunc = async (userInfo: CheckUser) => {
             },
             { transaction: transaction }
           );
-          WrappidLogger.info("User Created " + userData.id);
+          WrappidLogger.info("User Created" + userData.id);
           // create persondata         
           const personData = await databaseActions.create(
             "application",
@@ -212,7 +212,6 @@ const platformIdAddFunc = async (platformId:string, personId:number, platformTyp
  */
 const passwordLessLogin = async (email:number, deviceId:any) => {
   try {
-    // const deviceId = await getDeviceId(req);
     const userDetails = await databaseActions.findOne("application", "Users", {
       where: {email: email},
     });
@@ -224,7 +223,7 @@ const passwordLessLogin = async (email:number, deviceId:any) => {
 
     const userId = userDetails.id;
     const mail = userDetails.email;
-    const phone = userDetails.phone;
+    const phone = userDetails?.phone;
 
     const { refreshToken, accessToken } = genarateAccessToken(
       userId,

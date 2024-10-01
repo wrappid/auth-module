@@ -1,6 +1,7 @@
 import { WrappidLogger } from "@wrappid/service-core";
 import * as authFunctions from "../functions/auth.functions";
 
+
 /**
  *
  * @param {*} req
@@ -200,3 +201,9 @@ export const postVerifyOtp = async (req: any, res: any) => {
     WrappidLogger.logFunctionEnd("postVerifyOtp");
   }
 };
+
+
+
+
+
+
