@@ -1,16 +1,22 @@
 
+import React from "react";
+
 import {
   CoreDomNavigate,
   CoreForm,
   CoreLayoutItem,
   LinkedInAuthComponent
 } from "@wrappid/core";
+import { WrappidDataContext } from "@wrappid/styles";
 import { useSelector } from "react-redux";
 
 import AuthLayout from "./layout/AuthLayout";
 import { ModuleRoute } from "../constants/app.constants";
 
 export default function CheckUserExist() {
+  const { config } = React.useContext(WrappidDataContext);
+  const isEnable = config?.wrappid?.socialLogin?.enable;
+  const isLinkedInEnable = config?.wrappid?.socialLogin?.linkedin?.enable;
   const auth = useSelector(state => state.auth);
   const { checkLoginOrRegisterSuccess, authNextPage } = auth;
 
@@ -27,7 +33,8 @@ export default function CheckUserExist() {
               authenticated={false}
             />
 
-            <LinkedInAuthComponent />
+            {isEnable && isLinkedInEnable && <LinkedInAuthComponent />}
+           
           </>
         )}
       </CoreLayoutItem>

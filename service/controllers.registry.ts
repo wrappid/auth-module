@@ -1,6 +1,7 @@
 import { CoreMiddlewaresRegistry } from "@wrappid/service-core";
 
 import * as authController from "./controllers/auth.controller";
+import * as socailAuthController from "./controllers/social.auth.controllers";
 
 import {
   checkLoginOrRegister,
@@ -57,8 +58,8 @@ const ControllersRegistry = {
     CoreMiddlewaresRegistry.validation(postVerifyOtp),
     authController.postVerifyOtp,
   ],
-  helloWorld:[authController.helloWorld],
-  linkedInAccessCode:[authController.linkedInAccessCode],
+
+  linkedin:[socailAuthController.linkedin]
 };
 
 export default ControllersRegistry;

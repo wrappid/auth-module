@@ -1,12 +1,4 @@
 const RoutesRegistry = {
-  helloWorld:{
-    name: "",
-    url: "hello",
-    authRequired: false,
-    reqMethod: "get",
-    entityRef: "helloWorld",
-    controllerRef: "helloWorld"
-  },
   linkedInAccessCode:{
     name: "",
     url: "accesscode",
@@ -14,6 +6,14 @@ const RoutesRegistry = {
     reqMethod: "post",
     entityRef: "linkedInAccessCode",
     controllerRef: "linkedInAccessCode"
+  },
+  linkedin:{
+    name: "",
+    url: "social/login/:platform",
+    authRequired: false,
+    reqMethod: "post",
+    entityRef: "linkedin",
+    controllerRef: "linkedin"
   },
 
 };

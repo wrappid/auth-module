@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.22](https://https//github.com/wrappid/wrappid-module/compare/v0.0.21...v0.0.22) (2024-10-01)
+
+
+### Features
+
+* **global:** :sparkles: social login hook function added ([97b8f0c](https://https//github.com/wrappid/wrappid-module/commit/97b8f0c4c190b80fcceba71bc3793ae280b4f3dd)), closes [#98](https://https//github.com/wrappid/wrappid-module/issues/98)
+
+
+### Bug Fixes
+
+* **core:** :recycle: change function naming style ([d16e2f0](https://https//github.com/wrappid/wrappid-module/commit/d16e2f0a77ce94cbce932ddff4bc39ab2cfbb042)), closes [#98](https://https//github.com/wrappid/wrappid-module/issues/98)
+
 ### [0.0.21](https://https//github.com/wrappid/wrappid-module/compare/v0.0.20...v0.0.21) (2024-07-23)
 
 

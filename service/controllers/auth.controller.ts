@@ -207,22 +207,4 @@ export const postVerifyOtp = async (req: any, res: any) => {
  * @param req 
  * @param res 
  */
-export const helloWorld = async (req: any, res: any) => {
-  try {
-    const  { status, ...restData } = await authFunctions.helloWorldFunc();
-    res.status(status).json(restData);
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
-  }
-};
-export const linkedInAccessCode = async (req: any, res: any) => {
-  
-  const code = req.body.authCode;
-  // console.log("Authorization code got in controller: ",code);
-  try {
-    const  { status, ...restData } = await authFunctions.getAccessCode(code);
-    res.status(status).json(restData);
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
-  }
-};
+
