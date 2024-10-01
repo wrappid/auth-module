@@ -1,4 +1,1 @@
-export const ApiRegistry = {
-  "ACCESSCODE"         : "/accesscode",
-  GET_PROFILE_BASIC_API: "/business/individual/ProfileBasic"
-};
+export const ApiRegistry = { GET_PROFILE_BASIC_API: "/business/individual/ProfileBasic" };
