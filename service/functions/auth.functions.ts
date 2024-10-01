@@ -1167,4 +1167,6 @@ export {
   sentOtp,
   postChangePasswordFunc,
   postVerifyOtpFunc,
+  genarateAccessToken,
+  createLoginLogs
 };
