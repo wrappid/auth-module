@@ -27,7 +27,7 @@ interface PlatformType {
  * @param userInfo
  * @returns
  */
-const CheckuserFunc = async (userInfo: CheckUser) => {
+const checkuserFunc = async (userInfo: CheckUser) => {
   try {
     WrappidLogger.logFunctionStart("checkLoginOrRegisterUtil");
     // Get user data from db
@@ -142,7 +142,7 @@ const CheckuserFunc = async (userInfo: CheckUser) => {
  * @param personId 
  * @returns 
  */
-const VerifyMailFunc = async (email: string, personId: number): Promise<boolean> => {
+const verifyMailFunc = async (email: string, personId: number): Promise<boolean> => {
   try {
     WrappidLogger.logFunctionStart("VerifyMailFunc");
     const person = await databaseActions.create(
@@ -320,4 +320,4 @@ const passwordLessLogin = async (email:number, deviceId:any) => {
   }
 };
 
-export { CheckuserFunc, VerifyMailFunc, platformIdAddFunc, passwordLessLogin };
+export { checkuserFunc, verifyMailFunc, platformIdAddFunc, passwordLessLogin };
