@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.23](https://https//github.com/wrappid/wrappid-module/compare/v0.0.22...v0.0.23) (2024-10-03)
+
+
+### Features
+
+* **core:** :sparkles: facbook login implementation ([4e167fa](https://https//github.com/wrappid/wrappid-module/commit/4e167fa987706b3b95aaa8d56bb38cea0c87aebd)), closes [#96](https://https//github.com/wrappid/wrappid-module/issues/96)
+* **global:** :sparkles: social login code structure fix ([8ff38d7](https://https//github.com/wrappid/wrappid-module/commit/8ff38d7832b6f4ce30481a518073f2a8da831365)), closes [#103](https://https//github.com/wrappid/wrappid-module/issues/103)
+
 ### [0.0.22](https://https//github.com/wrappid/wrappid-module/compare/v0.0.21...v0.0.22) (2024-10-01)
 
 
