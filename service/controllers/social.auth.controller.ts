@@ -1,18 +1,20 @@
-import * as authFunctions from "../functions/auth.functions";
 import { getDeviceId } from "../functions/auth.helper.functions";
+import * as socialLoginFunc from "../functions/soicial.login.function";
 
-export const facebook = async (req: any, res: any) => {
+/**
+ *
+ * @description Social login controller
+ * @param {Object} req - The request object
+ * @param {Object} res - The response object
+ * @returns {Object} - The response object
+*/
+export const socialLogin = async (req: any, res: any) => {
   try {
     const { platform } = req.params;
-  
-    const { accessToken } = req.body;
+    const { platformToken } = req.body;
     const deviceId = await getDeviceId(req);
-  
-    // Call the function to fetch user data and pages
-    const { status, ...resData } = await authFunctions.facebookFunc(platform, accessToken, deviceId);
-    res.status(status).json({
-      resData,
-    });
+    const { status, ...resData } = await socialLoginFunc.socialLoginFunc(platform, platformToken, deviceId);
+    res.status(status).json({...resData});
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }

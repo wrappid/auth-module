@@ -87,6 +87,13 @@ const constant = {
       TEXT: "text/plain",
     },
   },
+  
+  platformType : {
+    FACEBOOK: "facebook",
+    LINKEDIN: "linkedin",
+    GITHUB: "github",
+  }
+
 };
 
 export default constant;
