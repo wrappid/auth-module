@@ -10,6 +10,7 @@ import {
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import DeviceDetector from "node-device-detector";
+import fetch from "node-fetch-commonjs";
 import otpGenerator from "otp-generator";
 import constant from "../constants/constants";
 
@@ -21,6 +22,7 @@ import {
   COMMUNICATION_EMAIL,
   COMMUNICATION_SMS,
 } from "./auth.helper.functions";
+import { checkuserFunc, passwordLessLogin, platformIdAddFunc, verifyMailFunc } from "./soicial.login.function";
 
 /**
  * 
@@ -1157,6 +1159,65 @@ const postVerifyOtpFunc = async (req: any, res: any) => {
   }
 };
 
+
+
+async function facebookFunc(platform: string, accessToken: string, deviceId: string) {
+  try {
+    if (platform === "facebook") {
+      const userResponse = await fetch(
+        `https://graph.facebook.com/me?fields=first_name,middle_name,last_name,id,email&access_token=${accessToken}`
+      );
+      if (!userResponse.ok) {
+        throw new Error(
+          `Failed to fetch user data: ${userResponse.statusText}`
+        );
+      }
+      const rawData:any = await userResponse.json();
+      //   console.log("userData: ", rawData);
+      const userData = {
+        firstName: rawData.first_name,
+        middleName: rawData.middle_name || "", // Default to empty string if middleName is null
+        lastName: rawData.last_name,
+        platformId: rawData.id,
+        email: rawData.email
+      };
+      const userDetails = await checkuserFunc(userData);
+      // console.log(userDetails);
+      if (userDetails?.message === "User Created") {
+        // Verify the user's email
+        const emailVerified = await verifyMailFunc(userData.email, userDetails.data.personId);
+        if (emailVerified) {
+          WrappidLogger.info("Email successfully verified");
+        }
+  
+        // Add platform ID to the PersonContacts table
+        const platformAdded = await platformIdAddFunc(
+          userData.platformId,
+          userDetails.data.personId,
+          { type: "facebook" } // Pass the platform type here
+        );
+        if (platformAdded) {
+          WrappidLogger.info("Platform ID added successfully");
+        }
+      }
+    
+
+  
+      // Optionally, you can implement password-less login after verifying the user's email and platform ID
+      const loginResult = await passwordLessLogin(userData.email, deviceId); // You may use a device ID in place of accessToken
+      return {
+        status: 200,
+        ...loginResult,
+      };
+    } else {
+      throw new Error("Unsupported platform");
+    }
+  } catch (err: any) {
+    WrappidLogger.error("Error: " + err.message);
+    throw err;
+  }
+}
+
 export {
   checkLoginOrRegisterUtil,
   loginHelper,
@@ -1168,5 +1229,6 @@ export {
   postChangePasswordFunc,
   postVerifyOtpFunc,
   genarateAccessToken,
-  createLoginLogs
+  createLoginLogs,
+  facebookFunc
 };
