@@ -6,8 +6,11 @@ import {
   WrappidLogger,
 } from "@wrappid/service-core";
 import bcrypt from "bcrypt";
+import fetch from "node-fetch-commonjs";
 import constant from "../constants/constants";
 import { genarateAccessToken } from "./auth.functions";
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 interface CheckUser {
   email: string;
@@ -15,21 +18,58 @@ interface CheckUser {
   firstName?: string;
   lastName?: string;
   middleName?: string;
+  photoUrl?: string;
 }
 
-interface PlatformType {
-  type: "x" | "facebook" | "linkidin"
-}
+/**
+ * Social login
+ * @param platform 
+ * @param accessToken 
+ * @param deviceId 
+ * @returns 
+ */
+async function socialLoginFunc(platform: string, platformToken: string, deviceId: string) {
+  try {
+    let userData:CheckUser = {email: "", platformId: ""} ;
+    switch (platform) {
+      case constant.platformType.FACEBOOK:
+        userData = await facebookLogin(platformToken);
+        break;
+      case constant.platformType.LINKEDIN:
+        userData = await linkedinLogin(platformToken);
+        break;
 
+      case constant.platformType.GITHUB:
+        userData = await githubLogin(platformToken);
+        break;
+      default:
+        break;  
+    } 
+
+    // check or create user
+    await checkuserFunc(platform,userData);
+    // Login without password
+    const loginResult = await passwordLessLogin(userData.email, deviceId);
+    return {status:200,  ...loginResult};
+  } catch (err: any) {
+    WrappidLogger.error("Error in socialLoginFunc " + err.message);
+    throw err;
+  }
+}
 
 /**
  * Check User or create user
- * @param userInfo
- * @returns
+ * @param platform 
+ * @param userInfo 
+ * @returns 
  */
-const checkuserFunc = async (userInfo: CheckUser) => {
+const checkuserFunc = async (platform:string, userInfo: CheckUser) => {
   try {
-    WrappidLogger.logFunctionStart("checkLoginOrRegisterUtil");
+    WrappidLogger.logFunctionStart("checkuserFunc");
+    const checkValidEmail = emailRegex.test(userInfo.email);
+    if(!checkValidEmail){
+      throw Error("Not a valid email");
+    }
     // Get user data from db
     const data = await databaseActions.findOne("application", "Users", {
       where:  {email :userInfo.email},
@@ -62,6 +102,7 @@ const checkuserFunc = async (userInfo: CheckUser) => {
         },
       };
     } else {
+      let personData:any;
       // user not found so create here
       await databaseProvider.application.sequelize.transaction(
         async (transaction: any) => {
@@ -91,7 +132,7 @@ const checkuserFunc = async (userInfo: CheckUser) => {
           );
           WrappidLogger.info("User Created" + userData.id);
           // create persondata         
-          const personData = await databaseActions.create(
+          personData = await databaseActions.create(
             "application",
             "Persons",
             {
@@ -110,23 +151,45 @@ const checkuserFunc = async (userInfo: CheckUser) => {
           );
           WrappidLogger.info("Person Created " + personData.id);
 
-          return {
-            message: "User Created",
-            data: {
-              personId: personData.id,
-              name:
-                personData?.firstName +
-                " " +
-                personData?.middleName +
-                " " +
-                personData?.lastName,
-              photoUrl: personData?.photoUrl,
-              isVerified: personData?.isVerified,
-            },
-          };
+        });
+      //update personcontacts with mail
+      await databaseActions.create(
+        "application",
+        "PersonContacts",
+        {
+          data: userInfo.email,
+          type: coreConstant.contact.EMAIL,
+          verfied: true,
+          personId: personData.id,
+          _status: coreConstant.entityStatus.ACTIVE,
         }
       );
-      WrappidLogger.info("New User created");
+      //update personcontacts with platformId
+      await databaseActions.create(
+        "application",
+        "PersonContacts",
+        {
+          data: userInfo.platformId,
+          type: platform,
+          verified:true,
+          personId: personData.id,
+          _status: coreConstant.entityStatus.ACTIVE,
+        }
+      );
+      return {
+        message: "User Created",
+        data: {
+          personId: personData.id,
+          name:
+              personData?.firstName +
+              " " +
+              personData?.middleName +
+              " " +
+              personData?.lastName,
+          photoUrl: personData?.photoUrl,
+          isVerified: personData?.isVerified,
+        },
+      };
     }
   } catch (err: any) {
     WrappidLogger.info("Error in check register " + err);
@@ -137,80 +200,11 @@ const checkuserFunc = async (userInfo: CheckUser) => {
 };
 
 /**
- * In PersonContacts table add email with varified true
- * @param email 
- * @param personId 
- * @returns 
- */
-const verifyMailFunc = async (email: string, personId: number): Promise<boolean> => {
-  try {
-    WrappidLogger.logFunctionStart("VerifyMailFunc");
-    const person = await databaseActions.create(
-      "application",
-      "PersonContacts",
-      {
-        data: email,
-        type: coreConstant.contact.EMAIL,
-        verfied: true,
-        personId: personId,
-        _status: coreConstant.entityStatus.ACTIVE,
-      }
-    );
-    if(person){
-      return true;
-    }else{
-      return false;
-    }
-  } catch (error: any) {
-    WrappidLogger.info("Error in db update VerifyMailFunc");
-    throw error;
-  } finally {
-    WrappidLogger.logFunctionEnd("VerifyMailFunc");
-  }
-};
-
-
-/**
- * Add platform id to PersonContacts table
- * @param platformId 
- * @param personId 
- * @param platformType 
- * @returns 
- */
-const platformIdAddFunc = async (platformId:string, personId:number, platformType: PlatformType)=> {
-  try {
-    WrappidLogger.logFunctionStart("VerifyMailFunc");
-    const person = await databaseActions.create(
-      "application",
-      "PersonContacts",
-      {
-        data: platformId,
-        type: platformType,
-        verified:true,
-        personId: personId,
-        _status: coreConstant.entityStatus.ACTIVE,
-      }
-    );
-    if(person){
-      return true;
-    }else{
-      return false;
-    }
-  } catch (error: any) {
-    WrappidLogger.info("Error in db update VerifyMailFunc");
-    throw error;
-  } finally {
-    WrappidLogger.logFunctionEnd("VerifyMailFunc");
-  }
-};
-
-
-/**
  * Login with password less
  * @param email 
  * @returns 
  */
-const passwordLessLogin = async (email:number, deviceId:any) => {
+const passwordLessLogin = async (email:string, deviceId:any) => {
   try {
     const userDetails = await databaseActions.findOne("application", "Users", {
       where: {email: email},
@@ -277,6 +271,7 @@ const passwordLessLogin = async (email:number, deviceId:any) => {
               WrappidLogger.info("Login Success");
               // createLoginLogs(req.originalUrl, userId, req.body?.devInfo);
               return {
+                status: 200,
                 message: "Successfully login",
                 id: userId,
                 personId: personData.id,
@@ -302,6 +297,7 @@ const passwordLessLogin = async (email:number, deviceId:any) => {
           );
           WrappidLogger.info( "Login Success with New Device, session id: " + newSession.id);
           return {
+            status: 200,
             message: "Successfully login with New Device",
             id: userId,
             personId: personData.id,
@@ -319,4 +315,48 @@ const passwordLessLogin = async (email:number, deviceId:any) => {
   }
 };
 
-export { checkuserFunc, verifyMailFunc, platformIdAddFunc, passwordLessLogin };
+
+/**
+ * Login with facebook
+ * @param accessToken 
+ * @param deviceId 
+ * @param platform 
+ * @returns 
+ */
+const facebookLogin = async (accessToken:string) => {
+  try {
+    // Get user details from facebook graph API
+    const userResponse = await fetch(
+      `https://graph.facebook.com/me?fields=email,first_name,middle_name,last_name,id&access_token=${accessToken}`
+    );
+    if (!userResponse.ok) {
+      throw new Error(
+        `Failed to fetch user data: ${userResponse.statusText}`
+      );
+    }
+    const rawData:any = await userResponse.json();
+    const userData = {
+      firstName: rawData.first_name || "",
+      middleName: rawData.middle_name || "", // Default to empty string if middleName is null
+      lastName: rawData.last_name || "",
+      platformId: rawData.id,
+      email: rawData.email
+    };
+    return userData;
+  } catch (error:any) {
+    WrappidLogger.info("Error in facebookLogin: " + error);
+    throw error;
+  } 
+};
+
+export { socialLoginFunc };
+function linkedinLogin(platformToken: string): CheckUser | PromiseLike<CheckUser> {
+  WrappidLogger.info("DB TOKEN: " + platformToken);
+  throw new Error("Function not implemented.");
+}
+
+function githubLogin(platformToken: string): CheckUser | PromiseLike<CheckUser> {
+  WrappidLogger.info("DB TOKEN: " + platformToken);
+  throw new Error("Function not implemented.");
+}
+

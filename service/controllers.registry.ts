@@ -58,9 +58,7 @@ const ControllersRegistry = {
     CoreMiddlewaresRegistry.validation(postVerifyOtp),
     authController.postVerifyOtp,
   ],
-  facebook: [
-    socialAuthController.facebook,
-  ],
+  socialLogin: [ socialAuthController.socialLogin ]
 };
 
 export default ControllersRegistry;

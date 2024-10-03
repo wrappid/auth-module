@@ -1,12 +1,12 @@
 const RoutesRegistry = {
-  facebook:{
-    name:"facebook",
-    url:"social/login/:platform",
+  socialLogin:{
+    name:"socialLogin",
+    url:"login/social/:platform",
     authRequired: false,
     reqMethod:"post",
-    entityRef: "facebook",
-    controllerRef: "facebook"
-  },
+    entityRef: "socialLogin",
+    controllerRef: "socialLogin"
+  }
 };
 
 export default RoutesRegistry;
