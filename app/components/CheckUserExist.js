@@ -4,7 +4,8 @@ import {
   CoreDomNavigate,
   CoreForm,
   CoreLayoutItem,
-  FacebookAuthComponent
+  FacebookAuthComponent,
+  LinkedInAuthComponent
 } from "@wrappid/core";
 import { WrappidDataContext } from "@wrappid/styles";
 import { useSelector } from "react-redux";
@@ -17,6 +18,7 @@ export default function CheckUserExist() {
   const { checkLoginOrRegisterSuccess, authNextPage } = auth;
   const { config } = React.useContext(WrappidDataContext);
   const isEnable = config?.wrappid?.socialLogin?.enable;
+  const isLinkedInEnable = config?.wrappid?.socialLogin?.linkedin?.enable;
   const isFacebookEnable = config?.wrappid?.socialLogin?.facebook?.enable;
 
   return (
@@ -33,7 +35,9 @@ export default function CheckUserExist() {
                 authenticated={false}
               />
 
-              {isEnable && isFacebookEnable && <FacebookAuthComponent />}
+              {isEnable && isFacebookEnable && <FacebookAuthComponent />} 
+
+              {isEnable && isLinkedInEnable && <LinkedInAuthComponent />}
             </>
           )}
       </CoreLayoutItem>
