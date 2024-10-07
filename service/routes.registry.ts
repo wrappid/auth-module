@@ -1,14 +1,12 @@
 const RoutesRegistry = {
-
-  linkedin:{
-    name: "",
-    url: "social/login/:platform",
+  socialLogin:{
+    name:"socialLogin",
+    url:"login/social/:platform",
     authRequired: false,
-    reqMethod: "post",
-    entityRef: "linkedin",
-    controllerRef: "linkedin"
-  },
-
+    reqMethod:"post",
+    entityRef: "socialLogin",
+    controllerRef: "socialLogin"
+  }
 };
 
 export default RoutesRegistry;

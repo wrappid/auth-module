@@ -10,7 +10,6 @@ import {
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import DeviceDetector from "node-device-detector";
-import fetch from "node-fetch-commonjs";
 import otpGenerator from "otp-generator";
 import constant from "../constants/constants";
 
@@ -20,8 +19,6 @@ import {
   COMMUNICATION_EMAIL,
   COMMUNICATION_SMS,
 } from "./auth.helper.functions";
-import { checkuserFunc, verifyMailFunc, platformIdAddFunc, passwordLessLogin } from "./soicial.login.function";
-
 
 /**
  *
@@ -1185,95 +1182,6 @@ const postVerifyOtpFunc = async (req: any, res: any) => {
   }
 };
 
-const linkedinFunc = async (
-  code: string,
-  platform: string,
-  deviceId: string
-) => {
-  try {
-    let retData:any = {};
-    if (platform === "linkedin") {
-      if (!code) {
-        return { status: 400, error: "Authorization code is required" };
-      }
-
-      const clientId =
-        ApplicationContext.getContext("config")?.socialLogin?.linkedin?.apiKey;
-      const clientSecret =
-        ApplicationContext.getContext("config")?.socialLogin?.linkedin
-          ?.apiKeySecret;
-      const redirectUri =
-        ApplicationContext.getContext("config")?.socialLogin?.linkedin
-          ?.callbackURL;
-      const tokenUrl = "https://www.linkedin.com/oauth/v2/accessToken";
-      // console.log("Backend Data",clientId);
-      const response = await fetch(tokenUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: new URLSearchParams({
-          grant_type: "authorization_code",
-          code,
-          client_id: clientId,
-          client_secret: clientSecret,
-          redirect_uri: redirectUri,
-        }),
-      });
-
-      const data: any = await response.json();
-      const token = data.access_token;
-
-      const res = await fetch("https://api.linkedin.com/v2/userinfo", {
-        headers: {
-          Authorization: "Bearer " + token,
-        },
-      });
-
-      const linkedinUserData: any = await res.json();
-      const userData = {
-        firstName: linkedinUserData.given_name,
-        middleName: linkedinUserData.middle_name || "",
-        lastName: linkedinUserData.family_name,
-        platformId: linkedinUserData.sub,
-        email: linkedinUserData.email,
-      };
-      console.log("Backend Userdata", userData);
-      const userDetails: any = await checkuserFunc(userData);
-      console.log(userDetails);
-      if (userDetails?.message === "User Created") {
-        // Verify the user's email
-        const emailVerified = await verifyMailFunc(
-          userData.email,
-          userDetails.data.personId
-        );
-        if (emailVerified) {
-          WrappidLogger.info("Email successfully verified");
-        }
-
-        // Add platform ID to the PersonContacts table
-        const platformAdded = await platformIdAddFunc(
-          userData.platformId,
-          userDetails.data.personId,
-          { type: "facebook" } // Pass the platform type here
-        );
-        if (platformAdded) {
-          WrappidLogger.info("Platform ID added successfully");
-        }
-      }
-
-      // Optionally, you can implement password-less login after verifying the user's email and platform ID
-      retData = await passwordLessLogin(userData.email, deviceId); // You may use a device ID in place of accessToken
-    }
-    return {
-      status: 200,
-      ...retData
-    };
-  } catch (error: any) {
-    WrappidLogger.error(error);
-    throw error;
-  }
-};
 
 export {
   checkLoginOrRegisterUtil,
@@ -1287,5 +1195,4 @@ export {
   postVerifyOtpFunc,
   genarateAccessToken,
   createLoginLogs,
-  linkedinFunc,
 };
