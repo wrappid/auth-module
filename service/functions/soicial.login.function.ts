@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import {
   ApplicationContext,
   coreConstant,
@@ -334,6 +335,7 @@ const facebookLogin = async (accessToken:string) => {
         `Failed to fetch user data: ${userResponse.statusText}`
       );
     }
+
     const rawData:any = await userResponse.json();
     const userData = {
       firstName: rawData.first_name || "",
@@ -349,14 +351,85 @@ const facebookLogin = async (accessToken:string) => {
   } 
 };
 
+
+
 export { socialLoginFunc };
 function linkedinLogin(platformToken: string): CheckUser | PromiseLike<CheckUser> {
   WrappidLogger.info("DB TOKEN: " + platformToken);
   throw new Error("Function not implemented.");
 }
 
-function githubLogin(platformToken: string): CheckUser | PromiseLike<CheckUser> {
-  WrappidLogger.info("DB TOKEN: " + platformToken);
-  throw new Error("Function not implemented.");
+async function githubLogin(platformToken:string): Promise<CheckUser>{
+  //
+  try {
+    const code  = platformToken;
+    if (!code) { throw new Error("Dint recived github code from the user");}
+
+    const client_id = ApplicationContext.getContext("config").socialLogin.github.client_id; // Replace with your GitHub client_id
+    const client_secret = ApplicationContext.getContext("config").socialLogin.github.client_secret; // Replace with your GitHub client_secret
+    
+    console.log(client_id, client_secret);
+    if (client_id == undefined  || client_secret == undefined) {throw new Error("unable to get the client_id client_secret");}
+    const bodyData = { client_id, client_secret, code };
+
+    const response = await fetch("https://github.com/login/oauth/access_token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify(bodyData)
+    });
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch user data: ${response.statusText}`
+      );
+    }
+
+    const data:any = await response.json();
+    console.log(data, "data from github");
+    const accessToken =data?.access_token; 
+    if (!accessToken) {
+      throw new Error(
+        "Failed to get the accessToken from github"
+      );
+    }
+    console.log(accessToken, ":Access Token for github ");
+    ApplicationContext.setContext("githubAccessToken", accessToken);
+    
+    const userResponse = await fetch("https://api.github.com/user", {
+      method: "GET",
+      headers: {
+        "Authorization": "Bearer " + ApplicationContext.getContext("githubAccessToken"),
+      }});
+
+    if (!userResponse.ok) {
+      throw new Error(
+        `Failed to fetch user data: ${userResponse.statusText}`
+      );
+    }
+
+
+    const rawData:any = await userResponse.json();
+    const nameArray = rawData.name?.split(" ");//name in the array format [firstName, middleName, lastName]
+    const userData = {
+      firstName: nameArray[0] || "",
+      middleName: nameArray[1] || "", // Default to empty string if middleName is null
+      lastName: nameArray[2]  || "",
+      platformId: rawData.id,
+      email: rawData.email
+    };
+    console.log(userData, "userData from github");
+    return userData;
+
+  }
+  catch (error:any) {
+    WrappidLogger.info("Error in GithubLogin: " + error);
+    throw error;
+  } 
+  finally{
+    WrappidLogger.logFunctionEnd("githubLogin");
+  }
 }
+  
 
