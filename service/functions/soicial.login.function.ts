@@ -367,8 +367,7 @@ async function githubLogin(platformToken:string): Promise<CheckUser>{
 
     const client_id = ApplicationContext.getContext("config").socialLogin.github.client_id; // Replace with your GitHub client_id
     const client_secret = ApplicationContext.getContext("config").socialLogin.github.client_secret; // Replace with your GitHub client_secret
-    
-    console.log(client_id, client_secret);
+
     if (client_id == undefined  || client_secret == undefined) {throw new Error("unable to get the client_id client_secret");}
     const bodyData = { client_id, client_secret, code };
 
@@ -394,8 +393,8 @@ async function githubLogin(platformToken:string): Promise<CheckUser>{
         "Failed to get the accessToken from github"
       );
     }
-    console.log(accessToken, ":Access Token for github ");
-    ApplicationContext.setContext("githubAccessToken", accessToken);
+
+    ApplicationContext.setContext("githubAccessToken", accessToken);    // store this in the database for future use
     
     const userResponse = await fetch("https://api.github.com/user", {
       method: "GET",
