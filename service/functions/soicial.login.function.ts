@@ -379,7 +379,6 @@ async function linkedinLogin(platformToken: string): Promise<CheckUser> {
     const data: any = await response.json();
     const token = data.access_token;
 
-
     const userResponse = await fetch("https://api.linkedin.com/v2/userinfo", {
       headers: {
         Authorization: "Bearer " + token,
@@ -389,17 +388,30 @@ async function linkedinLogin(platformToken: string): Promise<CheckUser> {
       throw new Error(`Failed to fetch user data: ${userResponse.statusText}`);
     }
     const rawData: any = await userResponse.json();
+    const nameParts = rawData.name.trim().split(" ");
+    let firstName = "", middleName = "", lastName = "";
+
+    // Assign the parts of the name accordingly
+    if (nameParts.length === 1) {
+      firstName = nameParts[0];
+    } else if (nameParts.length === 2) {
+      firstName = nameParts[0];
+      lastName = nameParts[1];
+    } else if (nameParts.length > 2) {
+      firstName = nameParts[0];
+      middleName = nameParts.slice(1, -1).join(" "); // Everything in the middle
+      lastName = nameParts[nameParts.length - 1];
+    }
     const userData = {
-      firstName: rawData.given_name || "",
-      middleName: rawData.middle_name || "", // Default to empty string if middleName is null
-      lastName: rawData.family_name || "",
+      firstName: firstName || "",
+      middleName: middleName || "", // Default to empty string if middleName is null
+      lastName: lastName || "",
       platformId: rawData.sub,
       email: rawData.email,
     };
-    console.log("=========>User Data from my store", userData);
     return userData;
   } catch (error: any) {
-    WrappidLogger.info("Error in facebookLogin: " + error);
+    WrappidLogger.info("Error in LinkedInLogin: " + error);
     throw error;
   }
 }
