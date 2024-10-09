@@ -11,6 +11,8 @@ import fetch from "node-fetch-commonjs";
 import constant from "../constants/constants";
 import { genarateAccessToken } from "./auth.functions";
 
+import * as linkedIn from "./linkedIn.function";
+
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 interface CheckUser {
@@ -350,7 +352,7 @@ const facebookLogin = async (accessToken: string) => {
   }
 };
 
-export { socialLoginFunc };
+
 async function linkedinLogin(platformToken: string): Promise<CheckUser> {
   try {
     // Get Access Token from LinkedIn API
@@ -362,56 +364,11 @@ async function linkedinLogin(platformToken: string): Promise<CheckUser> {
     const redirectUri =
       ApplicationContext.getContext("config")?.socialLogin?.linkedin
         ?.callbackURL;
-    const tokenUrl = "https://www.linkedin.com/oauth/v2/accessToken";
-    const response = await fetch(tokenUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams({
-        grant_type: "authorization_code",
-        code: platformToken,
-        client_id: clientId,
-        client_secret: clientSecret,
-        redirect_uri: redirectUri,
-      }),
-    });
-    const data: any = await response.json();
-    const token = data.access_token;
-
-    const userResponse = await fetch("https://api.linkedin.com/v2/userinfo", {
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    });
-    if (!userResponse.ok) {
-      throw new Error(`Failed to fetch user data: ${userResponse.statusText}`);
-    }
-    const rawData: any = await userResponse.json();
-    const nameParts = rawData.name.trim().split(" ");
-    let firstName = "", middleName = "", lastName = "";
-
-    // Assign the parts of the name accordingly
-    if (nameParts.length === 1) {
-      firstName = nameParts[0];
-    } else if (nameParts.length === 2) {
-      firstName = nameParts[0];
-      lastName = nameParts[1];
-    } else if (nameParts.length > 2) {
-      firstName = nameParts[0];
-      middleName = nameParts.slice(1, -1).join(" "); // Everything in the middle
-      lastName = nameParts[nameParts.length - 1];
-    }
-    const userData = {
-      firstName: firstName || "",
-      middleName: middleName || "", // Default to empty string if middleName is null
-      lastName: lastName || "",
-      platformId: rawData.sub,
-      email: rawData.email,
-    };
-    return userData;
+    const token = await linkedIn.getAccessToken(platformToken,clientId,clientSecret,redirectUri);
+    const userDetails = await linkedIn.getUserDetails(token);    
+    return userDetails;
   } catch (error: any) {
-    WrappidLogger.info("Error in LinkedInLogin: " + error);
+    WrappidLogger.error("Error in LinkedInLogin: " + error);
     throw error;
   }
 }
@@ -422,3 +379,9 @@ function githubLogin(
   WrappidLogger.info("DB TOKEN: " + platformToken);
   throw new Error("Function not implemented.");
 }
+
+
+
+export { socialLoginFunc };
+
+
