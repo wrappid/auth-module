@@ -423,7 +423,7 @@ async function githubLogin(platformToken:string): Promise<CheckUser>{
 
   }
   catch (error:any) {
-    WrappidLogger.info("Error in GithubLogin: " + error);
+    WrappidLogger.error("Error in GithubLogin: " + error);
     throw error;
   } 
   finally{
