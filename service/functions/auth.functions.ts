@@ -20,11 +20,10 @@ import {
   COMMUNICATION_SMS,
 } from "./auth.helper.functions";
 
-
 /**
- * 
- * @param req 
- * @returns 
+ *
+ * @param req
+ * @returns
  */
 const checkLoginOrRegisterUtil = async (req: any) => {
   try {
@@ -55,7 +54,7 @@ const checkLoginOrRegisterUtil = async (req: any) => {
           {
             where: {
               userId: data.id,
-            }
+            },
           }
         );
 
@@ -63,12 +62,15 @@ const checkLoginOrRegisterUtil = async (req: any) => {
           status: 200,
           message: "User Found",
           data: {
-            name: personData?.firstName +
-              " " + personData?.middleName +
-              " " + personData?.lastName,
+            name:
+              personData?.firstName +
+              " " +
+              personData?.middleName +
+              " " +
+              personData?.lastName,
             photoUrl: personData?.photoUrl,
             isVerified: personData?.isVerified,
-          }
+          },
         };
       }
     } else {
@@ -79,12 +81,19 @@ const checkLoginOrRegisterUtil = async (req: any) => {
             //Changed
             const rolesData = await databaseActions.findOne(
               "application",
-              "Roles",{
-                where: { role: ApplicationContext.getContext("config").wrappid.defaultUserRole || constant.userRoles.ROLE_DEVELOPER },
-              });
+              "Roles",
+              {
+                where: {
+                  role:
+                    ApplicationContext.getContext("config").wrappid
+                      .defaultUserRole || constant.userRoles.ROLE_DEVELOPER,
+                },
+              }
+            );
             const userData = await databaseActions.create(
               "application",
-              "Users",{
+              "Users",
+              {
                 ...userBody,
                 roleId: rolesData.id,
                 firstLogin: true,
@@ -95,7 +104,8 @@ const checkLoginOrRegisterUtil = async (req: any) => {
 
             const personData = await databaseActions.create(
               "application",
-              "Persons",{
+              "Persons",
+              {
                 ...userBody,
                 profileId: Date.now(),
                 userId: userData.id,
@@ -111,7 +121,8 @@ const checkLoginOrRegisterUtil = async (req: any) => {
 
             const person = await databaseActions.create(
               "application",
-              "PersonContacts",{
+              "PersonContacts",
+              {
                 data: emailOrPhone,
                 type:
                   ob.type === coreConstant.commType.EMAIL
@@ -136,16 +147,16 @@ const checkLoginOrRegisterUtil = async (req: any) => {
   } catch (err: any) {
     WrappidLogger.info("Error in check register " + err);
     throw err;
-  }finally{
+  } finally {
     WrappidLogger.logFunctionEnd("checkLoginOrRegisterUtil");
   }
 };
 
 /**
- * 
- * @param req 
- * @param otherLogin 
- * @returns 
+ *
+ * @param req
+ * @param otherLogin
+ * @returns
  */
 const loginHelper = async (req: any, otherLogin: any) => {
   try {
@@ -205,10 +216,14 @@ const loginHelper = async (req: any, otherLogin: any) => {
       const phone = userDetails.phone;
       const userUpdateOb: any = {};
 
-      const personData = await databaseActions.findOne("application", "Persons", {
-        attributes: ["id", "userInvitationToken"],
-        where: { userId: userId },
-      });
+      const personData = await databaseActions.findOne(
+        "application",
+        "Persons",
+        {
+          attributes: ["id", "userInvitationToken"],
+          where: { userId: userId },
+        }
+      );
       const personId = personData.id;
       WrappidLogger.info("Person details fetched");
 
@@ -223,10 +238,13 @@ const loginHelper = async (req: any, otherLogin: any) => {
             "application",
             "Otps",
             { _status: coreConstant.entityStatus.INACTIVE },
-            { where: {
-              userId: userId,
-              otp: req.body.otp,
-            }});
+            {
+              where: {
+                userId: userId,
+                otp: req.body.otp,
+              },
+            }
+          );
 
           if (resetPassword) {
             const passwordValid = resetPasswordCheck(
@@ -295,12 +313,13 @@ const loginHelper = async (req: any, otherLogin: any) => {
             const [checkUser] = await databaseActions.update(
               "application",
               "Users",
-              {   ...userUpdateOb },
+              { ...userUpdateOb },
               {
                 where: {
                   id: userId,
                 },
-              },{ transaction: t }
+              },
+              { transaction: t }
             );
             if (checkUser == 0) {
               WrappidLogger.error("DB update error");
@@ -312,7 +331,9 @@ const loginHelper = async (req: any, otherLogin: any) => {
 
           //for otplogin update personContact verfication status
           if (otpLogin || urlLogin) {
-            WrappidLogger.info("PersonContacts updating due to otplogin or urllogin");
+            WrappidLogger.info(
+              "PersonContacts updating due to otplogin or urllogin"
+            );
             const [checkContacts] = await databaseActions.update(
               "application",
               "PersonContacts",
@@ -327,7 +348,12 @@ const loginHelper = async (req: any, otherLogin: any) => {
             );
 
             if (checkContacts == 0) {
-              WrappidLogger.error("Person contact update not made, user id:" + userId+ " contact: " + emailOrPhone );
+              WrappidLogger.error(
+                "Person contact update not made, user id:" +
+                  userId +
+                  " contact: " +
+                  emailOrPhone
+              );
               throw "DB update error";
             } else {
               WrappidLogger.info("PersonContacts updated");
@@ -338,7 +364,8 @@ const loginHelper = async (req: any, otherLogin: any) => {
           if (
             userDetails.firstLogin ||
             (verificationOb.emailVerified && !personData.emailVerified) ||
-            (verificationOb.phoneVerified && !personData.phoneVerified)) {
+            (verificationOb.phoneVerified && !personData.phoneVerified)
+          ) {
             WrappidLogger.info("Persons table updating: " + verificationOb);
             if (urlLogin) {
               verificationOb["userInvitationToken"] = null;
@@ -425,7 +452,9 @@ const loginHelper = async (req: any, otherLogin: any) => {
                 transaction: t,
               }
             );
-            WrappidLogger.info( "Login Success with New Device, session id: " + newSession.id);
+            WrappidLogger.info(
+              "Login Success with New Device, session id: " + newSession.id
+            );
             createLoginLogs(req.originalUrl, userId, req.body?.devInfo);
 
             // get person id
@@ -457,15 +486,15 @@ const loginHelper = async (req: any, otherLogin: any) => {
   } catch (err: any) {
     WrappidLogger.info("Error in login: " + err);
     throw err;
-  }finally{
+  } finally {
     WrappidLogger.logFunctionEnd("loginHelper");
   }
 };
 
 /**
- * 
- * @param req 
- * @param res 
+ *
+ * @param req
+ * @param res
  */
 const logoutHelper = async (req: any) => {
   try {
@@ -496,28 +525,28 @@ const logoutHelper = async (req: any) => {
         );
         if (nrows > 0) {
           WrappidLogger.info("Successfully logged out");
-          return { status:200, message: "Successfully logged out" };
+          return { status: 200, message: "Successfully logged out" };
         } else {
           console.error("Database error in logout");
-          return { status:500,  message: "Database error" };
+          return { status: 500, message: "Database error" };
         }
         break;
       }
     }
-    return { staus:204, message: "No session found!!" };
+    return { staus: 204, message: "No session found!!" };
   } catch (err: any) {
     WrappidLogger.error("Database error in logout" + err);
     throw err;
-  }finally{
+  } finally {
     WrappidLogger.logFunctionEnd("logoutHelper");
   }
 };
 
 /**
- * 
- * @param userId 
- * @param otp 
- * @returns 
+ *
+ * @param userId
+ * @param otp
+ * @returns
  */
 async function checkOtp(userId: any, otp: any, type: string) {
   WrappidLogger.logFunctionStart("checkOtp");
@@ -529,11 +558,10 @@ async function checkOtp(userId: any, otp: any, type: string) {
         _status: coreConstant.entityStatus.ACTIVE,
       },
       limit: 1,
-      order: [["id", "DESC"]]
-    }
-    );
+      order: [["id", "DESC"]],
+    });
     const dbOtp = dbData[0].dataValues.otp;
-    if (Number(dbOtp ) === Number(otp)) {
+    if (Number(dbOtp) === Number(otp)) {
       return true;
     } else {
       return false;
@@ -541,17 +569,16 @@ async function checkOtp(userId: any, otp: any, type: string) {
   } catch (error) {
     WrappidLogger.error("Error: " + error);
     throw error;
-  }finally{
+  } finally {
     WrappidLogger.logFunctionEnd("checkOtp");
   }
-
 }
 
 /**
- * 
- * @param password 
- * @param userDetails 
- * @returns 
+ *
+ * @param password
+ * @param userDetails
+ * @returns
  */
 function resetPasswordCheck(password: any, userDetails: any) {
   try {
@@ -573,20 +600,21 @@ function resetPasswordCheck(password: any, userDetails: any) {
   } catch (error) {
     WrappidLogger.error("Error: " + error);
     throw error;
-  }finally{
+  } finally {
     WrappidLogger.logFunctionEnd("resetPasswordCheck");
   }
-  
 }
 
 /**
- * 
- * @param req 
- * @param personData 
- * @returns 
+ *
+ * @param req
+ * @param personData
+ * @returns
  */
 function checkUrlLoginValidation(req: any, personData: any) {
-  WrappidLogger.info("DB TOKEN: " + personData + " req token: " + req.body.userInvitationToken );
+  WrappidLogger.info(
+    "DB TOKEN: " + personData + " req token: " + req.body.userInvitationToken
+  );
   if (personData.userInvitationToken === req.body.userInvitationToken) {
     WrappidLogger.info("Url login token vvalidation succssfull");
     return true;
@@ -597,23 +625,23 @@ function checkUrlLoginValidation(req: any, personData: any) {
 }
 
 /**
- * 
- * @param reqPassword 
- * @param dbPassword 
- * @returns 
+ *
+ * @param reqPassword
+ * @param dbPassword
+ * @returns
  */
 function checkPassword(reqPassword: any, dbPassword: any) {
   return bcrypt.compareSync(reqPassword, dbPassword);
 }
 
 /**
- * 
- * @param userId 
- * @param mail 
- * @param phone 
- * @param personData 
- * @param userDetails 
- * @returns 
+ *
+ * @param userId
+ * @param mail
+ * @param phone
+ * @param personData
+ * @param userDetails
+ * @returns
  */
 function genarateAccessToken(
   userId: any,
@@ -659,16 +687,16 @@ function genarateAccessToken(
   } catch (error) {
     WrappidLogger.error("Error: " + error);
     throw error;
-  }finally{
+  } finally {
     WrappidLogger.logFunctionEnd("genarateAccessToken");
   }
 }
 
 /**
- * 
- * @param path 
- * @param userId 
- * @param extraInfo 
+ *
+ * @param path
+ * @param userId
+ * @param extraInfo
  */
 async function createLoginLogs(path: any, userId: any, extraInfo: any = "{}") {
   try {
@@ -684,16 +712,15 @@ async function createLoginLogs(path: any, userId: any, extraInfo: any = "{}") {
   } catch (error) {
     WrappidLogger.error("Error: " + error);
     throw error;
-  }finally{
+  } finally {
     WrappidLogger.logFunctionEnd("createLoginLogs");
   }
- 
 }
 /**
- * 
- * @param req 
- * @param res 
- * @returns 
+ *
+ * @param req
+ * @param res
+ * @returns
  */
 const getIPHelper = async (req: any, res: any) => {
   try {
@@ -711,26 +738,23 @@ const getIPHelper = async (req: any, res: any) => {
   } catch (err: any) {
     WrappidLogger.error("internal error" + err);
     throw err;
-  }finally{
+  } finally {
     WrappidLogger.logFunctionEnd("getIPHelper");
   }
 };
 
 /**
- * 
- * @param req 
- * @param res 
- * @returns 
+ *
+ * @param req
+ * @param res
+ * @returns
  */
 // eslint-disable-next-line no-unused-vars
 const refreshTokenHelper = async (req: any, res: any) => {
   try {
     WrappidLogger.logFunctionStart("refreshTokenHelper");
-    const {
-      accessTokenSecret,
-      refreshAccessTokenSecret,
-      expTime,
-    } = ApplicationContext.getContext("config").jwt;
+    const { accessTokenSecret, refreshAccessTokenSecret, expTime } =
+      ApplicationContext.getContext("config").jwt;
 
     return jwt.verify(
       req.body.refreshToken,
@@ -775,7 +799,7 @@ const refreshTokenHelper = async (req: any, res: any) => {
               {
                 where: {
                   id: userId,
-                }
+                },
               }
             );
             const accessToken = jwt.sign(
@@ -805,16 +829,16 @@ const refreshTokenHelper = async (req: any, res: any) => {
   } catch (err: any) {
     WrappidLogger.error("Database error in refresh token: " + err);
     throw err;
-  }finally{
+  } finally {
     WrappidLogger.logFunctionEnd("refreshTokenHelper");
   }
 };
 
 /**
- * 
- * @param req 
- * @param res 
- * @returns 
+ *
+ * @param req
+ * @param res
+ * @returns
  */
 const clientLoginInformationHelper = async (req: any, res: any) => {
   try {
@@ -863,7 +887,7 @@ const clientLoginInformationHelper = async (req: any, res: any) => {
   } catch (err: any) {
     WrappidLogger.info("Error : " + err);
     throw err;
-  }finally{
+  } finally {
     WrappidLogger.logFunctionEnd("clientLoginInformationHelper");
   }
 };
@@ -888,7 +912,6 @@ const sentOtp = async (req: any, res: any) => {
     let templateID = req.body?.templateID;
     const serviceName = req.body?.service;
 
-
     /**
      * @todo need to add template kit19
      */
@@ -902,7 +925,7 @@ const sentOtp = async (req: any, res: any) => {
     //       break;
     //     case "forgotpwd":
     //       templateID = constant.communication.SENT_OTP_LOGIN_WITH_OTP_SMS_EN;
-    //       break;  
+    //       break;
     //     default:
     //       break;
     //   }
@@ -921,7 +944,6 @@ const sentOtp = async (req: any, res: any) => {
       }
     }
 
-
     if (!userId) {
       const user = await databaseActions.findOne("application", "Users", {
         where:
@@ -937,22 +959,25 @@ const sentOtp = async (req: any, res: any) => {
       commData.id = user?.id;
     }
     /**
- * suggested by @pritamIT2024
- */
+     * suggested by @pritamIT2024
+     */
     if (!userId) {
-      const person = await databaseActions.findOne("application", "PersonContacts", {
-        where:{
-          data: req.body.data,
-          isActive: true,
-          _status : constant.entityStatus.ACTIVE
+      const person = await databaseActions.findOne(
+        "application",
+        "PersonContacts",
+        {
+          where: {
+            data: req.body.data,
+            isActive: true,
+            _status: constant.entityStatus.ACTIVE,
+          },
         }
-      });
+      );
       const user = await databaseActions.findOne("application", "Persons", {
         where: {
           id: person?.personId,
-
-        }
-      }); 
+        },
+      });
       userId = user?.userId;
       commData.id = user?.userId;
     }
@@ -963,7 +988,8 @@ const sentOtp = async (req: any, res: any) => {
         : commType;
     const personContact = await databaseActions.findOne(
       "application",
-      "PersonContacts",{
+      "PersonContacts",
+      {
         where: { data: emailOrPhone, type: contactType },
       }
     );
@@ -1034,16 +1060,16 @@ const sentOtp = async (req: any, res: any) => {
   } catch (err: any) {
     WrappidLogger.error("Error: " + err);
     throw err;
-  }finally{
+  } finally {
     WrappidLogger.logFunctionEnd("sentOtp");
   }
 };
 
 /**
- * 
- * @param req 
- * @param res 
- * @returns 
+ *
+ * @param req
+ * @param res
+ * @returns
  */
 const postChangePasswordFunc = async (req: any, res: any) => {
   try {
@@ -1071,7 +1097,7 @@ const postChangePasswordFunc = async (req: any, res: any) => {
         {
           where: {
             id: req.user.userId,
-          }
+          },
         }
       );
 
@@ -1088,16 +1114,16 @@ const postChangePasswordFunc = async (req: any, res: any) => {
   } catch (err: any) {
     WrappidLogger.error("Error: " + err);
     return { status: 500, message: err?.message || "Something went wrong." };
-  }finally{
+  } finally {
     WrappidLogger.logFunctionEnd("postChangePasswordFunc");
   }
 };
 
 /**
- * 
- * @param req 
- * @param res 
- * @returns 
+ *
+ * @param req
+ * @param res
+ * @returns
  */
 const postVerifyOtpFunc = async (req: any, res: any) => {
   try {
@@ -1151,7 +1177,7 @@ const postVerifyOtpFunc = async (req: any, res: any) => {
   } catch (err: any) {
     WrappidLogger.info("Error: " + err);
     return { status: 500, message: "Error to fetch Contacts data" };
-  }finally{
+  } finally {
     WrappidLogger.logFunctionEnd("postVerifyOtpFunc");
   }
 };
@@ -1168,5 +1194,5 @@ export {
   postChangePasswordFunc,
   postVerifyOtpFunc,
   genarateAccessToken,
-  createLoginLogs
+  createLoginLogs,
 };
