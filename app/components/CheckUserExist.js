@@ -5,7 +5,8 @@ import {
   CoreForm,
   CoreLayoutItem,
   FacebookAuthComponent,
-  LinkedInAuthComponent
+  LinkedInAuthComponent,
+  GithubAuthComponent
 } from "@wrappid/core";
 import { WrappidDataContext } from "@wrappid/styles";
 import { useSelector } from "react-redux";
@@ -20,6 +21,7 @@ export default function CheckUserExist() {
   const isEnable = config?.wrappid?.socialLogin?.enable;
   const isLinkedInEnable = config?.wrappid?.socialLogin?.linkedin?.enable;
   const isFacebookEnable = config?.wrappid?.socialLogin?.facebook?.enable;
+  const isGithubEnable = config?.wrappid?.socialLogin?.github?.enable;
 
   return (
     <>
@@ -38,6 +40,8 @@ export default function CheckUserExist() {
               {isEnable && isFacebookEnable && <FacebookAuthComponent />} 
 
               {isEnable && isLinkedInEnable && <LinkedInAuthComponent />}
+
+              {isEnable && isGithubEnable && <GithubAuthComponent />}
             </>
           )}
       </CoreLayoutItem>
