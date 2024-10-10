@@ -4,7 +4,8 @@ import {
   CoreDomNavigate,
   CoreForm,
   CoreLayoutItem,
-  FacebookAuthComponent
+  FacebookAuthComponent,
+  GithubAuthComponent
 } from "@wrappid/core";
 import { WrappidDataContext } from "@wrappid/styles";
 import { useSelector } from "react-redux";
@@ -18,13 +19,14 @@ export default function CheckUserExist() {
   const { config } = React.useContext(WrappidDataContext);
   const isEnable = config?.wrappid?.socialLogin?.enable;
   const isFacebookEnable = config?.wrappid?.socialLogin?.facebook?.enable;
+  const isGithubEnable = config?.wrappid?.socialLogin?.github?.enable;
 
   return (
     <>
       <CoreLayoutItem id={AuthLayout.PLACEHOLDER.CONTENT}>
         {checkLoginOrRegisterSuccess &&
         authNextPage.toLowerCase() !== ModuleRoute.LOGIN_ROUTE ? (
-            <CoreDomNavigate to={`/${authNextPage}`} />
+            <CoreDomNavigate to={`${authNextPage}`} />
           ) : (
             <>
               <CoreForm
@@ -34,6 +36,8 @@ export default function CheckUserExist() {
               />
 
               {isEnable && isFacebookEnable && <FacebookAuthComponent />}
+
+              {isEnable && isGithubEnable && <GithubAuthComponent />}
             </>
           )}
       </CoreLayoutItem>
