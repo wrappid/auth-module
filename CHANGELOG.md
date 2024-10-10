@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.24](https://https//github.com/wrappid/wrappid-module/compare/v0.0.23...v0.0.24) (2024-10-10)
+
+
+### Features
+
+* **core:** :sparkles: added both front end and backend code linkedIn auth component ([213692b](https://https//github.com/wrappid/wrappid-module/commit/213692bf81f2de976b7547a4ce0af23963b862a6)), closes [#97](https://https//github.com/wrappid/wrappid-module/issues/97)
+* **core:** :sparkles: added login with linkedin feature ([f78beb6](https://https//github.com/wrappid/wrappid-module/commit/f78beb6ce052de026c90b12b5cd60b91801f97c9)), closes [#97](https://https//github.com/wrappid/wrappid-module/issues/97)
+* **core:** :sparkles: adds tehg backend for the github auth ([5ec0a2f](https://https//github.com/wrappid/wrappid-module/commit/5ec0a2fb2212f929a373812e27a4e64ea378ceba)), closes [#95](https://https//github.com/wrappid/wrappid-module/issues/95)
+* **core:** :sparkles: code for linkedin auth component added ([b5d4fda](https://https//github.com/wrappid/wrappid-module/commit/b5d4fda3e69d9795a58b6c57cad7e093fbe18abe)), closes [#97](https://https//github.com/wrappid/wrappid-module/issues/97)
+* **core:** :sparkles: create the github login ([3994ab5](https://https//github.com/wrappid/wrappid-module/commit/3994ab5d2231594874c6f69fdc7e64d777baecce)), closes [#95](https://https//github.com/wrappid/wrappid-module/issues/95)
+* **core:** :sparkles: github login implementation ([2b21f85](https://https//github.com/wrappid/wrappid-module/commit/2b21f857f8d6f7edd2b7853d1a4c21dd28e4bcd8)), closes [#95](https://https//github.com/wrappid/wrappid-module/issues/95)
+* **core:** :sparkles: implemented login flow with Linkedin in the auth component ([fe87d6d](https://https//github.com/wrappid/wrappid-module/commit/fe87d6d426061f24e483b8d4d99ed65d5d3ba2e1)), closes [#97](https://https//github.com/wrappid/wrappid-module/issues/97)
+
+
+### Bug Fixes
+
+* **core:** :bug: fix email not getting for GitHub login ([18a9f45](https://https//github.com/wrappid/wrappid-module/commit/18a9f452e4c142754b1529ab16486d4e9257cd4f)), closes [#106](https://https//github.com/wrappid/wrappid-module/issues/106)
+* **core:** :bug: redirect url changes ([6deb292](https://https//github.com/wrappid/wrappid-module/commit/6deb2927ea2358f3baa6587ad3bf4f0f4be38349)), closes [#97](https://https//github.com/wrappid/wrappid-module/issues/97)
+* **core:** :bug: removed multiple console logs and divided name into three parts ([91525c0](https://https//github.com/wrappid/wrappid-module/commit/91525c0652c5c6c6957d5cd8945a2b2d997bdd17)), closes [#97](https://https//github.com/wrappid/wrappid-module/issues/97)
+* **core:** :bug: removed unwanted code ([f9b630e](https://https//github.com/wrappid/wrappid-module/commit/f9b630e59a2bf0c6ab05626286dc004f9c5aeeab)), closes [#97](https://https//github.com/wrappid/wrappid-module/issues/97)
+* **core:** :bug: removed unwanted code and made the code structured ([feb70f0](https://https//github.com/wrappid/wrappid-module/commit/feb70f09ace22837bb83454288f527fc341a836c)), closes [#97](https://https//github.com/wrappid/wrappid-module/issues/97)
+
 ### [0.0.23](https://https//github.com/wrappid/wrappid-module/compare/v0.0.22...v0.0.23) (2024-10-03)
 
 
