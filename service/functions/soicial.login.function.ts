@@ -382,8 +382,8 @@ async function githubLogin(platformToken:string): Promise<CheckUser>{
     const code  = platformToken;
     if (!code) { throw new Error("Dint recived github code from the user");}
 
-    const client_id = ApplicationContext.getContext("config").socialLogin.github.client_id; // Replace with your GitHub client_id
-    const client_secret = ApplicationContext.getContext("config").socialLogin.github.client_secret; // Replace with your GitHub client_secret
+    const client_id = ApplicationContext.getContext("config").socialLogin.github.clientId; // Replace with your GitHub client_id
+    const client_secret = ApplicationContext.getContext("config").socialLogin.github.clientSecret; // Replace with your GitHub client_secret
 
     if (client_id == undefined  || client_secret == undefined) {throw new Error("unable to get the client_id client_secret");}
     const bodyData = { client_id, client_secret, code };
@@ -392,7 +392,7 @@ async function githubLogin(platformToken:string): Promise<CheckUser>{
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Accept": "application/json"
+        "Accept": "application/vnd.github.v3+json",
       },
       body: JSON.stringify(bodyData)
     });
@@ -416,6 +416,7 @@ async function githubLogin(platformToken:string): Promise<CheckUser>{
     const userResponse = await fetch("https://api.github.com/user", {
       method: "GET",
       headers: {
+        "Accept": "application/vnd.github.v3+json",
         "Authorization": "Bearer " + ApplicationContext.getContext("githubAccessToken"),
       }});
 
@@ -424,16 +425,43 @@ async function githubLogin(platformToken:string): Promise<CheckUser>{
         `Failed to fetch user data: ${userResponse.statusText}`
       );
     }
-
-
     const rawData:any = await userResponse.json();
-    const nameArray = rawData.name?.split(" ");//name in the array format [firstName, middleName, lastName]
+
+
+    const emailResponse = await fetch("https://api.github.com/user/emails", {
+      headers: {
+        "Accept": "application/vnd.github.v3+json",
+        "Authorization": "Bearer " + ApplicationContext.getContext("githubAccessToken")
+      }
+    });
+
+    if (!emailResponse.ok) {
+      throw new Error(`HTTP error! status: ${emailResponse.status}`);
+    }
+
+    const emailData:any = await emailResponse.json();
+    const primaryEmail = emailData.find((email:any) => email.primary);
+
+    const nameParts = rawData.name?.split(" ");//name in the array format [firstName, middleName, lastName]
+    let firstName = "", middleName = "", lastName = "";
+          
+    // Assign the parts of the name accordingly
+    if (nameParts.length === 1) {
+      firstName = nameParts[0];
+    } else if (nameParts.length === 2) {
+      firstName = nameParts[0];
+      lastName = nameParts[1];
+    } else if (nameParts.length > 2) {
+      firstName = nameParts[0];
+      middleName = nameParts.slice(1, -1).join(" "); // Everything in the middle
+      lastName = nameParts[nameParts.length - 1];
+    }
     const userData = {
-      firstName: nameArray[0] || "",
-      middleName: nameArray[1] || "", // Default to empty string if middleName is null
-      lastName: nameArray[2]  || "",
+      firstName: firstName || "",
+      middleName: middleName || "", // Default to empty string if middleName is null
+      lastName: lastName  || "",
       platformId: rawData.id,
-      email: rawData.email
+      email: primaryEmail.email
     };
     console.log(userData, "userData from github");
     return userData;
