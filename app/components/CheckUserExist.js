@@ -6,7 +6,9 @@ import {
   CoreLayoutItem,
   FacebookAuthComponent,
   LinkedInAuthComponent,
-  GithubAuthComponent
+  GithubAuthComponent,
+  CoreBox,
+  CoreClasses
 } from "@wrappid/core";
 import { WrappidDataContext } from "@wrappid/styles";
 import { useSelector } from "react-redux";
@@ -27,7 +29,7 @@ export default function CheckUserExist() {
     <>
       <CoreLayoutItem id={AuthLayout.PLACEHOLDER.CONTENT}>
         {checkLoginOrRegisterSuccess &&
-        authNextPage.toLowerCase() !== ModuleRoute.LOGIN_ROUTE ? (
+          authNextPage.toLowerCase() !== ModuleRoute.LOGIN_ROUTE ? (
             <CoreDomNavigate to={authNextPage} />
           ) : (
             <>
@@ -37,11 +39,13 @@ export default function CheckUserExist() {
                 authenticated={false}
               />
 
-              {isEnable && isFacebookEnable && <FacebookAuthComponent />} 
+              <CoreBox styleClasses={[CoreClasses.PADDING.PT5, CoreClasses.DISPLAY.FLEX]}>
+                {isEnable && isFacebookEnable && <FacebookAuthComponent />}
 
-              {isEnable && isLinkedInEnable && <LinkedInAuthComponent />}
+                {isEnable && isLinkedInEnable && <LinkedInAuthComponent />}
 
-              {isEnable && isGithubEnable && <GithubAuthComponent />}
+                {isEnable && isGithubEnable && <GithubAuthComponent />}
+              </CoreBox>
             </>
           )}
       </CoreLayoutItem>
