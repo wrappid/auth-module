@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 import {
   ApplicationContext,
   coreConstant,
@@ -6,17 +5,15 @@ import {
   databaseProvider,
   WrappidLogger,
 } from "@wrappid/service-core";
-// eslint-disable-next-line import/no-unresolved
 import bcrypt from "bcrypt";
 import fetch from "node-fetch-commonjs";
 import constant from "../constants/constants";
 import { genarateAccessToken } from "./auth.functions";
-
 import * as linkedIn from "./linkedIn.function";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-interface CheckUser {
+export interface CheckUser {
   email: string;
   platformId: string;
   firstName?: string;
@@ -37,6 +34,10 @@ async function socialLoginFunc(
   platformToken: string,
   deviceId: string
 ) {
+  WrappidLogger.logFunctionStart("socialLoginFunc");
+  WrappidLogger.info("Platform " + platform);
+  WrappidLogger.info("platformToken " + platformToken);
+  WrappidLogger.info("deviceId " + deviceId);
   try {
     let userData: CheckUser = { email: "", platformId: "" };
     switch (platform) {
@@ -62,6 +63,8 @@ async function socialLoginFunc(
   } catch (err: any) {
     WrappidLogger.error("Error in socialLoginFunc " + err.message);
     throw err;
+  } finally {
+    WrappidLogger.logFunctionEnd("socialLoginFunc");
   }
 }
 
@@ -74,6 +77,8 @@ async function socialLoginFunc(
 const checkuserFunc = async (platform: string, userInfo: CheckUser) => {
   try {
     WrappidLogger.logFunctionStart("checkuserFunc");
+    WrappidLogger.info("Platform " + platform);
+    WrappidLogger.info("userInfo " + JSON.stringify(userInfo));
     const checkValidEmail = emailRegex.test(userInfo.email);
     if (!checkValidEmail) {
       throw Error("Not a valid email");
@@ -154,6 +159,7 @@ const checkuserFunc = async (platform: string, userInfo: CheckUser) => {
                * added for phase 0.5
                */
               isVerified: true,
+              emailVerified: true
             },
             { transaction: transaction }
           );
@@ -164,7 +170,8 @@ const checkuserFunc = async (platform: string, userInfo: CheckUser) => {
       await databaseActions.create("application", "PersonContacts", {
         data: userInfo.email,
         type: coreConstant.contact.EMAIL,
-        verfied: true,
+        verified: true,
+        primaryFlag: true,
         personId: personData.id,
         _status: coreConstant.entityStatus.ACTIVE,
       });
@@ -205,6 +212,9 @@ const checkuserFunc = async (platform: string, userInfo: CheckUser) => {
  * @returns
  */
 const passwordLessLogin = async (email: string, deviceId: any) => {
+  WrappidLogger.logFunctionStart("passwordLessLogin");
+  WrappidLogger.info("Email " + email);
+  WrappidLogger.info("deviceId " + deviceId);
   try {
     const userDetails = await databaseActions.findOne("application", "Users", {
       where: { email: email },
@@ -319,6 +329,8 @@ const passwordLessLogin = async (email: string, deviceId: any) => {
   } catch (error: any) {
     WrappidLogger.info("Error in login: " + error);
     throw error;
+  } finally {
+    WrappidLogger.logFunctionEnd("passwordLessLogin");
   }
 };
 
@@ -329,20 +341,22 @@ const passwordLessLogin = async (email: string, deviceId: any) => {
  * @param platform
  * @returns
  */
-const facebookLogin = async (accessToken: string) => {
+const facebookLogin = async (accessToken: string):Promise<CheckUser> => {
+  WrappidLogger.logFunctionStart("facebookLogin");
   try {
     // Get user details from facebook graph API
     const userResponse = await fetch(
       `https://graph.facebook.com/me?fields=email,first_name,middle_name,last_name,id&access_token=${accessToken}`
     );
     if (!userResponse.ok) {
+      WrappidLogger.error("Failed to fetch user data: " + userResponse.statusText);
       throw new Error(`Failed to fetch user data: ${userResponse.statusText}`);
     }
 
     const rawData: any = await userResponse.json();
-    const userData = {
+    const userData:CheckUser = {
       firstName: rawData.first_name || "",
-      middleName: rawData.middle_name || "", // Default to empty string if middleName is null
+      middleName: rawData.middle_name || "",
       lastName: rawData.last_name || "",
       platformId: rawData.id,
       email: rawData.email,
@@ -354,20 +368,19 @@ const facebookLogin = async (accessToken: string) => {
   }
 };
 
-
+/**
+ * Login with linkedin
+ * @param platformToken 
+ * @returns 
+ */
 async function linkedinLogin(platformToken: string): Promise<CheckUser> {
   try {
     // Get Access Token from LinkedIn API
-    const clientId =
-      ApplicationContext.getContext("config")?.socialLogin?.linkedin?.apiKey;
-    const clientSecret =
-      ApplicationContext.getContext("config")?.socialLogin?.linkedin
-        ?.apiKeySecret;
-    const redirectUri =
-      ApplicationContext.getContext("config")?.socialLogin?.linkedin
-        ?.callbackURL;
-    const token = await linkedIn.getAccessToken(platformToken,clientId,clientSecret,redirectUri);
-    const userDetails = await linkedIn.getUserDetails(token);    
+    const clientId = ApplicationContext.getContext("config")?.socialLogin?.linkedin?.apiKey;
+    const clientSecret = ApplicationContext.getContext("config")?.socialLogin?.linkedin?.apiKeySecret;
+    const redirectUri = ApplicationContext.getContext("config")?.socialLogin?.linkedin?.callbackURL;
+    const token:string = await linkedIn.getAccessToken(platformToken, clientId, clientSecret, redirectUri);
+    const userDetails:CheckUser = await linkedIn.getUserDetails(token);
     return userDetails;
   } catch (error: any) {
     WrappidLogger.error("Error in LinkedInLogin: " + error);
@@ -376,20 +389,31 @@ async function linkedinLogin(platformToken: string): Promise<CheckUser> {
 }
 
 
-async function githubLogin(platformToken:string): Promise<CheckUser>{
-  //
+/**
+ * Login with github
+ * @param platformToken
+ * @returns
+ */
+async function githubLogin(platformToken: string): Promise<CheckUser> {
+  WrappidLogger.logFunctionStart("githubLogin");
   try {
-    const code  = platformToken;
-    if (!code) { throw new Error("Dint recived github code from the user");}
+    const code = platformToken;
+    if (!code) {
+      WrappidLogger.error("Dint recived github code from the user");
+      throw new Error("Dint recived github code from the user");
+    }
 
     const client_id = ApplicationContext.getContext("config").socialLogin.github.clientId; // Replace with your GitHub client_id
     const client_secret = ApplicationContext.getContext("config").socialLogin.github.clientSecret; // Replace with your GitHub client_secret
 
-    if (client_id == undefined  || client_secret == undefined) {throw new Error("unable to get the client_id client_secret");}
+    if (client_id == undefined || client_secret == undefined) { 
+      WrappidLogger.error("unable to get the client_id client_secret");
+      throw new Error("unable to get the client_id client_secret"); 
+    }
     const bodyData = { client_id, client_secret, code };
 
     const response = await fetch("https://github.com/login/oauth/access_token", {
-      method: "POST",
+      method: constant.httpMethod.HTTP_POST,
       headers: {
         "Content-Type": "application/json",
         "Accept": "application/vnd.github.v3+json",
@@ -397,36 +421,36 @@ async function githubLogin(platformToken:string): Promise<CheckUser>{
       body: JSON.stringify(bodyData)
     });
     if (!response.ok) {
-      throw new Error(
-        `Failed to fetch user data: ${response.statusText}`
-      );
+      WrappidLogger.error(`Failed to fetch user data: ${response.statusText}`);
+      throw new Error(`Failed to fetch user data: ${response.statusText}`);
     }
 
-    const data:any = await response.json();
-    console.log(data, "data from github");
-    const accessToken =data?.access_token; 
+    const data: any = await response.json();
+    WrappidLogger.info( "data from github" + data);
+    const accessToken = data?.access_token;
     if (!accessToken) {
-      throw new Error(
-        "Failed to get the accessToken from github"
-      );
+      WrappidLogger.error("Failed to get the accessToken from github");
+      throw new Error("Failed to get the accessToken from github");
     }
 
-    ApplicationContext.setContext("githubAccessToken", accessToken);    // store this in the database for future use
+    /**
+     * @todo
+     * store this in the database for future use
+     */
+    ApplicationContext.setContext("githubAccessToken", accessToken);    
     
     const userResponse = await fetch("https://api.github.com/user", {
-      method: "GET",
+      method: constant.httpMethod.HTTP_POST,
       headers: {
         "Accept": "application/vnd.github.v3+json",
         "Authorization": "Bearer " + ApplicationContext.getContext("githubAccessToken"),
-      }});
-
+      }
+    });
     if (!userResponse.ok) {
-      throw new Error(
-        `Failed to fetch user data: ${userResponse.statusText}`
-      );
+      WrappidLogger.error(`Failed to fetch user data: ${userResponse.statusText}`);
+      throw new Error(`Failed to fetch user data: ${userResponse.statusText}`);
     }
-    const rawData:any = await userResponse.json();
-
+    const rawData: any = await userResponse.json();
 
     const emailResponse = await fetch("https://api.github.com/user/emails", {
       headers: {
@@ -436,15 +460,18 @@ async function githubLogin(platformToken:string): Promise<CheckUser>{
     });
 
     if (!emailResponse.ok) {
+      WrappidLogger.error(`HTTP error! status: ${emailResponse.status}`);
       throw new Error(`HTTP error! status: ${emailResponse.status}`);
     }
+    const emailData: any = await emailResponse.json();
 
-    const emailData:any = await emailResponse.json();
-    const primaryEmail = emailData.find((email:any) => email.primary);
+    // Find primary email if multiple emails are present
+    WrappidLogger.info("emailData from github" + emailData);
+    const primaryEmail = emailData.find((email: any) => email.primary);
 
     const nameParts = rawData.name?.split(" ");//name in the array format [firstName, middleName, lastName]
     let firstName = "", middleName = "", lastName = "";
-          
+
     // Assign the parts of the name accordingly
     if (nameParts.length === 1) {
       firstName = nameParts[0];
@@ -456,25 +483,24 @@ async function githubLogin(platformToken:string): Promise<CheckUser>{
       middleName = nameParts.slice(1, -1).join(" "); // Everything in the middle
       lastName = nameParts[nameParts.length - 1];
     }
-    const userData = {
+    const userData: CheckUser = {
       firstName: firstName || "",
-      middleName: middleName || "", // Default to empty string if middleName is null
-      lastName: lastName  || "",
+      middleName: middleName || "",
+      lastName: lastName || "",
       platformId: rawData.id,
       email: primaryEmail.email
     };
-    console.log(userData, "userData from github");
+    WrappidLogger.info("userData from github" + userData);
     return userData;
-
   }
-  catch (error:any) {
+  catch (error: any) {
     WrappidLogger.error("Error in GithubLogin: " + error);
     throw error;
-  } 
-  finally{
+  }
+  finally {
     WrappidLogger.logFunctionEnd("githubLogin");
   }
 }
-  
+
 
 export { socialLoginFunc };

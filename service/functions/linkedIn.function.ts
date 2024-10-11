@@ -2,13 +2,22 @@ import {
   WrappidLogger,
 } from "@wrappid/service-core";
 import fetch from "node-fetch-commonjs";
+import constant from "../constants/constants";
+import { CheckUser } from "./soicial.login.function";
 
-
-async function getAccessToken(platformToken:string,clientId:string,clientSecret:string,redirectUri:string){
+/**
+ * Get Access Token
+ * @param platformToken
+ * @param clientId
+ * @param clientSecret
+ * @param redirectUri
+ * @returns
+ */
+async function getAccessToken(platformToken:string,clientId:string,clientSecret:string,redirectUri:string):Promise<string>{
   try{
     const tokenUrl = "https://www.linkedin.com/oauth/v2/accessToken";
     const response = await fetch(tokenUrl, {
-      method: "POST",
+      method: constant.httpMethod.HTTP_POST,
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
@@ -22,6 +31,7 @@ async function getAccessToken(platformToken:string,clientId:string,clientSecret:
     });
     const data: any = await response.json();
     if (!data.access_token) {
+      WrappidLogger.error("Unable to generate Access Token");
       throw new Error("Unable to generate Access Token");    
     }
     const token = data.access_token;
@@ -31,7 +41,13 @@ async function getAccessToken(platformToken:string,clientId:string,clientSecret:
     throw error;
   }
 }
-async function getUserDetails(token:string){
+
+/**
+ * Get User Details from LinkedIn
+ * @param token 
+ * @returns 
+ */
+async function getUserDetails(token:string):Promise<CheckUser>{
   try{
     const userResponse = await fetch("https://api.linkedin.com/v2/userinfo", {
       headers: {
@@ -39,6 +55,7 @@ async function getUserDetails(token:string){
       },
     });
     if (userResponse.status != 200) {
+      WrappidLogger.error(`Failed to fetch user data: ${userResponse.statusText}`);
       throw new Error(`Failed to fetch user data: ${userResponse.statusText}`);
     }
     const rawData: any = await userResponse.json();
@@ -56,7 +73,7 @@ async function getUserDetails(token:string){
       middleName = nameParts.slice(1, -1).join(" "); // Everything in the middle
       lastName = nameParts[nameParts.length - 1];
     }
-    const userData = {
+    const userData: CheckUser = {
       firstName: firstName || "",
       middleName: middleName || "", // Default to empty string if middleName is null
       lastName: lastName || "",
