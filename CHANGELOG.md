@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.26](https://https//github.com/wrappid/wrappid-module/compare/v0.0.25...v0.0.26) (2024-10-12)
+
+
+### Features
+
+* **global:** :sparkles: get user data from google API from google token and sign-in with google ([58c1796](https://https//github.com/wrappid/wrappid-module/commit/58c1796fe14809ea283c9a7c4d2f19a1f968ed5b)), closes [#110](https://https//github.com/wrappid/wrappid-module/issues/110)
+
 ### [0.0.25](https://https//github.com/wrappid/wrappid-module/compare/v0.0.24...v0.0.25) (2024-10-11)
 
 ### [0.0.24](https://https//github.com/wrappid/wrappid-module/compare/v0.0.23...v0.0.24) (2024-10-10)
