@@ -92,6 +92,7 @@ const constant = {
     FACEBOOK: "facebook",
     LINKEDIN: "linkedin",
     GITHUB: "github",
+    GOOGLE: "google",
   }
 
 };

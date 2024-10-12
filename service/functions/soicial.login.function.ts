@@ -51,6 +51,11 @@ async function socialLoginFunc(
       case constant.platformType.GITHUB:
         userData = await githubLogin(platformToken);
         break;
+
+      case constant.platformType.GOOGLE:
+        userData = await googleLogin(platformToken);
+        break;
+        
       default:
         break;
     }
@@ -499,6 +504,38 @@ async function githubLogin(platformToken: string): Promise<CheckUser> {
   }
   finally {
     WrappidLogger.logFunctionEnd("githubLogin");
+  }
+}
+
+/**
+ * Get user detail from google
+ * @param idToken 
+ * @returns 
+ */
+async function googleLogin (idToken: string): Promise<CheckUser>  {
+  WrappidLogger.logFunctionStart("googleLogin");
+  try {
+    // Get user details from Google's tokeninfo endpoint
+    const userResponse = await fetch(
+      `https://oauth2.googleapis.com/tokeninfo?id_token=${idToken}`
+    );
+    if (!userResponse.ok) {
+      WrappidLogger.error("Failed to fetch user data: " + userResponse.statusText);
+      throw new Error(`Failed to fetch user data: ${userResponse.statusText}`);
+    }
+
+    const rawData: any = await userResponse.json();
+    const userData: CheckUser = {
+      firstName: rawData.given_name || "",
+      middleName: "", // Google doesn't provide a middle name
+      lastName: rawData.family_name || "",
+      platformId: rawData.sub, // 'sub' is Google's user ID
+      email: rawData.email,
+    };
+    return userData;
+  } catch (error: any) {
+    WrappidLogger.info("Error in googleLogin: " + error);
+    throw error;
   }
 }
 
