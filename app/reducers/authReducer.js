@@ -121,7 +121,7 @@ const authReducer = (state = initState, action) => {
         accessToken                : action.payload.accessToken,
         authError                  : null,
         authLoading                : false,
-        authNextPage               : "/",
+        authNextPage               : "",
         checkLoginOrRegisterSuccess: true,
         refreshToken               : action.payload.refreshToken,
         uid                        : action.payload.id,
