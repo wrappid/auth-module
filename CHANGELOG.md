@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.27](https://https//github.com/wrappid/wrappid-module/compare/v0.0.26...v0.0.27) (2024-10-16)
+
+
+### Bug Fixes
+
+* **core:** :bug: fix after checkuserexist redirect wrong url ([dfc71b0](https://https//github.com/wrappid/wrappid-module/commit/dfc71b05f991795ef79aad09bf922d58eb13be86)), closes [#113](https://https//github.com/wrappid/wrappid-module/issues/113)
+
 ### [0.0.26](https://https//github.com/wrappid/wrappid-module/compare/v0.0.25...v0.0.26) (2024-10-12)
 
 
