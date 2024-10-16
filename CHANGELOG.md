@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.28](https://https//github.com/wrappid/wrappid-module/compare/v0.0.27...v0.0.28) (2024-10-16)
+
+
+### Bug Fixes
+
+* **core:** :bug: fix github login not geting user information ([557f603](https://https//github.com/wrappid/wrappid-module/commit/557f6038c66a1750e489dda8c912d29a3859a3fd)), closes [#115](https://https//github.com/wrappid/wrappid-module/issues/115)
+
 ### [0.0.27](https://https//github.com/wrappid/wrappid-module/compare/v0.0.26...v0.0.27) (2024-10-16)
 
 
