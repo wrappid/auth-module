@@ -445,10 +445,10 @@ async function githubLogin(platformToken: string): Promise<CheckUser> {
     ApplicationContext.setContext("githubAccessToken", accessToken);    
     
     const userResponse = await fetch("https://api.github.com/user", {
-      method: constant.httpMethod.HTTP_POST,
+      method: constant.httpMethod.HTTP_GET,
       headers: {
-        "Accept": "application/vnd.github.v3+json",
-        "Authorization": "Bearer " + ApplicationContext.getContext("githubAccessToken"),
+        "Authorization": `token ${accessToken}`,
+        "Accept": "application/vnd.github.v3+json"
       }
     });
     if (!userResponse.ok) {
@@ -460,7 +460,7 @@ async function githubLogin(platformToken: string): Promise<CheckUser> {
     const emailResponse = await fetch("https://api.github.com/user/emails", {
       headers: {
         "Accept": "application/vnd.github.v3+json",
-        "Authorization": "Bearer " + ApplicationContext.getContext("githubAccessToken")
+        "Authorization": `token ${accessToken}`,
       }
     });
 
