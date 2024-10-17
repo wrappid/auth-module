@@ -9,7 +9,8 @@ import {
   GithubAuthComponent,
   CoreBox,
   GoogleAuthComponent,
-  CoreClasses
+  CoreClasses,
+  CoreGrid
 } from "@wrappid/core";
 import { WrappidDataContext } from "@wrappid/styles";
 import { useSelector } from "react-redux";
@@ -40,22 +41,38 @@ export default function CheckUserExist() {
                 mode="edit"
                 authenticated={false}
               />
-
-              <CoreBox
-                styleClasses={[CoreClasses.PADDING.PT5, CoreClasses.PADDING.PB3, CoreClasses.DISPLAY.FLEX]}
-              >
-                {isEnable && isFacebookEnable && <FacebookAuthComponent />}
-
-                {isEnable && isLinkedInEnable && <LinkedInAuthComponent />}
-
-                {isEnable && isGithubEnable && <GithubAuthComponent />}
-
+              
+              <CoreBox styleClasses={[CoreClasses.PADDING.PT2, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER]}>
+              - OR -
               </CoreBox>
 
-              {isEnable && isGoogleEnable &&
-              <CoreBox styleClasses={[CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER]}>
-                <GoogleAuthComponent />
-              </CoreBox>}
+              <CoreBox styleClasses={[CoreClasses.PADDING.PT3, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER]}>
+                Sign in with your social account to continue.
+              </CoreBox>
+
+              <CoreBox>
+                <CoreGrid spacing={2} direction="row" styleClasses={[CoreClasses.PADDING.PT3, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER]}>
+                  {isEnable && isFacebookEnable && <CoreBox gridProps={{ gridSize: { lg: "auto", md: "auto", sm: "auto" } }}>
+                    <FacebookAuthComponent />
+                  </CoreBox>}
+
+                  {isEnable && isLinkedInEnable && <CoreBox gridProps={{ gridSize: { lg: "auto", md: "auto", sm: "auto" } }}>
+                    <LinkedInAuthComponent />
+                  </CoreBox>}
+
+                  {isEnable && isGithubEnable && <CoreBox gridProps={{ gridSize: { lg: "auto", md: "auto", sm: "auto" } }}>
+                    <GithubAuthComponent />
+                  </CoreBox>}
+
+                  {isEnable && isGoogleEnable && <CoreBox gridProps={{ gridSize: { lg: "auto", md: "auto", sm: "auto" } }}>
+                    
+                    <CoreBox styleClasses={[CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER]}>
+                      <GoogleAuthComponent />
+                    </CoreBox>
+                  </CoreBox>}
+                </CoreGrid>
+              </CoreBox>
+
             </>
           )}
       </CoreLayoutItem>
