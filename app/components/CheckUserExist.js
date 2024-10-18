@@ -42,11 +42,11 @@ export default function CheckUserExist() {
                 authenticated={false}
               />
               
-              <CoreBox styleClasses={[CoreClasses.PADDING.PT2, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER]}>
-              - OR -
+              <CoreBox styleClasses={[CoreClasses.COLOR.TEXT_PRIMARY, CoreClasses.PADDING.PT2, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER]}>
+                - OR -
               </CoreBox>
 
-              <CoreBox styleClasses={[CoreClasses.PADDING.PT3, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER]}>
+              <CoreBox styleClasses={[CoreClasses.COLOR.TEXT_PRIMARY, CoreClasses.PADDING.PT3, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER]}>
                 Sign in with your social account to continue.
               </CoreBox>
 
