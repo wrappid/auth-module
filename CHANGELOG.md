@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.31](https://https//github.com/wrappid/wrappid-module/compare/v0.0.30...v0.0.31) (2024-10-22)
+
+
+### Features
+
+* :sparkles: update swagger json ([e343327](https://https//github.com/wrappid/wrappid-module/commit/e3433272625c21823d366d85b5df602d1a086764)), closes [#121](https://https//github.com/wrappid/wrappid-module/issues/121)
+
 ### [0.0.30](https://https//github.com/wrappid/wrappid-module/compare/v0.0.29...v0.0.30) (2024-10-18)
 
 ### [0.0.29](https://https//github.com/wrappid/wrappid-module/compare/v0.0.28...v0.0.29) (2024-10-17)
