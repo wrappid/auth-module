@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.32](https://https//github.com/wrappid/wrappid-module/compare/v0.0.31...v0.0.32) (2024-10-26)
+
+
+### Features
+
+* **core:** :bug: temporarily removed validation, causing input field crash in mobile ([e5c5382](https://https//github.com/wrappid/wrappid-module/commit/e5c53824412aa33e072ce8625a33762d2260aacc)), closes [#123](https://https//github.com/wrappid/wrappid-module/issues/123)
+
+
+### Bug Fixes
+
+* **core:** :bug: moved texts in CoreTypographyBody1 ([af297ed](https://https//github.com/wrappid/wrappid-module/commit/af297ed100977dd0003753006dbd9df47ee405c0)), closes [#123](https://https//github.com/wrappid/wrappid-module/issues/123)
+
 ### [0.0.31](https://https//github.com/wrappid/wrappid-module/compare/v0.0.30...v0.0.31) (2024-10-22)
 
 
