@@ -10,7 +10,8 @@ import {
   CoreBox,
   GoogleAuthComponent,
   CoreClasses,
-  CoreGrid
+  CoreGrid,
+  CoreTypographyBody1
 } from "@wrappid/core";
 import { WrappidDataContext } from "@wrappid/styles";
 import { useSelector } from "react-redux";
@@ -41,37 +42,44 @@ export default function CheckUserExist() {
                 mode="edit"
                 authenticated={false}
               />
-              
-              <CoreBox styleClasses={[CoreClasses.COLOR.TEXT_PRIMARY, CoreClasses.PADDING.PT2, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER]}>
-                - OR -
-              </CoreBox>
 
-              <CoreBox styleClasses={[CoreClasses.COLOR.TEXT_PRIMARY, CoreClasses.PADDING.PT3, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER]}>
-                Sign in with your social account to continue.
-              </CoreBox>
+              {isEnable && (<CoreBox>
 
-              <CoreBox>
-                <CoreGrid spacing={2} direction="row" styleClasses={[CoreClasses.PADDING.PT3, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER]}>
-                  {isEnable && isFacebookEnable && <CoreBox gridProps={{ gridSize: { lg: "auto", md: "auto", sm: "auto" } }}>
-                    <FacebookAuthComponent />
-                  </CoreBox>}
+                <CoreBox styleClasses={[CoreClasses.COLOR.TEXT_PRIMARY, CoreClasses.PADDING.PT2, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER]}>
+                  <CoreTypographyBody1>
+                  - OR -
+                  </CoreTypographyBody1>
+                </CoreBox>
 
-                  {isEnable && isLinkedInEnable && <CoreBox gridProps={{ gridSize: { lg: "auto", md: "auto", sm: "auto" } }}>
-                    <LinkedInAuthComponent />
-                  </CoreBox>}
+                <CoreBox styleClasses={[CoreClasses.COLOR.TEXT_PRIMARY, CoreClasses.PADDING.PT3, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER]}>
+                  <CoreTypographyBody1>
+                  Sign in with your social account to continue.
+                  </CoreTypographyBody1>
+                </CoreBox>
 
-                  {isEnable && isGithubEnable && <CoreBox gridProps={{ gridSize: { lg: "auto", md: "auto", sm: "auto" } }}>
-                    <GithubAuthComponent />
-                  </CoreBox>}
+                <CoreBox>
+                  <CoreGrid spacing={2} direction="row" styleClasses={[CoreClasses.PADDING.PT3, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER]}>
+                    {isFacebookEnable && <CoreBox gridProps={{ gridSize: { lg: "auto", md: "auto", sm: "auto" } }}>
+                      <FacebookAuthComponent />
+                    </CoreBox>}
 
-                  {isEnable && isGoogleEnable && <CoreBox gridProps={{ gridSize: { lg: "auto", md: "auto", sm: "auto" } }}>
-                    
-                    <CoreBox styleClasses={[CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER]}>
-                      <GoogleAuthComponent />
-                    </CoreBox>
-                  </CoreBox>}
-                </CoreGrid>
-              </CoreBox>
+                    {isLinkedInEnable && <CoreBox gridProps={{ gridSize: { lg: "auto", md: "auto", sm: "auto" } }}>
+                      <LinkedInAuthComponent />
+                    </CoreBox>}
+
+                    {isGithubEnable && <CoreBox gridProps={{ gridSize: { lg: "auto", md: "auto", sm: "auto" } }}>
+                      <GithubAuthComponent />
+                    </CoreBox>}
+
+                    {isGoogleEnable && <CoreBox gridProps={{ gridSize: { lg: "auto", md: "auto", sm: "auto" } }}>
+
+                      <CoreBox styleClasses={[CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER]}>
+                        <GoogleAuthComponent />
+                      </CoreBox>
+                    </CoreBox>}
+                  </CoreGrid>
+                </CoreBox>
+              </CoreBox>)}
 
             </>
           )}

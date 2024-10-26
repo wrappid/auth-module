@@ -1,15 +1,23 @@
-import { clearValidatePhoneEmail, getFormikRequiredMessage } from "@wrappid/core";
+import { 
+// eslint-disable-next-line etc/no-commented-out-code
+  // clearValidatePhoneEmail,
+  getFormikRequiredMessage
+} from "@wrappid/core";
 import * as yup from "yup";
-
+/**
+ * @todo
+ * commented validation temporarily 
+ */
 export const ValidationsRegistry = {
   checkEmailorPhone: {
     emailOrPhone: yup
       .string()
-      .test(
-        "email-phone-validation",
-        "Not a valid email or phone no.",
-        clearValidatePhoneEmail
-      )
+    // eslint-disable-next-line etc/no-commented-out-code
+      // .test(
+      //   "email-phone-validation",
+      //   "Not a valid email or phone no.",
+      //   clearValidatePhoneEmail
+      // )
       .required("Please enter email or phone")
   },
 
