@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.33](https://https//github.com/wrappid/wrappid-module/compare/v0.0.32...v0.0.33) (2024-10-29)
+
+
+### Bug Fixes
+
+* **config:** :heavy_plus_sign: added bcrypt ([7e4d6f6](https://https//github.com/wrappid/wrappid-module/commit/7e4d6f647b1e25a7b0f540e045c91c165661ec34)), closes [#126](https://https//github.com/wrappid/wrappid-module/issues/126)
+
 ### [0.0.32](https://https//github.com/wrappid/wrappid-module/compare/v0.0.31...v0.0.32) (2024-10-26)
 
 
