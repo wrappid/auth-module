@@ -95,10 +95,10 @@ export default function AuthLayout() {
             key="authlayoutplaceholder"
             id={AuthLayout.PLACEHOLDER.CONTENT}
           >
-            <CoreBox styleClasses={[CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER, CoreClasses.MARGIN.MB2]}>
+            <CoreBox styleClasses={[CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER, CoreClasses.MARGIN.MB5]}>
               {resourceContext?.appLogo ?
                 <CoreImage
-                  width={100}
+                  width={130}
                   src={resourceContext.appLogo}
                   alt="Logo" />
                 : <CoreTypographyBody1>{ }</CoreTypographyBody1>}

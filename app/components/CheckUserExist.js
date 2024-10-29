@@ -10,8 +10,7 @@ import {
   CoreBox,
   GoogleAuthComponent,
   CoreClasses,
-  CoreGrid,
-  CoreTypographyBody1
+  CoreStack
 } from "@wrappid/core";
 import { WrappidDataContext } from "@wrappid/styles";
 import { useSelector } from "react-redux";
@@ -37,50 +36,31 @@ export default function CheckUserExist() {
             <CoreDomNavigate to={`/${authNextPage}`} />
           ) : (
             <>
-              <CoreForm
-                formId="checkUserExist"
-                mode="edit"
-                authenticated={false}
-              />
-
-              {isEnable && (<CoreBox>
-
-                <CoreBox styleClasses={[CoreClasses.COLOR.TEXT_PRIMARY, CoreClasses.PADDING.PT2, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER]}>
-                  <CoreTypographyBody1>
-                  - OR -
-                  </CoreTypographyBody1>
+              <CoreStack spacing={5} styleClasses={[CoreClasses.PADDING.PT5, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER, CoreClasses.ALIGNMENT.ALIGN_ITEMS_CENTER]}>
+                <CoreBox styleClasses={[CoreClasses.WIDTH.W_75]}>
+                  <CoreForm
+                    formId="checkUserExist"
+                    mode="edit"
+                    authenticated={false}
+                  />
                 </CoreBox>
 
-                <CoreBox styleClasses={[CoreClasses.COLOR.TEXT_PRIMARY, CoreClasses.PADDING.PT3, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER]}>
-                  <CoreTypographyBody1>
-                  Sign in with your social account to continue.
-                  </CoreTypographyBody1>
-                </CoreBox>
+                {isEnable && (
 
-                <CoreBox>
-                  <CoreGrid spacing={2} direction="row" styleClasses={[CoreClasses.PADDING.PT3, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER]}>
-                    {isFacebookEnable && <CoreBox gridProps={{ gridSize: { lg: "auto", md: "auto", sm: "auto" } }}>
-                      <FacebookAuthComponent />
-                    </CoreBox>}
+                  <CoreBox styleClasses={[CoreClasses.GAP.GAP_2, CoreClasses.DISPLAY.FLEX, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER, CoreClasses.GAP.SM.GAP_1]}>
+                    {isFacebookEnable &&
+                    <FacebookAuthComponent />}
 
-                    {isLinkedInEnable && <CoreBox gridProps={{ gridSize: { lg: "auto", md: "auto", sm: "auto" } }}>
-                      <LinkedInAuthComponent />
-                    </CoreBox>}
+                    {isLinkedInEnable &&
+                    <LinkedInAuthComponent />}
 
-                    {isGithubEnable && <CoreBox gridProps={{ gridSize: { lg: "auto", md: "auto", sm: "auto" } }}>
-                      <GithubAuthComponent />
-                    </CoreBox>}
+                    {isGithubEnable &&
+                    <GithubAuthComponent />}
 
-                    {isGoogleEnable && <CoreBox gridProps={{ gridSize: { lg: "auto", md: "auto", sm: "auto" } }}>
-
-                      <CoreBox styleClasses={[CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER]}>
-                        <GoogleAuthComponent />
-                      </CoreBox>
-                    </CoreBox>}
-                  </CoreGrid>
-                </CoreBox>
-              </CoreBox>)}
-
+                    {isGoogleEnable &&
+                      <GoogleAuthComponent />}
+                  </CoreBox>)}
+              </CoreStack>
             </>
           )}
       </CoreLayoutItem>
