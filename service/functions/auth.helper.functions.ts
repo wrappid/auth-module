@@ -1,4 +1,4 @@
-import { ApplicationContext, databaseActions, databaseProvider, WrappidLogger } from "@wrappid/service-core";
+import { ApplicationContext, coreConstant, databaseActions, databaseProvider, WrappidLogger } from "@wrappid/service-core";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import DeviceDetector from "node-device-detector";
@@ -56,6 +56,45 @@ async function getIdentifierType(identifier: string): Promise<ContactType> {
 }
 
 
+/** 
+ * This function is used to check if the otp is valid
+ * 1. Get the latest otp from the database
+ * 2. Compare the otp with the provided otp
+ * 3. If equal then return true and marks as inactive
+ * 4. If not equal then return false
+ * @param userId
+ * @param otp
+ * @returns
+ */
+async function checkOtp(userId: number, otp: string, type: string): Promise<boolean> {
+  WrappidLogger.logFunctionStart("checkOtp");
+  try {
+    const dbData = await databaseActions.findAll("application", "Otps", {
+      where: {
+        userId: userId,
+        type: type,
+        _status: coreConstant.entityStatus.ACTIVE,
+      },
+      limit: 1,
+      order: [["id", "DESC"]]
+    });
+    const dbOtp = dbData[0].dataValues.otp;
+    if (Number(dbOtp) === Number(otp)) {
+      await databaseActions.update("application", "Otps", { _status: coreConstant.entityStatus.INACTIVE }, { where: { id: dbData[0].dataValues.id } });
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    WrappidLogger.error("Error: " + error);
+    throw error;
+  } finally {
+    WrappidLogger.logFunctionEnd("checkOtp");
+  }
+}
+
+
+
 /**
  * Gets the IP address from the request object
  * @param req 
@@ -85,7 +124,7 @@ async function getIP(req: any) {
 
 
 /**
- *  Gets the deviceid address from the request object
+ * Gets the deviceid address from the request object
  * @param req 
  * @returns 
  */
@@ -301,10 +340,10 @@ async function createSessionAndLogin(userData:any, originalUrl:string, deviceId:
  * @param userId
  * @param extraInfo
  */
-async function createLoginLogs(path: any, userId: any, extraInfo: any = "{}") {
+async function createLoginLogs(path: string, userId: number, extraInfo: any = "{}") {
   try {
     WrappidLogger.logFunctionStart("createLoginLogs");
-    WrappidLogger.info("Login logs created" + userId + path);
+    WrappidLogger.info("Login logs created for userID:" + userId + " path:"+ path);
     await databaseActions.create("application", "LoginLogs", {
       userId: userId,
       route: path,
@@ -324,5 +363,6 @@ export {
   getIdentifierType,
   getDeviceId,
   createSessionAndLogin,
-  genarateAccessToken
+  genarateAccessToken,
+  checkOtp
 };

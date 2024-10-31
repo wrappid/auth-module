@@ -11,8 +11,8 @@ const ControllersRegistry = {
   loginWithOtp: [CoreMiddlewaresRegistry.validation(loginWithOtpSchema), authController.loginWithOtpController],
   resetPassword: [CoreMiddlewaresRegistry.validation(registerSchema), authController.resetPasswordController],
   urlLogin: [authController.urlLoginController],
-  logout: [authController.logoutController],
-  refreshToken: [CoreMiddlewaresRegistry.validation(refreshTokenSchema), authController.refreshTokenController],
+  logoutt: [authController.logoutController],
+  refreshTokenn: [CoreMiddlewaresRegistry.validation(refreshTokenSchema), authController.refreshTokenController],
   socialLogin: [ socialAuthController.socialLogin ]
 };
 

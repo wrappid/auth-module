@@ -1,8 +1,8 @@
 import { WrappidLogger } from "@wrappid/service-core";
 import { Request, Response } from "express";
-import { checkUserFunc, loginWithPasswordFunc, registerWithPasswordFunc } from "../functions/auth.functions";
+import { checkUserFunc, loginWithOtpFunc, loginWithPasswordFunc, logoutFunc, refreshTokenFunc, registerWithPasswordFunc, resetPasswordFunc } from "../functions/auth.functions";
 import { getDeviceId } from "../functions/auth.helper.functions";
-import { IUserAuthData, IUserPersonData, RequestBody, ResponseBody } from "../types/auth.types";
+import { IUserAuthData, IUserPersonData, LoginWithOtp, LoginWithPass, RegisterWithPass, RequestBody, ResetPass, ResponseBody, UserRequest } from "../types/auth.types";
 
 
 /**
@@ -31,7 +31,7 @@ export const checkLoginController = async(req: Request<RequestBody<{ identifier:
  * @param req
  * @param res
  */
-export const registerWithPasswordController = async(req: Request<RequestBody<{ identifier: string; password: string; confirmPassWord:string, otp: string }>>, res: Response<ResponseBody<IUserAuthData>>)=> {
+export const registerWithPasswordController = async(req: Request<RequestBody<RegisterWithPass>>, res: Response<ResponseBody<IUserAuthData>>)=> {
   try {
     WrappidLogger.logFunctionStart("registerWithPasswordController");
     const { identifier, password, confirmPassWord, otp } = req.body;
@@ -54,7 +54,7 @@ export const registerWithPasswordController = async(req: Request<RequestBody<{ i
  * @param req 
  * @param res 
  */
-export const loginWithPasswordController = async(req: Request<RequestBody<{ identifier: string; password: string;}>>, res: Response<ResponseBody<IUserAuthData>>)=> {
+export const loginWithPasswordController = async(req: Request<RequestBody<LoginWithPass>>, res: Response<ResponseBody<IUserAuthData>>)=> {
   try {
     WrappidLogger.logFunctionStart("loginWithPasswordController");
     const { identifier, password } = req.body;
@@ -77,15 +77,15 @@ export const loginWithPasswordController = async(req: Request<RequestBody<{ iden
  * @param req
  * @param res
  */
-export const loginWithOtpController = (req: Request<RequestBody<{ identifier: string; otp: string;}>>, res: Response<ResponseBody<IUserAuthData>>)=> {
+export const loginWithOtpController = async(req: Request<RequestBody<LoginWithOtp>>, res: Response<ResponseBody<IUserAuthData>>)=> {
   try {
     WrappidLogger.logFunctionStart("loginWithOtpController");
-    res.status(200).json({ message: "Login successful", data: {
-      id: 1,
-      personId:1,
-      accessToken: "`",
-      refreshToken: "",
-      sessionId: ""} });
+    const { identifier, otp } = req.body;
+    const deviceId:string = await getDeviceId(req);
+    const devInfo = req.body?.devInfo || "{}";
+    const originalUrl = req?.originalUrl || "";
+    const {status, resData} = await loginWithOtpFunc(identifier, otp, deviceId, devInfo, originalUrl);
+    res.status(status).json({...resData});
   } catch (error:any) {
     res.status(500).json({ message: "Internal Server Error", data: error.message });
   }finally{
@@ -96,14 +96,19 @@ export const loginWithOtpController = (req: Request<RequestBody<{ identifier: st
 
 /**
  * resetPasswordController
- * @description This controller is used to forgot password
+ * @description This controller is used to reset password
  * @param req
  * @param res
  */
-export const resetPasswordController = (req: Request<RequestBody<{ identifier: string; password:string; confirmPassword:string; otp: string;}>>, res: Response<ResponseBody<{ message: string; }>>)=> {
+export const resetPasswordController = async(req: Request<RequestBody<ResetPass>>, res: Response<ResponseBody<IUserAuthData>>)=> {
   try {
     WrappidLogger.logFunctionStart("resetPasswordController");
-    res.status(200).json({ message: "Forgot password successful", data: { message: "Reset password successful"} });
+    const { identifier, password, confirmPassword, otp } = req.body;
+    const deviceId:string = await getDeviceId(req);
+    const devInfo = req.body?.devInfo || "{}";
+    const originalUrl = req?.originalUrl || "";
+    const {status, resData} = await resetPasswordFunc(identifier, password, confirmPassword, otp, deviceId, devInfo, originalUrl);
+    res.status(status).json({...resData});
   } catch (error:any) {
     res.status(500).json({ message: "Internal Server Error", data: error.message });
   }finally{
@@ -118,7 +123,7 @@ export const resetPasswordController = (req: Request<RequestBody<{ identifier: s
  * @param req
  * @param res
  */
-export const urlLoginController = (req: Request, res: Response<ResponseBody<IUserAuthData>>)=> {
+export const urlLoginController = async(req: Request, res: Response<ResponseBody<IUserAuthData>>)=> {
   try {
     WrappidLogger.logFunctionStart("urlLoginController");
     res.status(200).json({ message: "Login successful", data: {
@@ -141,10 +146,13 @@ export const urlLoginController = (req: Request, res: Response<ResponseBody<IUse
  * @param req
  * @param res
  */
-export const logoutController = (req: Request, res: Response<ResponseBody<{ message: string; }>>)=> {
+export const logoutController = async(req: UserRequest, res: Response<ResponseBody<{ message: string; }>>)=> {
   try {
     WrappidLogger.logFunctionStart("logoutController");
-    res.status(200).json({ message: "Logout successful", data: { message: "Logout successful"} });
+    const deviceId:string = await getDeviceId(req);
+    const userId = req.user.userId;
+    const {status, message} = await logoutFunc(userId, deviceId);
+    res.status(status).json({ message: "Succesfull operation", data: { message: message} });
   } catch (error:any) {
     res.status(500).json({ message: "Internal Server Error", data: error.message });
   }finally{
@@ -155,14 +163,17 @@ export const logoutController = (req: Request, res: Response<ResponseBody<{ mess
 
 /** 
  * refreshTokenController
- * @description This controller is used to refresh token
+ * @description This controller is used to generate new access token using refresh token
  * @param req
  * @param res
  */
-export const refreshTokenController = (req: Request<RequestBody<{refreshToken:string;}>>, res: Response<ResponseBody<{ accessToken: string; refreshToken: string; }>>)=> {
+export const refreshTokenController = async(req: Request<RequestBody<{refreshToken:string;}>>, res: Response<ResponseBody<{ accessToken: string; }>>)=> {
   try {
     WrappidLogger.logFunctionStart("refreshTokenController");
-    res.status(200).json({ message: "Refresh token successful", data: { accessToken: "access_token", refreshToken: "refresh_token"} });
+    const { refreshToken } = req.body;
+    const deviceId:string = await getDeviceId(req);
+    const{ status, accessToken} = await refreshTokenFunc(refreshToken, deviceId);
+    res.status(status).json({ message: "Refresh token successful", data: { accessToken: accessToken}});
   } catch (error:any) {
     res.status(500).json({ message: "Internal Server Error", data: error.message });
   }finally{

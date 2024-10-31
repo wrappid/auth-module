@@ -42,11 +42,60 @@ interface Register {
   resData: ResponseBody<IUserAuthData>
 }
 
+// You can also use an interface
+interface LogoutResponse {
+  status: number;
+  message: string;
+}
+
+// You can also use an interface
+interface RefreshToken {
+  status: number;
+  accessToken: string;
+}
+
+interface RegisterWithPass {
+  identifier: string; 
+  password: string; 
+  confirmPassWord:string,
+   otp: string
+}
+
+interface LoginWithOtp {
+  identifier: string;
+  otp: string;
+}
+
+interface LoginWithPass {
+  identifier: string;
+  password: string;
+}
+
+interface ResetPass {
+  identifier: string;
+  password:string;
+  confirmPassword:string;
+   otp: string;
+}
+
+interface UserRequest extends Express.Request {
+  user: {
+    userId: string;
+  }
+}
+
 export{
   IUserPersonData,
   IApiResponse,
   RequestBody,
   ResponseBody,
   IUserAuthData,
-  Register
+  Register,
+  LogoutResponse,
+  RefreshToken,
+  RegisterWithPass,
+  LoginWithOtp,
+  LoginWithPass,
+  ResetPass,
+  UserRequest
 };
