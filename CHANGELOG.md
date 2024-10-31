@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.34](https://https//github.com/wrappid/wrappid-module/compare/v0.0.33...v0.0.34) (2024-10-31)
+
+
+### Features
+
+* **global:** :lipstick: update ui of check user exist page ([ec7cbfb](https://https//github.com/wrappid/wrappid-module/commit/ec7cbfb3014b5fff4456f2c9f22cb94f78ae14e1)), closes [#125](https://https//github.com/wrappid/wrappid-module/issues/125)
+
 ### [0.0.33](https://https//github.com/wrappid/wrappid-module/compare/v0.0.32...v0.0.33) (2024-10-29)
 
 
