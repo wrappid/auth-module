@@ -1,129 +1,97 @@
 import * as yup from "yup";
 
-const emailOrPhone = yup
+const identifier = yup
   .string()
   .matches(/^([0-9]{10}|[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+)$/);
 
-const otp = yup.string().min(0o0).max(999999);
 
-const checkLoginOrRegister = {
+const checkLoginSchema = {
   body: yup
     .object({
-      emailOrPhone: emailOrPhone.required(),
-    })
-    .noUnknown()
-    .strict(),
-  query: yup
-    .object({
-      loginWithOtp: yup.string(),
-    })
-    .noUnknown()
-    .strict(),
+      identifier: identifier.required("identifier required"),
+    }).noUnknown().strict(),
+  query:  yup.object().noUnknown().strict(),
+  params:  yup.object().noUnknown().strict()
 };
 
-const login = {
+
+const registerSchema = {
   body: yup
     .object({
-      emailOrPhone: emailOrPhone.required(),
-      password: yup.string().required(),
-      devInfo: yup.string(),
-    })
-    .noUnknown()
-    .strict(),
-  query: yup.object({}).noUnknown().strict(),
+      // Email or phone validation
+      identifier:identifier.required("identifier required"),
+      // Password validation
+      password: yup
+        .string()
+        .required("Password is required")
+        .min(8, "Password must be at least 8 characters")
+        .matches(
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
+          "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
+        ),
+
+      // Confirm password validation
+      confirmPassword: yup
+        .string()
+        .required("Please confirm your password")
+        .oneOf([yup.ref("password")], "Passwords must match"),
+
+      // OTP validation
+      otp: yup
+        .string()
+        .required("OTP is required")
+        .matches(/^[0-9]+$/, "OTP must only contain numbers")
+        .length(6, "OTP must be exactly 6 digits")
+    }).noUnknown().strict(),
+  query:  yup.object().noUnknown().strict(),
+  params:  yup.object().noUnknown().strict()
 };
 
-const postLoginWithOtp = {
+const loginwithPasswordSchema = {
   body: yup
     .object({
-      otp: otp.required(),
-      emailOrPhone: emailOrPhone.required(),
-      password: yup.string(),
-      devInfo: yup.string(),
-    })
-    .noUnknown()
-    .strict(),
-  query: yup.object({ reset: yup.string().notRequired() }).noUnknown().strict(),
+      identifier: identifier.required("identifier required"),
+      password:  yup
+        .string()
+        .required("Password is required")
+        .min(8, "Password must be at least 8 characters")
+        .matches(
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
+          "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
+        ),
+    }).noUnknown().strict(),
+  query:  yup.object().noUnknown().strict(),
+  params:  yup.object().noUnknown().strict()
 };
 
-const postLogoutSchema = {
-  body: yup.object({}).noUnknown().strict(),
-  query: yup.object({}).noUnknown().strict(),
-};
-
-const sentOtp = {
+const loginWithOtpSchema = {
   body: yup
     .object({
-      data: emailOrPhone.required("Please enter emailOrPhone!!"),
-      // Type: yup.string().required("Please enter Type!!"),
-      type: yup.string().notRequired(),
-      templateID: yup.string().notRequired(),
-      service: yup.string().notRequired(),
-    })
-    .noUnknown()
-    .strict(),
-  query: yup.object({test: yup.string().notRequired(),}).noUnknown().strict(),
-};
-
-const getClientLoginInfo = {
-  body: yup
-    .object({
-      userId: yup.string().required(),
-    })
-    .noUnknown()
-    .strict(),
-  query: yup.object({}).noUnknown().strict(),
-};
-
-const getIpSchema = {
-  params: yup.object({}).noUnknown().strict(),
-  query: yup.object({}).noUnknown().strict(),
-};
-
-const postLoginWithUrl = {
-  params: yup.object({}).noUnknown().strict(),
-  query: yup.object({}).noUnknown().strict(),
-};
-
-const postChangePassword = {
-  params: yup.object({}).noUnknown().strict(),
-  query: yup.object({}).noUnknown().strict(),
+      // Email or phone validation
+      identifier: identifier.required("identifier required"),
+      // Otp validation
+      otp: yup
+        .string()
+        .required("OTP is required")
+        .matches(/^[0-9]+$/, "OTP must only contain numbers")
+        .length(6, "OTP must be exactly 6 digits")
+    }).noUnknown().strict(),
+  query:  yup.object().noUnknown().strict(),
+  params:  yup.object().noUnknown().strict()
 };
 
 const refreshTokenSchema = {
-  body: yup
-    .object({
-      refreshToken: yup.string().required(),
-    })
-    .noUnknown()
-    .strict(),
-  query: yup.object({}).noUnknown().strict(),
-};
-const postVerifyOtp = {
-  params: yup.object({}).noUnknown().strict(),
-  query: yup.object({}).noUnknown().strict(),
+  body: yup.object({
+    refreshToken: yup.string().required("refreshtoken missing")
+  }).noUnknown().strict(),
+  query:  yup.object().noUnknown().strict(),
+  params:  yup.object().noUnknown().strict()
 };
 
-const validateEmail = yup
-  .string()
-  .matches(/^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/, "Invalid email");
-
-const validatePhone = yup
-  .string()
-  .matches(/^[0-9]{10}$/, "Phone number must contains 10 digits")
-  .required();
 export {
-  checkLoginOrRegister,
-  login,
-  postLoginWithOtp,
-  postLogoutSchema,
-  getIpSchema,
-  refreshTokenSchema,
-  postLoginWithUrl,
-  getClientLoginInfo,
-  sentOtp,
-  validateEmail,
-  validatePhone,
-  postChangePassword,
-  postVerifyOtp,
+  checkLoginSchema,
+  registerSchema,
+  loginwithPasswordSchema,
+  loginWithOtpSchema,
+  refreshTokenSchema
 };
