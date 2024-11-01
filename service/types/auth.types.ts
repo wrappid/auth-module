@@ -1,7 +1,7 @@
 // Base response data interface for user-person relationship
 interface IUserPersonData {
-  userId: number;
-  personId: number;
+  name: string;
+  photoUrl: string;
 }
 
 // Base response data interface for user-person relationship
@@ -58,7 +58,7 @@ interface RegisterWithPass {
   identifier: string; 
   password: string; 
   confirmPassWord:string,
-   otp: string
+  otp: string
 }
 
 interface LoginWithOtp {
@@ -75,7 +75,7 @@ interface ResetPass {
   identifier: string;
   password:string;
   confirmPassword:string;
-   otp: string;
+  otp: string;
 }
 
 interface UserRequest extends Express.Request {

@@ -119,7 +119,107 @@ const RoutesRegistry = {
         }
       }
     }
-  }
+  },
+  checkLogin: {
+    title: "jnkf",
+    url: "login/check",
+    authRequired: false,
+    reqMethod: "post",
+    entityRef: "checkLogin",
+    controllerRef: "checkLogin",
+    swaggerJson: {
+      "tags":[
+        "Auth-Module"
+      ],
+      "responses":{}
+    }
+  },
+  registerWithPassword: {
+    title: "jnkf",
+    url: "register",
+    authRequired: false,
+    reqMethod: "post",
+    entityRef: "registerWithPassword",
+    controllerRef: "registerWithPassword",
+    swaggerJson: {
+      "tags":[
+        "Auth-Module"
+      ],
+      "responses":{}
+    }
+  },
+  loginWithPassword: {
+    title: "jnkf",
+    url: "login/password",
+    authRequired: false,
+    reqMethod: "post",
+    entityRef: "loginWithPassword",
+    controllerRef: "loginWithPassword",
+    swaggerJson: {
+      "tags":[
+        "Auth-Module"
+      ],
+      "responses":{}
+    }
+  },
+  loginWithOtpp: {
+    title: "jnkf",
+    url: "login/otp",
+    authRequired: false,
+    reqMethod: "post",
+    entityRef: "loginWithOtpp",
+    controllerRef: "loginWithOtpp",
+    swaggerJson: {
+      "tags":[
+        "Auth-Module"
+      ],
+      "responses":{}
+    }
+  },
+  resetPassword: {
+    title: "jnkf",
+    url: "password/reset",
+    authRequired: false,
+    reqMethod: "post",
+    entityRef: "resetPassword",
+    controllerRef: "resetPassword",
+    swaggerJson: {
+      "tags":[
+        "Auth-Module"
+      ],
+      "responses":{}
+    }
+  },
+  urlLogin: {
+    title: "jnkf",
+    url: "login/url",
+    authRequired: false,
+    reqMethod: "post",
+    entityRef: "urlLogin",
+    controllerRef: "urlLogin",
+    swaggerJson: {
+      "tags":[
+        "Auth-Module"
+      ],
+      "responses":{}
+    }
+  },
+  refreshTokenn: {
+    title: "jnkf",
+    url: "token/refresh",
+    authRequired: true,
+    reqMethod: "post",
+    entityRef: "refreshTokenn",
+    controllerRef: "refreshTokenn",
+    swaggerJson: {
+      "tags":[
+        "Auth-Module"
+      ],
+      "responses":{}
+    }
+  },
+
+
 };
 
 export default RoutesRegistry;

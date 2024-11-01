@@ -1,5 +1,6 @@
-import { databaseActions, databaseProvider, WrappidLogger } from "@wrappid/service-core";
+import { ApplicationContext, databaseActions, databaseProvider, WrappidLogger } from "@wrappid/service-core";
 import { Transaction } from "sequelize";
+import constant from "../constants/constants";
 import { IApiResponse } from "../types/auth.types";
 
 /**
@@ -37,8 +38,8 @@ const createUser = async (identifierType:string, identifier: string):Promise<IAp
       resData: {
         message: "",
         data: {
-          userId: 0,
-          personId: 0
+          name: "",
+          photoUrl: ""
         }
       }
     };
@@ -47,13 +48,17 @@ const createUser = async (identifierType:string, identifier: string):Promise<IAp
         const useradta = await databaseActions.create("application", "Users", { [identifierType]: identifier}, { transaction });
         const personData = await databaseActions.create("application", "Persons", { userId: useradta.id }, { transaction });
         await databaseActions.create("application", "PersonContacts", {data: identifier, personId: personData.id }, { transaction });
+        const role = ApplicationContext.getContext("config").wrappid.defaultUserRole || constant.userRoles.ROLE_DEVELOPER;
+        // Get the role id from the Roles table
+        const roleData = await databaseActions.findOne("application", "Roles", {where: {role: role} }, { transaction });
+        await databaseActions.create("application", "UserRoles", { roleID: roleData.id, userID: useradta.id, _status: constant.entityStatus.ACTIVE}, { transaction });
         returnData = {
           status:201,
           resData:{
             message:"User created successfully",
             data:{
-              userId: useradta.id,
-              personId: personData.id
+              name: personData.firstName,
+              photoUrl: personData.photoUrl
             }
           }
         };

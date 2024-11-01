@@ -109,7 +109,7 @@ const authReducer = (state = initState, action) => {
     case LOGIN_ERROR:
       return {
         ...state,
-        authError: action.message
+        authError: action.payload.data.data
           ? "Login failed due to " + String(action.message).toLowerCase()
           : "Login Failed",
         authLoading: false,
@@ -118,21 +118,21 @@ const authReducer = (state = initState, action) => {
     case LOGIN_SUCCESS:
       return {
         ...state,
-        accessToken                : action.payload.accessToken,
+        accessToken                : action.payload.data.accessToken,
         authError                  : null,
         authLoading                : false,
         authNextPage               : "",
         checkLoginOrRegisterSuccess: true,
-        refreshToken               : action.payload.refreshToken,
-        uid                        : action.payload.id,
-        user                       : action.payload,
+        refreshToken               : action.payload.data.refreshToken,
+        uid                        : action.payload.data.id,
+        user                       : action.payload.data,
       };
 
     case TOKEN_REFRESH_SUCCESS:
       // //console.log("REDU:", action.payload.accessToken, action.payload.refreshToken );
       return {
         ...state,
-        accessToken: action.payload.accessToken,
+        accessToken: action.payload.data.accessToken,
         authError  : null,
         authLoading: false,
       };

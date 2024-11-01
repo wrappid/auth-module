@@ -89,11 +89,11 @@ const RegisterOrResetPassword = () => {
           hideSeeMore={true}
 
         >
-          {" " + stringUtils.maskEmailOrPhone(navData?.emailOrPhone)}
+          {" " + stringUtils.maskEmailOrPhone(navData?.identifier)}
         </CoreTypographyBody2>
 
         <CoreTypographyBody2 component="span">
-          {`. Please enter the One Time Password (OTP) to verify your ${isNaN(navData?.emailOrPhone) ? " email." : " phone."
+          {`. Please enter the One Time Password (OTP) to verify your ${isNaN(navData?.identifier) ? " email." : " phone."
           }`}
         </CoreTypographyBody2>
       </CoreTypographyBody2>
@@ -118,13 +118,13 @@ const RegisterOrResetPassword = () => {
     <>
       <CoreLayoutItem id={AuthLayout.PLACEHOLDER.CONTENT}>
         <CoreH1 variant="h5" styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.COLOR.TEXT_PRIMARY]}>
-          {`Verify your${isNaN(navData?.emailOrPhone) ? " email" : " phone"
+          {`Verify your${isNaN(navData?.identifier) ? " email" : " phone"
           }`}
         </CoreH1>
 
         {authNextPage === routeRegistry.register?.url ? (<>
           <CoreTypographyBody1 styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.COLOR.TEXT_PRIMARY]}>
-            {`Verify your${isNaN(navData?.emailOrPhone) ? " email" : " phone"
+            {`Verify your${isNaN(navData?.identifier) ? " email" : " phone"
             } through OTP`}
           </CoreTypographyBody1>
 
@@ -153,19 +153,19 @@ const RegisterOrResetPassword = () => {
           formId="loginWithResetPassword"
           mode="edit"
           authenticated={false}
-          initProps={{ otp: { to: navData?.emailOrPhone } }}
+          initProps={{ otp: { to: navData?.identifier } }}
         />
 
         {authNextPage === routeRegistry?.register?.url && (
           <CoreTypographyBody2 styleClasses={[CoreClasses.COLOR.TEXT_PRIMARY]}>
-              By signing up you agree to our{" "}
+            By signing up you agree to our{" "}
 
             <CoreLink
               href={
                 appConfig?.wrappid?.privacyLink ||
-                  "#"
+                "#"
               }>
-                Privacy Policy
+              Privacy Policy
             </CoreLink>{" "}
 
             <CoreTypographyBody2 component="span">&</CoreTypographyBody2>{" "}
@@ -173,9 +173,9 @@ const RegisterOrResetPassword = () => {
             <CoreLink
               href={
                 appConfig?.wrappid?.termsLink ||
-                  "#"
+                "#"
               }>
-                Terms
+              Terms
             </CoreLink>
 
             {"."}

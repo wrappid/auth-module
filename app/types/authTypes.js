@@ -99,8 +99,8 @@ export const AUTHENTICATION_ERROR = "AUTHENTICATION_ERROR";
 export const CLIENT_INFORMATION_FETCH_SUCCESS = "CLIENT_INFORMATION_FETCH_SUCCESS";
 export const CLIENT_INFORMATION_FETCH_ERROR = "CLIENT_INFORMATION_FETCH_ERROR";
 
-export const NAVIGATE_TO_OTP_LOGIN_API = "/checkLoginOrRegister?loginWithOtp=1";
-export const NAVIGATE_TO_RESET_PASSWORD_API = "/checkLoginOrRegister?loginWithOtp=1";
+export const NAVIGATE_TO_OTP_LOGIN_API = "/login/otp";
+export const NAVIGATE_TO_RESET_PASSWORD_API = "/password/reset";
 
 export const SIGNUP_ERROR = "SIGNUP_ERROR";
 export const SIGNUP_SUCCESS = "SIGNUP_SUCCESS";

@@ -8,10 +8,10 @@ const ControllersRegistry = {
   checkLogin: [CoreMiddlewaresRegistry.validation(checkLoginSchema), authController.checkLoginController],
   registerWithPassword: [CoreMiddlewaresRegistry.validation(registerSchema), authController.registerWithPasswordController],
   loginWithPassword: [CoreMiddlewaresRegistry.validation(loginwithPasswordSchema), authController.loginWithPasswordController],
-  loginWithOtp: [CoreMiddlewaresRegistry.validation(loginWithOtpSchema), authController.loginWithOtpController],
+  loginWithOtpp: [CoreMiddlewaresRegistry.validation(loginWithOtpSchema), authController.loginWithOtpController],
   resetPassword: [CoreMiddlewaresRegistry.validation(registerSchema), authController.resetPasswordController],
   urlLogin: [authController.urlLoginController],
-  logoutt: [authController.logoutController],
+  logout: [authController.logoutController],
   refreshTokenn: [CoreMiddlewaresRegistry.validation(refreshTokenSchema), authController.refreshTokenController],
   socialLogin: [ socialAuthController.socialLogin ]
 };

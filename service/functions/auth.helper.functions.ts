@@ -170,7 +170,8 @@ function genarateAccessToken(
   mail: any,
   phone: any,
   personData: any,
-  userDetails: any
+  userDetails: any,
+  roleID:number
 ) {
   try {
     WrappidLogger.logFunctionStart("genarateAccessToken");
@@ -188,7 +189,7 @@ function genarateAccessToken(
         email: mail,
         phone: phone,
         personId: personData?.id,
-        roleId: userDetails.roleId,
+        roleId: roleID,
       },
       accessTokenSecret,
       { expiresIn: expTime }
@@ -237,12 +238,14 @@ async function createSessionAndLogin(userData:any, originalUrl:string, deviceId:
         where: { userId: userData.id },
       }
     );
+    const roleData = await databaseActions.findOne("application", "UserRoles", { where: { userID: userData.id } });
     const { refreshToken, accessToken } = genarateAccessToken(
       userData.id,
       userData.email,
       userData.phone,
       personData,
-      userData
+      userData,
+      roleData?.roleID
     );
 
     const sessions = await databaseActions.findAll(

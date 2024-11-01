@@ -24,8 +24,8 @@ const checkUserFunc = async (identifier: string): Promise<IApiResponse> => {
   try {
     WrappidLogger.logFunctionStart("checkUser");
     let returnData: IApiResponse;
-    const commType: string = await getIdentifierType(identifier);
-    const data = await checkUserExistance(commType, identifier);
+    const identifierType: string = await getIdentifierType(identifier);
+    const data = await checkUserExistance(identifierType, identifier);
     if (data) {
       const personData = await databaseActions.findOne("application", "Persons", { where: { userId: data.id } });
       returnData = {
@@ -33,13 +33,13 @@ const checkUserFunc = async (identifier: string): Promise<IApiResponse> => {
         resData: {
           message: "User already exists",
           data: {
-            userId: data.id,
-            personId: personData.id
+            name: personData.firstName,
+            photoUrl: personData.photoUrl
           }
         }
       };
     } else {
-      returnData = await createUser(commType, identifier);
+      returnData = await createUser(identifierType, identifier);
     }
 
     WrappidLogger.info("returnData" + returnData);
@@ -55,7 +55,7 @@ const checkUserFunc = async (identifier: string): Promise<IApiResponse> => {
 
 /**
  * This function is used to register user with password
- * @param emailOrPhone 
+ * @param identifier 
  * @param password 
  * @param confirmPassword 
  * @param otp 
@@ -66,12 +66,12 @@ const registerWithPasswordFunc = async (identifier: string, password: string, co
     if (password !== confirmPassword) {
       throw new Error("Passwords do not match");
     }
-    const commType: string = await getIdentifierType(identifier);
-    const userData = await checkUserExistance(commType, identifier);
+    const identifierType: string = await getIdentifierType(identifier);
+    const userData = await checkUserExistance(identifierType, identifier);
     if (!userData) {
       throw new Error("User does not exist");
     }
-    const otpCheck = await checkOtp(userData.id, otp, commType);
+    const otpCheck = await checkOtp(userData.id, otp, identifierType);
 
     if (!otpCheck) {
       throw new Error("Invalid otp");
@@ -79,6 +79,7 @@ const registerWithPasswordFunc = async (identifier: string, password: string, co
       const hashedPassword = await bcrypt.hash(password, 9); // Hash the password
       await databaseActions.update("application", "Users", { password: hashedPassword }, { where: { id: userData.id } }); // Update the password
       const data = await createSessionAndLogin(userData, originalUrl, deviceId, devInfo);
+      await databaseActions.create("application", "UserRoles", { userId: userData.id, roleId: 1 }); 
       returnData = {
         status: 200,
         resData: data
@@ -104,8 +105,8 @@ const registerWithPasswordFunc = async (identifier: string, password: string, co
 const loginWithPasswordFunc = async (identifier: string, password: string, deviceId: string, devInfo: string, originalUrl: string): Promise<Register> => {
   try {
     let returnData = {} as Register;
-    const commType: string = await getIdentifierType(identifier);
-    const userData = await checkUserExistance(commType, identifier);
+    const identifierType: string = await getIdentifierType(identifier);
+    const userData = await checkUserExistance(identifierType, identifier);
     if (!userData) {
       throw new Error("User does not exist");
     }
@@ -139,12 +140,12 @@ const loginWithOtpFunc = async (identifier: string, otp: string, deviceId: strin
   try {
     WrappidLogger.logFunctionStart("loginWithOtpFunc");
     let returnData = {} as Register;
-    const commType: string = await getIdentifierType(identifier);
-    const userData = await checkUserExistance(commType, identifier);
+    const identifierType: string = await getIdentifierType(identifier);
+    const userData = await checkUserExistance(identifierType, identifier);
     if (!userData) {
       throw new Error("User does not exist");
     }
-    const otpCheck = await checkOtp(userData.id, otp, commType);
+    const otpCheck = await checkOtp(userData.id, otp, identifierType);
     if (!otpCheck) {
       throw new Error("Invalid otp");
     } else {
@@ -182,12 +183,12 @@ const resetPasswordFunc = async (identifier: string, password: string, confirmPa
     if (password !== confirmPassword) {
       throw new Error("Passwords do not match");
     }
-    const commType: string = await getIdentifierType(identifier);
-    const userData = await checkUserExistance(commType, identifier);
+    const identifierType: string = await getIdentifierType(identifier);
+    const userData = await checkUserExistance(identifierType, identifier);
     if (!userData) {
       throw new Error("User does not exist");
     }
-    const otpCheck = await checkOtp(userData.id, otp, commType);
+    const otpCheck = await checkOtp(userData.id, otp, identifierType);
     if (!otpCheck) {
       throw new Error("Invalid otp");
     } else {

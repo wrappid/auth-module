@@ -236,12 +236,15 @@ const passwordLessLogin = async (email: string, deviceId: any) => {
     const mail = userDetails.email;
     const phone = userDetails?.phone;
 
+    const roleData = await databaseActions.findOne("application", "UserRoles", { where: { userID: userDetails.id } });
+
     const { refreshToken, accessToken } = genarateAccessToken(
       userId,
       mail,
       phone,
       personData,
-      userDetails
+      userDetails,
+      roleData?.roleID
     );
     WrappidLogger.info("Tokens generate done");
 
