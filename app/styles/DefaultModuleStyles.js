@@ -19,6 +19,7 @@ export default class DefaultModuleStyles extends DefaultCoreStyles {
         ...this.defaultUtilityStyles.displayFlex,
         ...this.defaultUtilityStyles.alignContentEnd,
         ...this.defaultUtilityStyles.justifyContentSpaceBetween,
+        ...this.defaultUtilityStyles.px4,
         height: "10vh"
       }
     };
