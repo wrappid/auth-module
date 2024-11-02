@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.36](https://https//github.com/wrappid/wrappid-module/compare/v0.0.35...v0.0.36) (2024-11-02)
+
+
+### Bug Fixes
+
+* **global:** :bug: export service data type fix ([e459b4b](https://https//github.com/wrappid/wrappid-module/commit/e459b4b77111ed3db5f28c3f297a4aced5e20b02)), closes [#129](https://https//github.com/wrappid/wrappid-module/issues/129)
+
 ### [0.0.35](https://https//github.com/wrappid/wrappid-module/compare/v0.0.34...v0.0.35) (2024-11-02)
 
 
