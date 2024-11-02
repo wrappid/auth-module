@@ -90,7 +90,7 @@ interface SenOtpBody {
   userID?:number;
 }
 
-export{
+export type{
   IUserPersonData,
   IApiResponse,
   RequestBody,
