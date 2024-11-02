@@ -37,7 +37,7 @@ const checkUserFunc = async (identifier: string): Promise<IApiResponse> => {
         throw new Error("Person data not found");
       }
       
-      const FunctionsRegistry: GenericObject = ApplicationContext.getContext(coreConstant.registry.ROUTES_REGISTRY);
+      const FunctionsRegistry: GenericObject = ApplicationContext.getContext(coreConstant.registry.FUNCTIONS_REGISTRY);
       
       const personMetaData = await FunctionsRegistry["getMetaDataJSON"]("PersonMetas", personData.id);
       if (!personMetaData || Object.keys(personMetaData).length <= 0) {
