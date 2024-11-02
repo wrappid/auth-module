@@ -84,6 +84,12 @@ interface UserRequest extends Express.Request {
   }
 }
 
+interface SenOtpBody {
+  identifier: string;
+  serviceName:string;
+  userID?:number;
+}
+
 export{
   IUserPersonData,
   IApiResponse,
@@ -97,5 +103,6 @@ export{
   LoginWithOtp,
   LoginWithPass,
   ResetPass,
-  UserRequest
+  UserRequest,
+  SenOtpBody
 };

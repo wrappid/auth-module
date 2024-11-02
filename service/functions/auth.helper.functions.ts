@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import DeviceDetector from "node-device-detector";
 import { Transaction } from "sequelize";
+import constant from "../constants/constants";
 import { IUserAuthData, ResponseBody } from "../types/auth.types";
 
 // Custom type for contact validation results
@@ -62,22 +63,33 @@ async function getIdentifierType(identifier: string): Promise<ContactType> {
  * 2. Compare the otp with the provided otp
  * 3. If equal then return true and marks as inactive
  * 4. If not equal then return false
+ * @param identifier
  * @param userId
  * @param otp
  * @returns
  */
-async function checkOtp(userId: number, otp: string, type: string): Promise<boolean> {
+async function checkOtp(identifier:string, userId: number, otp: string, type: string): Promise<boolean> {
   WrappidLogger.logFunctionStart("checkOtp");
   try {
+    let identifierType: string = type;
+    if(type==="phone"){
+      identifierType = "sms";
+    }
     const dbData = await databaseActions.findAll("application", "Otps", {
       where: {
-        userId: userId,
-        type: type,
+        type: identifierType,
         _status: coreConstant.entityStatus.ACTIVE,
+        [databaseProvider.application.Sequelize.Op.or]: [
+          { recipient: identifier },
+          { userId: userId }
+        ]
       },
       limit: 1,
       order: [["id", "DESC"]]
     });
+    if (dbData.length === 0) {
+      throw new Error("Otp not found");  
+    }
     const dbOtp = dbData[0].dataValues.otp;
     if (Number(dbOtp) === Number(otp)) {
       await databaseActions.update("application", "Otps", { _status: coreConstant.entityStatus.INACTIVE }, { where: { id: dbData[0].dataValues.id } });
@@ -362,10 +374,60 @@ async function createLoginLogs(path: string, userId: number, extraInfo: any = "{
   }
 }
 
+
+
+async function getTemplateName(identifierType:string, serviceName:string) {
+  try {
+    WrappidLogger.logFunctionStart("getTemplateID");
+ 
+    let templateName = "";
+    if (identifierType === constant.contact.EMAIL) {
+      switch (serviceName) {
+        case "loginWithOtp":
+          templateName = constant.communication.SENT_OTP_LOGIN_WITH_OTP_MAIL_EN;
+          break;
+        case "reset":
+          templateName = constant.communication.SENT_OTP_RESET_PASSWORD_MAIL_EN;
+          break;
+        case "register":
+          templateName = constant.communication.SENT_OTP_MAIL_EN;
+          break;
+        default:
+          templateName = constant.communication.SENT_OTP_MAIL_EN;
+          break;
+      }
+    }
+
+    if(identifierType === constant.contact.PHONE){
+      switch (serviceName) {
+        case "loginWithOtp":
+          templateName = constant.communication.SENT_OTP_LOGIN_WITH_OTP_SMS_EN;
+          break;
+        case "reset":
+          templateName = constant.communication.SENT_OTP_RESET_PASSWORD_OTP_SMS_EN;
+          break;
+        case "register":
+          templateName = constant.communication.SENT_OTP_SMS_EN;
+          break;
+        default:
+          templateName = constant.communication.SENT_OTP_SMS_EN;
+          break;
+      }
+    }
+    return templateName;
+  } catch (error:any) {
+    WrappidLogger.error("Error: " + error);
+    throw error;
+  }finally{
+    WrappidLogger.logFunctionEnd("getTemplateID");
+  }
+}
+
 export {
   getIdentifierType,
   getDeviceId,
   createSessionAndLogin,
   genarateAccessToken,
-  checkOtp
+  checkOtp,
+  getTemplateName
 };

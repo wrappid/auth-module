@@ -1,12 +1,16 @@
 import {
   ApplicationContext,
+  communicate,
+  coreConstant,
   databaseActions,
+  databaseProvider,
   WrappidLogger,
 } from "@wrappid/service-core";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import otpGenerator from "otp-generator";
 import { IApiResponse, LogoutResponse, RefreshToken, Register } from "../types/auth.types";
-import { checkOtp, createSessionAndLogin, getIdentifierType } from "./auth.helper.functions";
+import { checkOtp, createSessionAndLogin, getIdentifierType, getTemplateName } from "./auth.helper.functions";
 import { checkUserExistance, createUser } from "./user.function";
 
 
@@ -71,7 +75,7 @@ const registerWithPasswordFunc = async (identifier: string, password: string, co
     if (!userData) {
       throw new Error("User does not exist");
     }
-    const otpCheck = await checkOtp(userData.id, otp, identifierType);
+    const otpCheck = await checkOtp(identifier, userData.id, otp, identifierType);
 
     if (!otpCheck) {
       throw new Error("Invalid otp");
@@ -145,7 +149,7 @@ const loginWithOtpFunc = async (identifier: string, otp: string, deviceId: strin
     if (!userData) {
       throw new Error("User does not exist");
     }
-    const otpCheck = await checkOtp(userData.id, otp, identifierType);
+    const otpCheck = await checkOtp(identifier, userData.id, otp, identifierType);
     if (!otpCheck) {
       throw new Error("Invalid otp");
     } else {
@@ -188,7 +192,7 @@ const resetPasswordFunc = async (identifier: string, password: string, confirmPa
     if (!userData) {
       throw new Error("User does not exist");
     }
-    const otpCheck = await checkOtp(userData.id, otp, identifierType);
+    const otpCheck = await checkOtp(identifier, userData.id, otp, identifierType);
     if (!otpCheck) {
       throw new Error("Invalid otp");
     } else {
@@ -333,6 +337,95 @@ const refreshTokenFunc = async (refreshToken:string, deviceId:string):Promise<Re
   }
 };
 
+
+
+
+/**
+ * @description This function is used to send otp to user
+ * @param identifier 
+ * @param serviceName 
+ * @param userID 
+ * @returns 
+ */
+const sentOtpFunc = async (identifier:string, serviceName:string, userID?:any ) => {
+  try {
+    WrappidLogger.logFunctionStart("sentOtpFunc");
+    let identifierType: string = await getIdentifierType(identifier);
+    // If userID not proveide
+    if(userID === undefined){
+      userID = null;
+    }
+  
+    const templateName = await getTemplateName(identifierType, serviceName);
+   
+    // Generate otp
+    const genetatedOTP = otpGenerator.generate(
+      ApplicationContext.getContext("config").wrappid.otpLength,
+      {
+        specialChars: false,
+        lowerCaseAlphabets: false,
+        upperCaseAlphabets: false,
+      }
+    );
+    const commData:{otp:string} = {otp:""};
+    if (genetatedOTP) {
+      commData.otp = genetatedOTP;
+    }
+    
+    if(identifierType==="phone"){
+      identifierType = "sms";
+    }
+    // Calling service-core communicate function for sending otp
+    const commResult = await communicate({
+      commType: identifierType,
+      commRecipients: {
+        to: [identifier],
+      },
+      commData,
+      commTemplateID: templateName,
+      directFlag: true,
+      errorFlag: true,
+    });
+
+    if (commResult) {
+      // All otp of user mark as inactive
+      await databaseActions.update(
+        "application",
+        "Otps",
+        { _status: coreConstant.entityStatus.INACTIVE },
+        {where: { type: identifierType,
+          [databaseProvider.application.Sequelize.Op.or]: [
+            { recipient: identifier },
+            { userId: userID }
+          ]
+        }}
+
+      );
+
+      // Current otp mark as active
+      await databaseActions.create("application", "Otps", {
+        recipient: identifier,
+        otp: genetatedOTP,
+        type: identifierType,
+        _status: coreConstant.entityStatus.ACTIVE,
+        userId: userID,
+      });
+
+      WrappidLogger.info(`OTP ${identifierType} sent successfully.`);
+      return { status: 200, message: `OTP ${identifierType} sent successfully.` };
+    } else {
+      throw new Error(`OTP ${identifierType} sent failed.`);
+    }
+  } catch (err: any) {
+    WrappidLogger.error("Error: " + err);
+    throw err;
+  } finally {
+    WrappidLogger.logFunctionEnd("sentOtpFunc");
+  }
+};
+
+
+
 export {
   checkUserFunc,
   registerWithPasswordFunc,
@@ -340,5 +433,6 @@ export {
   loginWithOtpFunc,
   resetPasswordFunc,
   logoutFunc,
-  refreshTokenFunc
+  refreshTokenFunc,
+  sentOtpFunc
 };

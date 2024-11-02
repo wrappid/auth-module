@@ -26,7 +26,7 @@ import { ApiRegistry } from "../apis.registry";
 import { ModuleRoute } from "../constants/app.constants";
 import { GET_PROFILE_BASIC_ERROR, GET_PROFILE_BASIC_SUCCESS } from "../types/authTypes";
 
-const RegisterOrResetPassword = () => {
+const Register = () => {
   const navigate = coreUseNavigate();
   const dispatch = useDispatch();
   // eslint-disable-next-line etc/no-commented-out-code
@@ -150,7 +150,7 @@ const RegisterOrResetPassword = () => {
 
         <CoreForm
           styleClasses={CoreClasses.LAYOUT.AUTH_FORM_CONTAINER}
-          formId="loginWithResetPassword"
+          formId="register"
           mode="edit"
           authenticated={false}
           initProps={{ otp: { to: navData?.identifier } }}
@@ -187,4 +187,4 @@ const RegisterOrResetPassword = () => {
   );
 };
 
-export default RegisterOrResetPassword;
+export default Register;

@@ -13,6 +13,7 @@ const ControllersRegistry = {
   urlLogin: [authController.urlLoginController],
   logout: [authController.logoutController],
   refreshTokenn: [CoreMiddlewaresRegistry.validation(refreshTokenSchema), authController.refreshTokenController],
+  sentOtp: [authController.sentOtpController],
   socialLogin: [ socialAuthController.socialLogin ]
 };
 

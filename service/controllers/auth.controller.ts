@@ -1,8 +1,8 @@
 import { WrappidLogger } from "@wrappid/service-core";
 import { Request, Response } from "express";
-import { checkUserFunc, loginWithOtpFunc, loginWithPasswordFunc, logoutFunc, refreshTokenFunc, registerWithPasswordFunc, resetPasswordFunc } from "../functions/auth.functions";
+import { checkUserFunc, loginWithOtpFunc, loginWithPasswordFunc, logoutFunc, refreshTokenFunc, registerWithPasswordFunc, resetPasswordFunc, sentOtpFunc } from "../functions/auth.functions";
 import { getDeviceId } from "../functions/auth.helper.functions";
-import { IUserAuthData, IUserPersonData, LoginWithOtp, LoginWithPass, RegisterWithPass, RequestBody, ResetPass, ResponseBody, UserRequest } from "../types/auth.types";
+import { IUserAuthData, IUserPersonData, LoginWithOtp, LoginWithPass, RegisterWithPass, RequestBody, ResetPass, ResponseBody, SenOtpBody, UserRequest } from "../types/auth.types";
 
 
 /**
@@ -178,5 +178,24 @@ export const refreshTokenController = async(req: Request<RequestBody<{refreshTok
     res.status(500).json({ message: "Internal Server Error", data: error.message });
   }finally{
     WrappidLogger.logFunctionEnd("refreshTokenController");
+  }
+};
+
+/**
+ * sentOtpController
+ * @description This controller is used to send otp to user
+ * @param req 
+ * @param res 
+ */
+export const sentOtpController = async(req: Request<RequestBody<SenOtpBody>>, res: Response<ResponseBody<{ message: string; }>>)=> {
+  try {
+    WrappidLogger.logFunctionStart("sentOtpController");
+    const { identifier, serviceName, userID } = req.body;
+    const {status, message} = await sentOtpFunc(identifier, serviceName, userID);
+    res.status(status).json({ message: "Succesfull operation", data: { message: message} });
+  } catch (error:any) {
+    res.status(500).json({ message: "Internal Server Error", data: error.message });
+  }finally{
+    WrappidLogger.logFunctionEnd("sentOtpController");
   }
 };
