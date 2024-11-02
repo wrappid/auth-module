@@ -135,8 +135,8 @@ const LoginWithPassword = () => {
           styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.COLOR.TEXT_PRIMARY]}
         >
           {stringUtils.maskEmailOrPhone(
-            navData?.emailOrPhone
-              ? navData?.emailOrPhone
+            navData?.identifier
+              ? navData?.identifier
               : ""
           )}
         </CoreTypographyBody2>

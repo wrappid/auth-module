@@ -37,7 +37,8 @@ const constant = {
 
   userRoles: {
     ROLE_SYSTEM_ADMIN: "system_admin",
-    ROLE_DEVELOPER: "developer"
+    ROLE_DEVELOPER: "developer",
+    ROLE_DOCTOR: "doctor"
   },
 
   contact: {

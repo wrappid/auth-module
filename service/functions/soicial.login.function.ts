@@ -5,10 +5,12 @@ import {
   databaseProvider,
   WrappidLogger,
 } from "@wrappid/service-core";
+
 import bcrypt from "bcrypt";
 import fetch from "node-fetch-commonjs";
+import { Transaction } from "sequelize";
 import constant from "../constants/constants";
-import { genarateAccessToken } from "./auth.functions";
+import { genarateAccessToken } from "./auth.helper.functions";
 import * as linkedIn from "./linkedIn.function";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -226,7 +228,7 @@ const passwordLessLogin = async (email: string, deviceId: any) => {
     });
 
     const personData = await databaseActions.findOne("application", "Persons", {
-      attributes: ["id", "userInvitationToken"],
+      attributes: ["id"],
       where: { userId: userDetails.id },
     });
 
@@ -234,12 +236,15 @@ const passwordLessLogin = async (email: string, deviceId: any) => {
     const mail = userDetails.email;
     const phone = userDetails?.phone;
 
+    const roleData = await databaseActions.findOne("application", "UserRoles", { where: { userID: userDetails.id } });
+
     const { refreshToken, accessToken } = genarateAccessToken(
       userId,
       mail,
       phone,
       personData,
-      userDetails
+      userDetails,
+      roleData?.roleID
     );
     WrappidLogger.info("Tokens generate done");
 
@@ -248,14 +253,14 @@ const passwordLessLogin = async (email: string, deviceId: any) => {
       "SessionManagers",
       {
         where: {
-          userId: userId,
+          userId: userId
         },
       }
     );
     WrappidLogger.info("All sessions fetchd: " + sessions.length);
     let found = false;
     const result = await databaseProvider.application.sequelize.transaction(
-      async (transaction: any) => {
+      async (transaction: Transaction) => {
         //check first time login
         if (userDetails.firstLogin) {
           WrappidLogger.info("First time login detected");

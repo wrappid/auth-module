@@ -1,9 +1,9 @@
 export const ModuleRoute = {
   LOGIN_DASHBOARD     : "dashboard",
-  LOGIN_OTP_ROUTE     : "enterotp",
-  LOGIN_ROUTE         : "checkuserexist",
+  LOGIN_OTP_ROUTE     : "login/otp",
+  LOGIN_ROUTE         : "login/check",
   LOGOUT              : "logout",
-  PASSWORD_ROUTE      : "enterpassword",
+  PASSWORD_ROUTE      : "login/password",
   REGISTER_ROUTE      : "register",
-  RESET_PASSWORD_ROUTE: "resetpassword",
+  RESET_PASSWORD_ROUTE: "password/reset",
 };
