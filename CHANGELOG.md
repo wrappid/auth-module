@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.37](https://https//github.com/wrappid/wrappid-module/compare/v0.0.36...v0.0.37) (2024-11-02)
+
+
+### Bug Fixes
+
+* **core:** :zap: auth impact handle due torestructure ([c2f8606](https://https//github.com/wrappid/wrappid-module/commit/c2f8606209b488349fe4bca1c0a72429e16db707))
+* **core:** :zap: patch fix ([19f9c42](https://https//github.com/wrappid/wrappid-module/commit/19f9c4275b5a8a575ff411dc332c1d41ed563d6e))
+* **core:** :zap: person meta data is served ([134f4f5](https://https//github.com/wrappid/wrappid-module/commit/134f4f531185472591f26da8d135a9323c939587))
+
 ### [0.0.36](https://https//github.com/wrappid/wrappid-module/compare/v0.0.35...v0.0.36) (2024-11-02)
 
 
