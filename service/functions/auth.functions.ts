@@ -32,13 +32,17 @@ const checkUserFunc = async (identifier: string): Promise<IApiResponse> => {
     const data = await checkUserExistance(identifierType, identifier);
     if (data) {
       const personData = await databaseActions.findOne("application", "Persons", { where: { userId: data.id } });
+      if (personData && personData?.id <= 0) {
+        throw new Error("Person data not found");
+      }
+      const personMetaData = await databaseActions.findAll("application", "PersonMetas", { where: { parentID: personData.id } });
       returnData = {
         status: 200,
         resData: {
           message: "User already exists",
           data: {
-            name: personData.firstName,
-            photoUrl: personData.photoUrl
+            name: personMetaData.firstName,
+            photoUrl: personMetaData.photoUrl
           }
         }
       };
