@@ -18,7 +18,7 @@ export const checkLoginController = async(req: Request<RequestBody<{ identifier:
     const {status, resData } = await checkUserFunc(identifier);
     res.status(status).json({ ...resData });
   } catch (error:any) {
-    res.status(500).json({ message: "Internal Server Error", data: error.message });
+    res.status(500).json({ message: error?.message || "Internal Server Error", error: error?.stack });
   }finally{
     WrappidLogger.logFunctionEnd("checkLoginController");
   }
@@ -41,7 +41,7 @@ export const registerWithPasswordController = async(req: Request<RequestBody<Reg
     const {status, resData } = await registerWithPasswordFunc(identifier, password, confirmPassWord, otp, deviceId, devInfo, originalUrl);
     res.status(status).json({...resData});
   } catch (error:any) {
-    res.status(500).json({ message: "Internal Server Error", data: error.message });
+    res.status(500).json({ message: error?.message || "Internal Server Error", error: error?.stack });
   }finally{
     WrappidLogger.logFunctionEnd("registerWithPasswordController");
   }
@@ -64,7 +64,7 @@ export const loginWithPasswordController = async(req: Request<RequestBody<LoginW
     const {status, resData} = await loginWithPasswordFunc(identifier, password, deviceId, devInfo, originalUrl);
     res.status(status).json({...resData});
   } catch (error:any) {
-    res.status(500).json({ message: "Internal Server Error", data: error.message });
+    res.status(500).json({ message: error?.message || "Internal Server Error", error: error?.stack });
   }finally{
     WrappidLogger.logFunctionEnd("loginWithPasswordController");
   }
@@ -87,7 +87,7 @@ export const loginWithOtpController = async(req: Request<RequestBody<LoginWithOt
     const {status, resData} = await loginWithOtpFunc(identifier, otp, deviceId, devInfo, originalUrl);
     res.status(status).json({...resData});
   } catch (error:any) {
-    res.status(500).json({ message: "Internal Server Error", data: error.message });
+    res.status(500).json({ message: error?.message || "Internal Server Error", error: error?.stack });
   }finally{
     WrappidLogger.logFunctionEnd("loginWithOtpController");
   }
@@ -110,7 +110,7 @@ export const resetPasswordController = async(req: Request<RequestBody<ResetPass>
     const {status, resData} = await resetPasswordFunc(identifier, password, confirmPassword, otp, deviceId, devInfo, originalUrl);
     res.status(status).json({...resData});
   } catch (error:any) {
-    res.status(500).json({ message: "Internal Server Error", data: error.message });
+    res.status(500).json({ message: error?.message || "Internal Server Error", error: error?.stack });
   }finally{
     WrappidLogger.logFunctionEnd("resetPasswordController");
   }
@@ -133,7 +133,7 @@ export const urlLoginController = async(req: Request, res: Response<ResponseBody
       refreshToken: "",
       sessionId: ""} });
   } catch (error:any) {
-    res.status(500).json({ message: "Internal Server Error", data: error.message });
+    res.status(500).json({ message: error?.message || "Internal Server Error", error: error?.stack });
   }finally{
     WrappidLogger.logFunctionEnd("urlLoginController");
   }
@@ -154,7 +154,7 @@ export const logoutController = async(req: UserRequest, res: Response<ResponseBo
     const {status, message} = await logoutFunc(userId, deviceId);
     res.status(status).json({ message: "Succesfull operation", data: { message: message} });
   } catch (error:any) {
-    res.status(500).json({ message: "Internal Server Error", data: error.message });
+    res.status(500).json({ message: error?.message || "Internal Server Error", error: error?.stack });
   }finally{
     WrappidLogger.logFunctionEnd("logoutController");
   }
@@ -175,7 +175,7 @@ export const refreshTokenController = async(req: Request<RequestBody<{refreshTok
     const{ status, accessToken} = await refreshTokenFunc(refreshToken, deviceId);
     res.status(status).json({ message: "Refresh token successful", data: { accessToken: accessToken}});
   } catch (error:any) {
-    res.status(500).json({ message: "Internal Server Error", data: error.message });
+    res.status(500).json({ message: error?.message || "Internal Server Error", error: error?.stack });
   }finally{
     WrappidLogger.logFunctionEnd("refreshTokenController");
   }
@@ -194,7 +194,7 @@ export const sentOtpController = async(req: Request<RequestBody<SenOtpBody>>, re
     const {status, message} = await sentOtpFunc(identifier, serviceName, userID);
     res.status(status).json({ message: "Succesfull operation", data: { message: message} });
   } catch (error:any) {
-    res.status(500).json({ message: "Internal Server Error", data: error.message });
+    res.status(500).json({ message: error?.message || "Internal Server Error", error: error?.stack });
   }finally{
     WrappidLogger.logFunctionEnd("sentOtpController");
   }

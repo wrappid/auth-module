@@ -21,7 +21,8 @@ interface RequestBody<T> {
 }
 
 interface ResponseBody<T> {
-  data: T;
+  data?: T;
+  error?: Error;
   message?: string;
 }
 
@@ -90,19 +91,8 @@ interface SenOtpBody {
   userID?:number;
 }
 
-export type{
-  IUserPersonData,
-  IApiResponse,
-  RequestBody,
-  ResponseBody,
-  IUserAuthData,
-  Register,
-  LogoutResponse,
-  RefreshToken,
-  RegisterWithPass,
-  LoginWithOtp,
-  LoginWithPass,
-  ResetPass,
-  UserRequest,
-  SenOtpBody
+export type {
+  IApiResponse, IUserAuthData, IUserPersonData, LoginWithOtp,
+  LoginWithPass, LogoutResponse,
+  RefreshToken, Register, RegisterWithPass, RequestBody, ResetPass, ResponseBody, SenOtpBody, UserRequest
 };

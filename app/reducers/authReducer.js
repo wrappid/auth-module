@@ -15,7 +15,6 @@ import {
   CHECK_LOGIN_SUCCESS_UNREGISTERED,
   CLIENT_INFORMATION_FETCH_ERROR,
   CLIENT_INFORMATION_FETCH_SUCCESS,
-  GET_PROFILE_BASIC_SUCCESS,
   GET_ROLE_PERMISSION_ERROR,
   GET_ROLE_PERMISSION_LOADING,
   GET_ROLE_PERMISSION_SUCCESS,
@@ -356,12 +355,6 @@ const authReducer = (state = initState, action) => {
         checkLoginOrRegisterLoading: false,
         checkLoginOrRegisterMsg    : action.message,
         checkLoginOrRegisterSuccess: false,
-      };
-
-    case GET_PROFILE_BASIC_SUCCESS:
-      return {
-        ...state,
-        photo: action?.payload?.data?.data?.photoUrl,
       };
 
     case SAVE_NAV_DATA:
