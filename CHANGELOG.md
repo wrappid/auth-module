@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.35](https://https//github.com/wrappid/wrappid-module/compare/v0.0.34...v0.0.35) (2024-11-02)
+
+
+### Features
+
+* **core:** :sparkles: auth api restructure ([de592c5](https://https//github.com/wrappid/wrappid-module/commit/de592c520ea0167460304b90189f5b46bd4e7de0)), closes [#129](https://https//github.com/wrappid/wrappid-module/issues/129)
+* **global:** :sparkles: auth service code restructure ([27b9664](https://https//github.com/wrappid/wrappid-module/commit/27b9664e13b88a85187a9bab3542cd48858bfbe8)), closes [#129](https://https//github.com/wrappid/wrappid-module/issues/129)
+* **global:** :sparkles: auth structure change impact handling ([5e9da73](https://https//github.com/wrappid/wrappid-module/commit/5e9da736180f2ddefb8b28fe851c5e9b2dd2e8c7)), closes [#129](https://https//github.com/wrappid/wrappid-module/issues/129)
+* **global:** :sparkles: sentotp api added and separeate register and resetpaswword comp ([452a0ea](https://https//github.com/wrappid/wrappid-module/commit/452a0ea986fa587e99097a3b37f701c0412362fb)), closes [#129](https://https//github.com/wrappid/wrappid-module/issues/129)
+
+
+### Bug Fixes
+
+* **core:** :ambulance: fix check login response ([09651b1](https://https//github.com/wrappid/wrappid-module/commit/09651b1d49111f722d78ffb02e900dc2179d30df)), closes [#129](https://https//github.com/wrappid/wrappid-module/issues/129)
+
 ### [0.0.34](https://https//github.com/wrappid/wrappid-module/compare/v0.0.33...v0.0.34) (2024-10-31)
 
 
