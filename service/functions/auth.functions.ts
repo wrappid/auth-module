@@ -4,6 +4,7 @@ import {
   coreConstant,
   databaseActions,
   databaseProvider,
+  GenericObject,
   WrappidLogger,
 } from "@wrappid/service-core";
 import bcrypt from "bcrypt";
@@ -35,7 +36,14 @@ const checkUserFunc = async (identifier: string): Promise<IApiResponse> => {
       if (personData && personData?.id <= 0) {
         throw new Error("Person data not found");
       }
-      const personMetaData = await databaseActions.findAll("application", "PersonMetas", { where: { parentID: personData.id } });
+      
+      const FunctionsRegistry: GenericObject = ApplicationContext.getContext(coreConstant.registry.ROUTES_REGISTRY);
+      
+      const personMetaData = await FunctionsRegistry["getMetaDataJSON"]("PersonMetas", personData.id);
+      if (!personMetaData || Object.keys(personMetaData).length <= 0) {
+        throw new Error("Person meta data not found");
+      }
+
       returnData = {
         status: 200,
         resData: {
@@ -431,12 +439,6 @@ const sentOtpFunc = async (identifier:string, serviceName:string, userID?:any ) 
 
 
 export {
-  checkUserFunc,
-  registerWithPasswordFunc,
-  loginWithPasswordFunc,
-  loginWithOtpFunc,
-  resetPasswordFunc,
-  logoutFunc,
-  refreshTokenFunc,
-  sentOtpFunc
+  checkUserFunc, loginWithOtpFunc, loginWithPasswordFunc, logoutFunc,
+  refreshTokenFunc, registerWithPasswordFunc, resetPasswordFunc, sentOtpFunc
 };
