@@ -376,6 +376,45 @@ async function createLoginLogs(path: string, userId: number, extraInfo: any = "{
 
 
 
+/**
+* Determines the appropriate communication template based on identifier type and service.
+* 
+* @param {string} identifierType - Type of identifier ('email' or 'phone')
+* @param {string} serviceName - The service requesting the template
+*   Supported services:
+*   - 'loginWithOtp': For OTP-based login
+*   - 'reset': For password reset
+*   - 'register': For new user registration
+* 
+* @returns {Promise<string>} A promise that resolves to the template name
+* 
+* @throws {Error} Propagates any errors that occur during template selection
+* 
+* @description
+* This function performs the following operations:
+* 1. Logs function entry
+* 2. Determines template based on identifier type:
+*    For Email:
+*    - Login OTP: SENT_OTP_LOGIN_WITH_OTP_MAIL_EN
+*    - Reset Password: SENT_OTP_RESET_PASSWORD_MAIL_EN
+*    - Registration: SENT_OTP_MAIL_EN
+*    
+*    For Phone:
+*    - Login OTP: SENT_OTP_LOGIN_WITH_OTP_SMS_EN
+*    - Reset Password: SENT_OTP_RESET_PASSWORD_OTP_SMS_EN
+*    - Registration: SENT_OTP_SMS_EN
+* 3. Logs function exit
+* 
+* Template Selection:
+* - Uses separate templates for email and SMS
+* - Defaults to basic OTP template if service is not recognized
+* - All templates are in English ('EN' suffix)
+* - Templates are defined in communication constants
+* 
+* Note: The function uses constants from the application's
+* constant configuration for both contact types and
+* communication template identifiers.
+*/
 async function getTemplateName(identifierType:string, serviceName:string) {
   try {
     WrappidLogger.logFunctionStart("getTemplateID");
