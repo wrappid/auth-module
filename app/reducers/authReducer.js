@@ -272,6 +272,7 @@ const authReducer = (state = initState, action) => {
         checkLoginOrRegisterLoading: false,
         checkLoginOrRegisterMsg    : null,
         checkLoginOrRegisterSuccess: true,
+        identifier                 : action.payload.data.identifier,
         name                       : action.payload.data.name,
         photo                      : action.payload.data.photoUrl,
       };
@@ -284,6 +285,7 @@ const authReducer = (state = initState, action) => {
         checkLoginOrRegisterLoading: false,
         checkLoginOrRegisterMsg    : action.message,
         checkLoginOrRegisterSuccess: true,
+        identifier                 : action.payload.data.identifier,
       };
 
     case NAVIGATE_TO_OTP_LOGIN_LOADING:

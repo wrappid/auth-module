@@ -36,8 +36,8 @@ const LoginWithPassword = () => {
     // navigateToOtpSuccess,
     // checkLoginOrRegisterSuccess,
     // authNextPage,
+    identifier,
     name,
-    navData,
     photo,
     uid,
     accessToken
@@ -135,9 +135,7 @@ const LoginWithPassword = () => {
           styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.COLOR.TEXT_PRIMARY]}
         >
           {stringUtils.maskEmailOrPhone(
-            navData?.identifier
-              ? navData?.identifier
-              : ""
+            identifier
           )}
         </CoreTypographyBody2>
 

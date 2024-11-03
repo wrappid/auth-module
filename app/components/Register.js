@@ -36,7 +36,7 @@ const Register = () => {
   const auth = useSelector(state => state.auth);
   const routeRegistry = React.useContext(CoreRoutesContext);
 
-  const { authNextPage, navData, uid, accessToken } = auth;
+  const { authNextPage, uid, accessToken, identifier } = auth;
 
   let authenticated = uid && accessToken ? true : false;
 
@@ -89,11 +89,11 @@ const Register = () => {
           hideSeeMore={true}
 
         >
-          {" " + stringUtils.maskEmailOrPhone(navData?.identifier)}
+          {" " + stringUtils.maskEmailOrPhone(identifier)}
         </CoreTypographyBody2>
 
         <CoreTypographyBody2 component="span">
-          {`. Please enter the One Time Password (OTP) to verify your ${isNaN(navData?.identifier) ? " email." : " phone."
+          {`. Please enter the One Time Password (OTP) to verify your ${isNaN(identifier) ? " email." : " phone."
           }`}
         </CoreTypographyBody2>
       </CoreTypographyBody2>
@@ -118,13 +118,13 @@ const Register = () => {
     <>
       <CoreLayoutItem id={AuthLayout.PLACEHOLDER.CONTENT}>
         <CoreH1 variant="h5" styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.COLOR.TEXT_PRIMARY]}>
-          {`Verify your${isNaN(navData?.identifier) ? " email" : " phone"
+          {`Verify your${isNaN(identifier) ? " email" : " phone"
           }`}
         </CoreH1>
 
         {authNextPage === routeRegistry.register?.url ? (<>
           <CoreTypographyBody1 styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.COLOR.TEXT_PRIMARY]}>
-            {`Verify your${isNaN(navData?.identifier) ? " email" : " phone"
+            {`Verify your${isNaN(identifier) ? " email" : " phone"
             } through OTP`}
           </CoreTypographyBody1>
 
@@ -153,7 +153,7 @@ const Register = () => {
           formId="register"
           mode="edit"
           authenticated={false}
-          initProps={{ otp: { to: navData?.identifier } }}
+          initProps={{ otp: { to: identifier } }}
         />
 
         {authNextPage === routeRegistry?.register?.url && (

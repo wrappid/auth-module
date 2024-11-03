@@ -106,16 +106,7 @@ const checkUserExistance = async (identifierType:string, identifier:string)=>{
 const createUser = async (identifierType:string, identifier: string):Promise<IApiResponse> => {
   try {
     WrappidLogger.logFunctionStart("createUser");
-    let returnData:IApiResponse = {
-      status: 500,
-      resData: {
-        message: "",
-        data: {
-          name: "",
-          photoUrl: ""
-        }
-      }
-    };
+    let returnData:IApiResponse = {} as IApiResponse;
     await databaseProvider.application.sequelize.transaction(
       async (transaction: Transaction) => {
         const useradta = await databaseActions.create("application", "Users", { [identifierType]: identifier}, { transaction });
@@ -131,7 +122,8 @@ const createUser = async (identifierType:string, identifier: string):Promise<IAp
             message:"User created successfully",
             data:{
               name: personData.firstName,
-              photoUrl: personData.photoUrl
+              photoUrl: personData.photoUrl,
+              "identifier": identifier
             }
           }
         };

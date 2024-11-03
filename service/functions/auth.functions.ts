@@ -11,7 +11,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import otpGenerator from "otp-generator";
 import { IApiResponse, LogoutResponse, RefreshToken, Register } from "../types/auth.types";
-import { checkOtp, createSessionAndLogin, getIdentifierType, getTemplateName } from "./auth.helper.functions";
+import { checkOtp, createSessionAndLogin, formatPhoneNumber, getIdentifierType, getTemplateName } from "./auth.helper.functions";
 import { checkUserExistance, createUser } from "./user.function";
 
 
@@ -30,6 +30,9 @@ const checkUserFunc = async (identifier: string): Promise<IApiResponse> => {
     WrappidLogger.logFunctionStart("checkUser");
     let returnData: IApiResponse;
     const identifierType: string = await getIdentifierType(identifier);
+    if (identifierType === "phone") {
+      identifier = formatPhoneNumber(identifier);
+    }
     const data = await checkUserExistance(identifierType, identifier);
     if (data) {
       const personData = await databaseActions.findOne("application", "Persons", { where: { userId: data.id } });
@@ -50,7 +53,8 @@ const checkUserFunc = async (identifier: string): Promise<IApiResponse> => {
           message: "User already exists",
           data: {
             name: personMetaData.firstName,
-            photoUrl: personMetaData.photoUrl
+            photoUrl: personMetaData.photoUrl,
+            "identifier": identifier
           }
         }
       };
@@ -109,6 +113,9 @@ const registerWithPasswordFunc = async (identifier: string, password: string, co
       throw new Error("Passwords do not match");
     }
     const identifierType: string = await getIdentifierType(identifier);
+    if (identifierType === "phone") {
+      identifier = formatPhoneNumber(identifier);
+    }
     const userData = await checkUserExistance(identifierType, identifier);
     if (!userData) {
       throw new Error("User does not exist");
@@ -168,6 +175,9 @@ const loginWithPasswordFunc = async (identifier: string, password: string, devic
   try {
     let returnData = {} as Register;
     const identifierType: string = await getIdentifierType(identifier);
+    if (identifierType === "phone") {
+      identifier = formatPhoneNumber(identifier);
+    }
     const userData = await checkUserExistance(identifierType, identifier);
     if (!userData) {
       throw new Error("User does not exist");
@@ -227,6 +237,9 @@ const loginWithOtpFunc = async (identifier: string, otp: string, deviceId: strin
     WrappidLogger.logFunctionStart("loginWithOtpFunc");
     let returnData = {} as Register;
     const identifierType: string = await getIdentifierType(identifier);
+    if (identifierType === "phone") {
+      identifier = formatPhoneNumber(identifier);
+    }
     const userData = await checkUserExistance(identifierType, identifier);
     if (!userData) {
       throw new Error("User does not exist");
@@ -294,6 +307,9 @@ const resetPasswordFunc = async (identifier: string, password: string, confirmPa
       throw new Error("Passwords do not match");
     }
     const identifierType: string = await getIdentifierType(identifier);
+    if (identifierType === "phone") {
+      identifier = formatPhoneNumber(identifier);
+    }
     const userData = await checkUserExistance(identifierType, identifier);
     if (!userData) {
       throw new Error("User does not exist");
@@ -553,6 +569,9 @@ const sentOtpFunc = async (identifier:string, serviceName:string, userID?:any ) 
   try {
     WrappidLogger.logFunctionStart("sentOtpFunc");
     let identifierType: string = await getIdentifierType(identifier);
+    if (identifierType === "phone") {
+      identifier = formatPhoneNumber(identifier);
+    }
     // If userID not proveide
     if(userID === undefined){
       userID = null;

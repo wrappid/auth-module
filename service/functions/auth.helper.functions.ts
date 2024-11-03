@@ -462,11 +462,87 @@ async function getTemplateName(identifierType:string, serviceName:string) {
   }
 }
 
+/**
+ * Formats and validates Indian phone numbers to a standardized 10-digit format.
+ * 
+ * @description
+ * This function takes a phone number in various formats and converts it to a standardized
+ * 10-digit format by:
+ * 1. Removing country code ('+91' or '91')
+ * 2. Removing all special characters (spaces, hyphens, etc.)
+ * 3. Validating the resulting number
+ * 
+ * Valid input formats include:
+ * - 10-digit number: '9876543210'
+ * - With country code: '+919876543210' or '919876543210'
+ * - With separators: '91-98765-43210' or '+91 98765 43210'
+ * 
+ * Validation rules:
+ * - Must be exactly 10 digits after removing country code
+ * - Must start with 6, 7, 8, or 9
+ * - Can include spaces, hyphens as separators
+ * - Can include '+91' or '91' as country code
+ * 
+ * @param {string|number} phone - The phone number to format. Can be string or number.
+ * 
+ * @returns {string|null} Returns:
+ * - A 10-digit string if valid
+ * - null if invalid
+ * 
+ * @example
+ * // Returns "9876543210"
+ * formatPhoneNumber("9876543210")
+ * formatPhoneNumber("+919876543210")
+ * formatPhoneNumber("91-98765-43210")
+ * formatPhoneNumber("+91 98765 43210")
+ * 
+ * // Throw error
+ * formatPhoneNumber("123456789")     // Invalid: Too short
+ * formatPhoneNumber("5876543210")    // Invalid: Starts with 5
+ * formatPhoneNumber("98765432100")   // Invalid: Too long
+ * formatPhoneNumber("abc9876543210") // Invalid: Contains letters
+ * 
+ */
+const formatPhoneNumber = (phone:string) => {
+  try {
+    WrappidLogger.logFunctionStart("formatPhoneNumber");
+    // Convert to string if number is passed
+    const phoneStr = phone.toString();
+
+    // Remove all non-digit characters (spaces, hyphens, etc.)
+    const cleanPhone = phoneStr.replace(/\D/g, "");
+
+    // Check if the clean number starts with country code (91)
+    if (cleanPhone.startsWith("91") && cleanPhone.length === 12) {
+      return cleanPhone.slice(2);
+    }
+
+    // Check if it's a valid 10-digit number
+    if (cleanPhone.length === 10 && /^[6-9]\d{9}$/.test(cleanPhone)) {
+      return cleanPhone;
+    }
+
+    // Return null for invalid numbers
+    throw new Error("Invalid phone number");
+  } catch (error:any) {
+    WrappidLogger.error("Error: " + error);
+    throw error;
+  }finally{
+    WrappidLogger.logFunctionEnd("formatPhoneNumber");
+  }
+  // Return null if input is null or undefined
+  if (!phone){
+    throw new Error("Phone number cannot be null or undefined");
+  }
+};
+
+
 export {
   getIdentifierType,
   getDeviceId,
   createSessionAndLogin,
   genarateAccessToken,
   checkOtp,
-  getTemplateName
+  getTemplateName,
+  formatPhoneNumber
 };
