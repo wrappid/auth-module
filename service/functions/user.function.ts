@@ -37,12 +37,13 @@ import { IApiResponse } from "../types/auth.types";
 * - Entry and exit points are logged
 * - Any errors are logged before being propagated
 */
-const checkUserExistance = async (identifierType:string, identifier:string)=>{
+const checkUserExistance = async (identifierType:string, identifier:string, status:string)=>{
   try {
     WrappidLogger.logFunctionStart("checkUser");
     const data = await databaseActions.findOne("application", "Users", {
       where: {
-        [identifierType]: identifier
+        [identifierType]: identifier,
+        _status: status
       }
     });
     return data;
@@ -106,29 +107,28 @@ const checkUserExistance = async (identifierType:string, identifier:string)=>{
 const createUser = async (identifierType:string, identifier: string):Promise<IApiResponse> => {
   try {
     WrappidLogger.logFunctionStart("createUser");
-    let returnData:IApiResponse = {} as IApiResponse;
-    await databaseProvider.application.sequelize.transaction(
-      async (transaction: Transaction) => {
-        const useradta = await databaseActions.create("application", "Users", { [identifierType]: identifier}, { transaction });
-        const personData = await databaseActions.create("application", "Persons", { userId: useradta.id }, { transaction });
-        await databaseActions.create("application", "PersonContacts", {data: identifier, personId: personData.id }, { transaction });
-        const role = ApplicationContext.getContext("config").wrappid.defaultUserRole || constant.userRoles.ROLE_DEVELOPER;
-        // Get the role id from the Roles table
-        const roleData = await databaseActions.findOne("application", "Roles", {where: {role: role} }, { transaction });
-        await databaseActions.create("application", "UserRoles", { roleID: roleData.id, userID: useradta.id, _status: constant.entityStatus.ACTIVE}, { transaction });
-        returnData = {
-          status:201,
-          resData:{
-            message:"User created successfully",
-            data:{
-              name: personData.firstName,
-              photoUrl: personData.photoUrl,
-              "identifier": identifier
-            }
-          }
-        };
-      });
-    return returnData;
+    const user = await databaseActions.findOne("application", "Users", {where:{ [identifierType]: identifier}});
+    if(!user){
+      await databaseProvider.application.sequelize.transaction(
+        async (transaction: Transaction) => {
+          const useradta = await databaseActions.create("application", "Users", { [identifierType]: identifier, _status: constant.entityStatus.NEW }, { transaction });
+          const personData = await databaseActions.create("application", "Persons", { userId: useradta.id, _status: constant.entityStatus.NEW }, { transaction });
+          await databaseActions.create("application", "PersonContacts", {data: identifier, type: identifierType, personId: personData.id, _status: constant.entityStatus.NEW }, { transaction });
+          const role = ApplicationContext.getContext("config").wrappid.defaultUserRole || constant.userRoles.ROLE_DEVELOPER;
+          // Get the role id from the Roles table
+          const roleData = await databaseActions.findOne("application", "Roles", {where: {role: role} }, { transaction });
+          await databaseActions.create("application", "UserRoles", { roleID: roleData.id, userID: useradta.id, _status: constant.entityStatus.ACTIVE}, { transaction });
+        });
+    }
+    return {
+      status:201,
+      resData:{
+        message:"User created successfully",
+        data:{
+          "identifier": identifier
+        }
+      }
+    };
   } catch (error: any) {
     WrappidLogger.error("Error: " + error);
     throw error;

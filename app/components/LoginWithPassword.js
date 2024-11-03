@@ -181,4 +181,3 @@ const LoginWithPassword = () => {
 };
 
 export default LoginWithPassword;
-
