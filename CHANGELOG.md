@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.39](https://https//github.com/wrappid/wrappid-module/compare/v0.0.38...v0.0.39) (2024-11-03)
+
+
+### Bug Fixes
+
+* **core:** :bug: confirmpassword field id change ([439340b](https://https//github.com/wrappid/wrappid-module/commit/439340b4cf4d98021d727fca958980afcab9cf40)), closes [#129](https://https//github.com/wrappid/wrappid-module/issues/129)
+* **core:** :bug: update _staus in multiple table ([f6499d3](https://https//github.com/wrappid/wrappid-module/commit/f6499d34494b91352e7914096f3b158cacadd9f3)), closes [#129](https://https//github.com/wrappid/wrappid-module/issues/129)
+* **global:** :bug: email or phone validaton fix ([6da38d9](https://https//github.com/wrappid/wrappid-module/commit/6da38d937817f6e72fdc3bc07838ad751e27e773)), closes [#129](https://https//github.com/wrappid/wrappid-module/issues/129)
+* **global:** :bug: validation message change ([b72358f](https://https//github.com/wrappid/wrappid-module/commit/b72358fb6b59522bcf063e846809d6bb0b196259)), closes [#129](https://https//github.com/wrappid/wrappid-module/issues/129)
+
 ### [0.0.38](https://https//github.com/wrappid/wrappid-module/compare/v0.0.37...v0.0.38) (2024-11-03)
 
 ### [0.0.37](https://https//github.com/wrappid/wrappid-module/compare/v0.0.36...v0.0.37) (2024-11-02)
