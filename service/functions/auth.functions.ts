@@ -70,11 +70,37 @@ const checkUserFunc = async (identifier: string): Promise<IApiResponse> => {
 
 
 /**
- * This function is used to register user with password
- * @param identifier 
- * @param password 
- * @param confirmPassword 
- * @param otp 
+ * Registers a user with a password and creates their initial session.
+ * 
+ * @param {string} identifier - The user's email or phone number for identification
+ * @param {string} password - The desired password for the account
+ * @param {string} confirmPassword - Password confirmation to ensure matching
+ * @param {string} otp - One-time password for verification
+ * @param {string} deviceId - Unique identifier for the user's device
+ * @param {string} devInfo - Device information/metadata
+ * @param {string} originalUrl - The original URL
+ * 
+ * @returns {Promise<Register>} A promise that resolves to an object containing:
+ *   - status: HTTP status code (200 for success)
+ *   - resData: Session and login information
+ * 
+ * @throws {Error} Throws an error in the following cases:
+ *   - "Passwords do not match" - If password and confirmPassword don't match
+ *   - "User does not exist" - If the identifier is not found in the system
+ *   - "Invalid otp" - If the provided OTP is incorrect or expired
+ * 
+ * @description
+ * This function performs the following operations:
+ * 1. Validates password match
+ * 2. Determines identifier type (email/phone)
+ * 3. Verifies user existence
+ * 4. Validates OTP
+ * 5. Hashes and updates password
+ * 6. Creates user session
+ * 7. Assigns basic user role (roleId: 1)
+ * 
+ * The function should be used in the password registration flow after initial user creation
+ * and OTP verification.
  */
 const registerWithPasswordFunc = async (identifier: string, password: string, confirmPassword: string, otp: string, deviceId: string, devInfo: string, originalUrl: string): Promise<Register> => {
   try {
@@ -105,18 +131,38 @@ const registerWithPasswordFunc = async (identifier: string, password: string, co
   } catch (error: any) {
     WrappidLogger.error(error);
     throw error;
+  }finally{
+    WrappidLogger.logFunctionEnd("registerWithPasswordFunc");
   }
 };
 
 
 /**
- * This function is used to login with password
- * @param identifier 
- * @param password 
- * @param originalUrl 
- * @param deviceId 
- * @param devInfo 
- * @returns 
+ * Authenticates a user with their identifier and password, and creates a login session.
+ * 
+ * @param {string} identifier - The user's email or phone number for identification
+ * @param {string} password - The user's password for authentication
+ * @param {string} deviceId - Unique identifier for the user's device
+ * @param {string} devInfo - Device information/metadata
+ * @param {string} originalUrl - The original URL for redirect after login
+ * 
+ * @returns {Promise<Register>} A promise that resolves to an object containing:
+ *   - status: HTTP status code (200 for success)
+ *   - resData: Session and login information
+ * 
+ * @throws {Error} Throws an error in the following cases:
+ *   - "User does not exist" - If the identifier is not found in the system
+ *   - "Invalid password" - If the provided password doesn't match stored hash
+ * 
+ * @description
+ * This function performs the following operations:
+ * 1. Determines identifier type (email/phone)
+ * 2. Verifies user existence in the system
+ * 3. Validates password against stored hash
+ * 4. Creates new login session with device information
+ * 
+ * The function implements standard password-based authentication flow
+ * and should be used as the primary login endpoint for password authentication.
  */
 const loginWithPasswordFunc = async (identifier: string, password: string, deviceId: string, devInfo: string, originalUrl: string): Promise<Register> => {
   try {
@@ -140,17 +186,41 @@ const loginWithPasswordFunc = async (identifier: string, password: string, devic
   } catch (error: any) {
     WrappidLogger.error(error);
     throw error;
+  }finally{
+    WrappidLogger.logFunctionEnd("loginWithPasswordFunc");
   }
 };
 
+
 /**
- * This function is used to login with otp
- * @param identifier
- * @param otp
- * @param originalUrl
- * @param deviceId
- * @param devInfo
- * @returns
+ * Authenticates a user using a one-time password (OTP) and creates a login session.
+ * 
+ * @param {string} identifier - The user's email or phone number for identification
+ * @param {string} otp - One-time password for authentication
+ * @param {string} deviceId - Unique identifier for the user's device
+ * @param {string} devInfo - Device information/metadata
+ * @param {string} originalUrl - The original URL for redirect after login
+ * 
+ * @returns {Promise<Register>} A promise that resolves to an object containing:
+ *   - status: HTTP status code (200 for success)
+ *   - resData: Session and login information
+ * 
+ * @throws {Error} Throws an error in the following cases:
+ *   - "User does not exist" - If the identifier is not found in the system
+ *   - "Invalid otp" - If the provided OTP is incorrect or expired
+ * 
+ * @description
+ * This function performs the following operations:
+ * 1. Logs function entry
+ * 2. Determines identifier type (email/phone)
+ * 3. Verifies user existence in the system
+ * 4. Validates the provided OTP
+ * 5. Creates new login session with device information
+ * 6. Logs function exit
+ * 
+ * The function implements OTP-based authentication flow and can be used as an
+ * alternative to password-based login or for two-factor authentication scenarios.
+ * All function execution is logged for debugging and monitoring purposes.
  */
 const loginWithOtpFunc = async (identifier: string, otp: string, deviceId: string, devInfo: string, originalUrl: string): Promise<Register> => {
   try {
@@ -182,16 +252,40 @@ const loginWithOtpFunc = async (identifier: string, otp: string, deviceId: strin
 
 
 /**
- * This function is used to reset password
- * @param identifier
- * @param password
- * @param confirmPassword
- * @param otp
- * @param deviceId
- * @param devInfo
- * @param originalUrl
- * @returns
- */
+* Resets a user's password using OTP verification and creates a new login session.
+* 
+* @param {string} identifier - The user's email or phone number for identification
+* @param {string} password - The new password to set
+* @param {string} confirmPassword - Password confirmation to ensure matching
+* @param {string} otp - One-time password for verification
+* @param {string} deviceId - Unique identifier for the user's device
+* @param {string} devInfo - Device information/metadata
+* @param {string} originalUrl - The original URL for redirect after reset
+* 
+* @returns {Promise<Register>} A promise that resolves to an object containing:
+*   - status: HTTP status code (200 for success)
+*   - resData: Session and login information
+* 
+* @throws {Error} Throws an error in the following cases:
+*   - "Passwords do not match" - If password and confirmPassword don't match
+*   - "User does not exist" - If the identifier is not found in the system
+*   - "Invalid otp" - If the provided OTP is incorrect or expired
+* 
+* @description
+* This function performs the following operations:
+* 1. Logs function entry
+* 2. Validates password match
+* 3. Determines identifier type (email/phone)
+* 4. Verifies user existence
+* 5. Validates OTP
+* 6. Hashes and updates the new password
+* 7. Creates new login session
+* 8. Logs function exit
+* 
+* The function implements a secure password reset flow with OTP verification
+* and automatically logs the user in after successful password reset.
+* All function execution is logged for debugging and monitoring purposes.
+*/
 const resetPasswordFunc = async (identifier: string, password: string, confirmPassword: string, otp: string, deviceId: string, devInfo: string, originalUrl: string): Promise<Register> => {
   try {
     WrappidLogger.logFunctionStart("resetPasswordFunc");
@@ -226,13 +320,39 @@ const resetPasswordFunc = async (identifier: string, password: string, confirmPa
 };
 
 
-
 /**
- * This function is used to logout
- * @param userId
- * @param deviceId
- * @returns
- */
+* Logs out a user by invalidating their session for the specified device.
+* 
+* @param {string} userId - The unique identifier of the user
+* @param {string} deviceId - The device identifier to logout from
+* 
+* @returns {Promise<LogoutResponse>} A promise that resolves to an object containing:
+*   - status: HTTP status code (200 for successful logout, 204 if no session found)
+*   - message: Description of the operation result
+* 
+* @throws {Error} Throws an error in the following cases:
+*   - "Database error in logout" - If session update fails
+* 
+* @description
+* This function performs the following operations:
+* 1. Logs function entry
+* 2. Retrieves all sessions for the user
+* 3. Finds the session matching the provided device ID
+* 4. Invalidates the session by clearing the refresh token
+* 5. Logs function exit
+* 
+* Response Status Codes:
+* - 200: Successfully logged out from the device
+* - 204: No active session found for the device
+* 
+* The function implements secure logout by:
+* - Matching hashed device IDs for verification
+* - Invalidating refresh tokens instead of deleting sessions
+* - Logging all operations for audit purposes
+* 
+* Note: The function only logs out from the specified device,
+* not all devices associated with the user.
+*/
 const logoutFunc = async (userId: string, deviceId: string):Promise<LogoutResponse> => {
   try {
     WrappidLogger.logFunctionStart("logoutFunc");
@@ -266,11 +386,47 @@ const logoutFunc = async (userId: string, deviceId: string):Promise<LogoutRespon
 
 
 /**
- * This function is used to generate new access token using refresh token
- * @param refreshToken
- * @param deviceId
- * @returns
- */
+* Refreshes the access token using a valid refresh token and device ID.
+* 
+* @param {string} refreshToken - The current refresh token
+* @param {string} deviceId - The device identifier for session validation
+* 
+* @returns {Promise<RefreshToken>} A promise that resolves to an object containing:
+*   - status: HTTP status code (200 for success)
+*   - accessToken: Newly generated access token
+* 
+* @throws {Error} Throws an error in the following cases:
+*   - "Refresh token expired" - If the provided refresh token is no longer valid
+*   - "Session not found" - If no active session exists for the user/device
+*   - "Invalid request" - If refresh token is missing
+*   - "Refresh token mismatch" - If provided token doesn't match stored token
+* 
+* @description
+* This function performs the following operations:
+* 1. Logs function entry
+* 2. Verifies the refresh token validity
+* 3. Extracts user ID from the refresh token
+* 4. Finds matching session(s) for user ID and device
+* 5. Validates device ID using bcrypt comparison
+* 6. Verifies refresh token matches stored token
+* 7. Retrieves user details
+* 8. Generates new access token
+* 9. Logs function exit
+* 
+* Security measures:
+* - Validates both refresh token and device ID
+* - Uses JWT verification for token validation
+* - Implements bcrypt comparison for device ID
+* - Checks token matches stored value
+* - Includes user roles in new access token
+* 
+* The new access token includes:
+* - User ID
+* - Email
+* - Phone
+* - Role ID
+* - Configured expiration time
+*/
 const refreshTokenFunc = async (refreshToken:string, deviceId:string):Promise<RefreshToken> => {
   try {
     WrappidLogger.logFunctionStart("refreshTokenFunc");
@@ -350,15 +506,49 @@ const refreshTokenFunc = async (refreshToken:string, deviceId:string):Promise<Re
 };
 
 
-
-
 /**
- * @description This function is used to send otp to user
- * @param identifier 
- * @param serviceName 
- * @param userID 
- * @returns 
- */
+* Generates and sends an OTP (One-Time Password) to a specified identifier (email/phone).
+* 
+* @param {string} identifier - The email or phone number to send OTP to
+* @param {string} serviceName - The service requesting OTP (e.g., 'login', 'registration')
+* @param {string} [userID] - Optional user ID for existing users
+* 
+* @returns {Promise<{status: number, message: string}>} A promise that resolves to:
+*   - status: HTTP status code (200 for success)
+*   - message: Description of operation result
+* 
+* @throws {Error} Throws an error in the following cases:
+*   - If communication service fails to send OTP
+*   - Any errors during template retrieval or database operations
+* 
+* @description
+* This function performs the following operations:
+* 1. Logs function entry
+* 2. Determines identifier type (email/phone)
+* 3. Retrieves appropriate template for communication
+* 4. Generates numeric OTP based on configured length
+* 5. Converts 'phone' type to 'sms' for communication service
+* 6. Sends OTP using communication service
+* 7. Deactivates any existing OTPs for the user/identifier
+* 8. Creates new active OTP record
+* 9. Logs function exit
+* 
+* OTP Generation Features:
+* - Configurable length
+* - Numeric only (no special chars, no alphabets)
+* - One active OTP per user/identifier
+* 
+* Security Measures:
+* - Deactivates previous OTPs before creating new ones
+* - Associates OTPs with both identifier and userID (if provided)
+* - Uses template-based communication
+* - Maintains OTP status tracking
+* 
+* Database Operations:
+* - Updates existing OTPs to inactive status
+* - Creates new OTP record with active status
+* - Stores recipient, OTP value, type, and user association
+*/
 const sentOtpFunc = async (identifier:string, serviceName:string, userID?:any ) => {
   try {
     WrappidLogger.logFunctionStart("sentOtpFunc");

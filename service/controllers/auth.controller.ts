@@ -14,8 +14,8 @@ import { IUserAuthData, IUserPersonData, LoginWithOtp, LoginWithPass, RegisterWi
 export const checkLoginController = async(req: Request<RequestBody<{ identifier: string;}>>, res: Response<ResponseBody<IUserPersonData>>)=> {
   try {
     WrappidLogger.logFunctionStart("checkLoginController");
-    const identifier = req.body.identifier;
-    const {status, resData } = await checkUserFunc(identifier);
+    const identifier = req.body?.identifier;
+    const {status, resData } = await checkUserFunc(identifier.toLowerCase());
     res.status(status).json({ ...resData });
   } catch (error:any) {
     res.status(500).json({ message: error?.message || "Internal Server Error", error: error?.stack });
@@ -38,7 +38,7 @@ export const registerWithPasswordController = async(req: Request<RequestBody<Reg
     const deviceId:string = await getDeviceId(req);
     const devInfo =  req.body?.devInfo || "{}";
     const originalUrl = req.originalUrl || "";
-    const {status, resData } = await registerWithPasswordFunc(identifier, password, confirmPassWord, otp, deviceId, devInfo, originalUrl);
+    const {status, resData } = await registerWithPasswordFunc(identifier.toLowerCase(), password, confirmPassWord, otp, deviceId, devInfo, originalUrl);
     res.status(status).json({...resData});
   } catch (error:any) {
     res.status(500).json({ message: error?.message || "Internal Server Error", error: error?.stack });
@@ -61,7 +61,7 @@ export const loginWithPasswordController = async(req: Request<RequestBody<LoginW
     const deviceId:string = await getDeviceId(req);
     const devInfo =  req.body?.devInfo || "{}";
     const originalUrl = req?.originalUrl || "";
-    const {status, resData} = await loginWithPasswordFunc(identifier, password, deviceId, devInfo, originalUrl);
+    const {status, resData} = await loginWithPasswordFunc(identifier.toLowerCase(), password, deviceId, devInfo, originalUrl);
     res.status(status).json({...resData});
   } catch (error:any) {
     res.status(500).json({ message: error?.message || "Internal Server Error", error: error?.stack });
@@ -84,7 +84,7 @@ export const loginWithOtpController = async(req: Request<RequestBody<LoginWithOt
     const deviceId:string = await getDeviceId(req);
     const devInfo = req.body?.devInfo || "{}";
     const originalUrl = req?.originalUrl || "";
-    const {status, resData} = await loginWithOtpFunc(identifier, otp, deviceId, devInfo, originalUrl);
+    const {status, resData} = await loginWithOtpFunc(identifier.toLowerCase(), otp, deviceId, devInfo, originalUrl);
     res.status(status).json({...resData});
   } catch (error:any) {
     res.status(500).json({ message: error?.message || "Internal Server Error", error: error?.stack });
@@ -107,7 +107,7 @@ export const resetPasswordController = async(req: Request<RequestBody<ResetPass>
     const deviceId:string = await getDeviceId(req);
     const devInfo = req.body?.devInfo || "{}";
     const originalUrl = req?.originalUrl || "";
-    const {status, resData} = await resetPasswordFunc(identifier, password, confirmPassword, otp, deviceId, devInfo, originalUrl);
+    const {status, resData} = await resetPasswordFunc(identifier.toLowerCase(), password, confirmPassword, otp, deviceId, devInfo, originalUrl);
     res.status(status).json({...resData});
   } catch (error:any) {
     res.status(500).json({ message: error?.message || "Internal Server Error", error: error?.stack });
@@ -150,7 +150,7 @@ export const logoutController = async(req: UserRequest, res: Response<ResponseBo
   try {
     WrappidLogger.logFunctionStart("logoutController");
     const deviceId:string = await getDeviceId(req);
-    const userId = req.user.userId;
+    const userId = req?.user?.userId;
     const {status, message} = await logoutFunc(userId, deviceId);
     res.status(status).json({ message: "Succesfull operation", data: { message: message} });
   } catch (error:any) {
@@ -191,7 +191,7 @@ export const sentOtpController = async(req: Request<RequestBody<SenOtpBody>>, re
   try {
     WrappidLogger.logFunctionStart("sentOtpController");
     const { identifier, serviceName, userID } = req.body;
-    const {status, message} = await sentOtpFunc(identifier, serviceName, userID);
+    const {status, message} = await sentOtpFunc(identifier.toLowerCase(), serviceName, userID);
     res.status(status).json({ message: "Succesfull operation", data: { message: message} });
   } catch (error:any) {
     res.status(500).json({ message: error?.message || "Internal Server Error", error: error?.stack });
