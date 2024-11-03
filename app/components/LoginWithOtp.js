@@ -32,7 +32,8 @@ const LoginWithOtp = () => {
     // authNextPage,
     navData,
     uid,
-    accessToken
+    accessToken,
+    identifier
   } = auth;
 
   let authenticated = uid && accessToken ? true : false;
@@ -89,11 +90,11 @@ const LoginWithOtp = () => {
         <CoreH1 styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.COLOR.TEXT_PRIMARY]} variant="h5">
           Enter OTP
         </CoreH1><CoreTypographyBody2 styleClasses={[CoreClasses.COLOR.TEXT_PRIMARY]}>
-          {`We have sent you a verification code on your ${isNaN(navData?.identifier) ? " email " : " phone "} ${stringUtils.maskEmailOrPhone(
+          {`We have sent you a verification code on your ${isNaN(identifier) ? " email " : " phone "} ${stringUtils.maskEmailOrPhone(
             navData?.identifier
               ? navData?.identifier
               : ""
-          )}.\nPlease enter the One Time Password (OTP) to verify your ${isNaN(navData.identifier) ? " email." : " phone."}`}
+          )}.\nPlease enter the One Time Password (OTP) to verify your ${isNaN(identifier) ? " email." : " phone."}`}
         </CoreTypographyBody2><CoreBox
           styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.MARGIN.MB1]}
         >

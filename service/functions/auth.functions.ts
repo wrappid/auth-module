@@ -10,8 +10,10 @@ import {
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import otpGenerator from "otp-generator";
+import { Transaction } from "sequelize";
+import constant from "../constants/constants";
 import { IApiResponse, LogoutResponse, RefreshToken, Register } from "../types/auth.types";
-import { checkOtp, createSessionAndLogin, getIdentifierType, getTemplateName } from "./auth.helper.functions";
+import { checkOtp, createSessionAndLogin, formatPhoneNumber, getIdentifierType, getTemplateName } from "./auth.helper.functions";
 import { checkUserExistance, createUser } from "./user.function";
 
 
@@ -30,7 +32,10 @@ const checkUserFunc = async (identifier: string): Promise<IApiResponse> => {
     WrappidLogger.logFunctionStart("checkUser");
     let returnData: IApiResponse;
     const identifierType: string = await getIdentifierType(identifier);
-    const data = await checkUserExistance(identifierType, identifier);
+    if (identifierType === "phone") {
+      identifier = formatPhoneNumber(identifier);
+    }
+    const data = await checkUserExistance(identifierType, identifier, constant.entityStatus.ACTIVE);
     if (data) {
       const personData = await databaseActions.findOne("application", "Persons", { where: { userId: data.id } });
       if (personData && personData?.id <= 0) {
@@ -50,7 +55,8 @@ const checkUserFunc = async (identifier: string): Promise<IApiResponse> => {
           message: "User already exists",
           data: {
             name: personMetaData.firstName,
-            photoUrl: personMetaData.photoUrl
+            photoUrl: personMetaData.photoUrl,
+            "identifier": identifier
           }
         }
       };
@@ -104,12 +110,14 @@ const checkUserFunc = async (identifier: string): Promise<IApiResponse> => {
  */
 const registerWithPasswordFunc = async (identifier: string, password: string, confirmPassword: string, otp: string, deviceId: string, devInfo: string, originalUrl: string): Promise<Register> => {
   try {
-    let returnData = {} as Register;
     if (password !== confirmPassword) {
       throw new Error("Passwords do not match");
     }
     const identifierType: string = await getIdentifierType(identifier);
-    const userData = await checkUserExistance(identifierType, identifier);
+    if (identifierType === "phone") {
+      identifier = formatPhoneNumber(identifier);
+    }
+    const userData = await checkUserExistance(identifierType, identifier, constant.entityStatus.NEW);
     if (!userData) {
       throw new Error("User does not exist");
     }
@@ -119,15 +127,20 @@ const registerWithPasswordFunc = async (identifier: string, password: string, co
       throw new Error("Invalid otp");
     } else {
       const hashedPassword = await bcrypt.hash(password, 9); // Hash the password
-      await databaseActions.update("application", "Users", { password: hashedPassword }, { where: { id: userData.id } }); // Update the password
-      const data = await createSessionAndLogin(userData, originalUrl, deviceId, devInfo);
-      await databaseActions.create("application", "UserRoles", { userId: userData.id, roleId: 1 }); 
-      returnData = {
-        status: 200,
-        resData: data
-      };
+      await databaseProvider.application.sequelize.transaction(
+        async (transaction: Transaction) => {
+          await databaseActions.update("application", "Users", { password: hashedPassword, _status:constant.entityStatus.ACTIVE }, { where: { id: userData.id } }, {transaction}); // Update the password
+          await databaseActions.update("application", "Persons", { _status:constant.entityStatus.ACTIVE }, { where: { userId: userData.id } }, {transaction});
+          const personData = await databaseActions.findOne("application", "Persons", { where: { userId: userData.id } }, {transaction});
+          await databaseActions.update("application", "PersonContacts", { _status:constant.entityStatus.ACTIVE, verified:true, primaryFlag:true }, { where: { personId: personData.id, type: identifierType, data:identifier } },{transaction});
+          await databaseActions.create("application", "UserRoles", { userId: userData.id, roleId: 1 }); 
+        });
     }
-    return returnData;
+    const data = await createSessionAndLogin(userData, originalUrl, deviceId, devInfo);
+    return{
+      status: 200,
+      resData: data
+    };
   } catch (error: any) {
     WrappidLogger.error(error);
     throw error;
@@ -168,7 +181,10 @@ const loginWithPasswordFunc = async (identifier: string, password: string, devic
   try {
     let returnData = {} as Register;
     const identifierType: string = await getIdentifierType(identifier);
-    const userData = await checkUserExistance(identifierType, identifier);
+    if (identifierType === "phone") {
+      identifier = formatPhoneNumber(identifier);
+    }
+    const userData = await checkUserExistance(identifierType, identifier, constant.entityStatus.ACTIVE);
     if (!userData) {
       throw new Error("User does not exist");
     }
@@ -227,7 +243,10 @@ const loginWithOtpFunc = async (identifier: string, otp: string, deviceId: strin
     WrappidLogger.logFunctionStart("loginWithOtpFunc");
     let returnData = {} as Register;
     const identifierType: string = await getIdentifierType(identifier);
-    const userData = await checkUserExistance(identifierType, identifier);
+    if (identifierType === "phone") {
+      identifier = formatPhoneNumber(identifier);
+    }
+    const userData = await checkUserExistance(identifierType, identifier, constant.entityStatus.ACTIVE);
     if (!userData) {
       throw new Error("User does not exist");
     }
@@ -294,7 +313,10 @@ const resetPasswordFunc = async (identifier: string, password: string, confirmPa
       throw new Error("Passwords do not match");
     }
     const identifierType: string = await getIdentifierType(identifier);
-    const userData = await checkUserExistance(identifierType, identifier);
+    if (identifierType === "phone") {
+      identifier = formatPhoneNumber(identifier);
+    }
+    const userData = await checkUserExistance(identifierType, identifier, constant.entityStatus.ACTIVE);
     if (!userData) {
       throw new Error("User does not exist");
     }
@@ -553,6 +575,9 @@ const sentOtpFunc = async (identifier:string, serviceName:string, userID?:any ) 
   try {
     WrappidLogger.logFunctionStart("sentOtpFunc");
     let identifierType: string = await getIdentifierType(identifier);
+    if (identifierType === "phone") {
+      identifier = formatPhoneNumber(identifier);
+    }
     // If userID not proveide
     if(userID === undefined){
       userID = null;

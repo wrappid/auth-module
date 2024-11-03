@@ -1,7 +1,8 @@
 // Base response data interface for user-person relationship
 interface IUserPersonData {
-  name: string;
-  photoUrl: string;
+  name?: string;
+  photoUrl?: string;
+  identifier: string
 }
 
 // Base response data interface for user-person relationship

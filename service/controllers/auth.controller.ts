@@ -34,11 +34,11 @@ export const checkLoginController = async(req: Request<RequestBody<{ identifier:
 export const registerWithPasswordController = async(req: Request<RequestBody<RegisterWithPass>>, res: Response<ResponseBody<IUserAuthData>>)=> {
   try {
     WrappidLogger.logFunctionStart("registerWithPasswordController");
-    const { identifier, password, confirmPassWord, otp } = req.body;
+    const { identifier, password, confirmPassword, otp } = req.body;
     const deviceId:string = await getDeviceId(req);
     const devInfo =  req.body?.devInfo || "{}";
     const originalUrl = req.originalUrl || "";
-    const {status, resData } = await registerWithPasswordFunc(identifier.toLowerCase(), password, confirmPassWord, otp, deviceId, devInfo, originalUrl);
+    const {status, resData } = await registerWithPasswordFunc(identifier.toLowerCase(), password, confirmPassword, otp, deviceId, devInfo, originalUrl);
     res.status(status).json({...resData});
   } catch (error:any) {
     res.status(500).json({ message: error?.message || "Internal Server Error", error: error?.stack });
