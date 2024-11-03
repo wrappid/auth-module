@@ -2,13 +2,13 @@ import * as yup from "yup";
 
 const identifier = yup
   .string()
-  .matches(/^([0-9]{10}|[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+)$/);
+  .matches(/^([0-9]{10}|[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+)$/, "The email or phone number format is incorrect.");
 
 
 const checkLoginSchema = {
   body: yup
     .object({
-      identifier: identifier.required("identifier required"),
+      identifier: identifier.required("Either email or phone number, is necessary"),
     }).noUnknown().strict(),
   query:  yup.object().noUnknown().strict(),
   params:  yup.object().noUnknown().strict()
@@ -19,7 +19,7 @@ const registerSchema = {
   body: yup
     .object({
       // Email or phone validation
-      identifier:identifier.required("identifier required"),
+      identifier:identifier.required("Either email or phone number, is necessary"),
       // Password validation
       password: yup
         .string()
@@ -50,15 +50,10 @@ const registerSchema = {
 const loginwithPasswordSchema = {
   body: yup
     .object({
-      identifier: identifier.required("identifier required"),
+      identifier: identifier.required("Either email or phone number, is necessary"),
       password:  yup
         .string()
         .required("Password is required")
-        .min(8, "Password must be at least 8 characters")
-        .matches(
-          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
-          "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
-        ),
     }).noUnknown().strict(),
   query:  yup.object().noUnknown().strict(),
   params:  yup.object().noUnknown().strict()
@@ -68,7 +63,7 @@ const loginWithOtpSchema = {
   body: yup
     .object({
       // Email or phone validation
-      identifier: identifier.required("identifier required"),
+      identifier: identifier.required("Either email or phone number, is necessary"),
       // Otp validation
       otp: yup
         .string()
