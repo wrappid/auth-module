@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.40](https://https//github.com/wrappid/wrappid-module/compare/v0.0.39...v0.0.40) (2024-11-04)
+
+
+### Bug Fixes
+
+* **core:** :bug: code clean up ([0d437a5](https://https//github.com/wrappid/wrappid-module/commit/0d437a58bac51d6d4217948571ec382a5084197b)), closes [#129](https://https//github.com/wrappid/wrappid-module/issues/129)
+
 ### [0.0.39](https://https//github.com/wrappid/wrappid-module/compare/v0.0.38...v0.0.39) (2024-11-03)
 
 
