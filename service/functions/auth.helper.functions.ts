@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import DeviceDetector from "node-device-detector";
 import { Transaction } from "sequelize";
 import constant from "../constants/constants";
-import { IUserAuthData, ResponseBody } from "../types/auth.types";
+import { IUserAuthData, NameData, ResponseBody } from "../types/auth.types";
 
 // Custom type for contact validation results
 type ContactType = "email" | "phone";
@@ -270,6 +270,11 @@ async function createSessionAndLogin(userData:any, originalUrl:string, deviceId:
       throw new Error("Person meta data not found");
     }
 
+    const fullName = getFullName({
+      firstName : personMetaData?. firstName,
+      lastName  :personMetaData?.lastName,
+      middleName:personMetaData?. middleName,
+    });
 
     const roleData = await databaseActions.findOne("application", "UserRoles", { where: { userID: userData.id } });
     const { refreshToken, accessToken } = genarateAccessToken(
@@ -329,7 +334,7 @@ async function createSessionAndLogin(userData:any, originalUrl:string, deviceId:
                   emailVerified: primaryEmail[0]?.verified,
                   phone: primaryPhone[0]?.data,
                   phoneVerified: primaryPhone[0]?.verified,
-                  name: personMetaData.firstName,
+                  name: fullName,
                   photoUrl: personMetaData.photoUrl,
                 }
               };
@@ -367,7 +372,7 @@ async function createSessionAndLogin(userData:any, originalUrl:string, deviceId:
               emailVerified: primaryEmail[0]?.verified,
               phone: primaryPhone[0]?.data,
               phoneVerified: primaryPhone[0]?.verified,
-              name: personMetaData.firstName,
+              name: fullName,
               photoUrl: personMetaData.photoUrl,
             }
           };
@@ -382,6 +387,51 @@ async function createSessionAndLogin(userData:any, originalUrl:string, deviceId:
     throw error;
   }
 }
+
+
+/**
+ * Generates a full name string from the provided name components
+ * 
+ * @param data - Object containing name components
+ * @param data.firstName - First name of the person
+ * @param data.middleName - Middle name of the person
+ * @param data.lastName - Last name of the person
+ * 
+ * @returns A concatenated full name string with proper spacing.
+ *          Returns "Unnamed" if no name components are provided or if they're all empty.
+ * 
+ * @example
+ * ```typescript
+ * getFullName({ firstName: "John", lastName: "Doe" })
+ * // Returns: "John Doe"
+ * 
+ * getFullName({ firstName: "John", middleName: "William", lastName: "Doe" })
+ * // Returns: "John William Doe"
+ * 
+ * getFullName({})
+ * // Returns: "Unnamed"
+ * ```
+ */
+export function getFullName(data: NameData): string {
+  let name = "";
+
+  if (data?.firstName) {
+    name += data.firstName;
+  }
+  if (data?.middleName) {
+    name += " " + data.middleName;
+  }
+  if (data?.lastName) {
+    name += " " + data.lastName;
+  }
+  return name && name.length > 0 ? name : "Unnamed";
+}
+
+
+
+
+
+
 
 
 /**

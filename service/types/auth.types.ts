@@ -44,6 +44,11 @@ interface IUserAuthData {
   photoUrl:string;
 }
 
+interface NameData {
+  firstName?: string;
+  middleName?: string;
+  lastName?: string;
+}
 
 interface Register {
   status: number,
@@ -100,6 +105,6 @@ interface SenOtpBody {
 
 export type {
   IApiResponse, IUserAuthData, IUserPersonData, LoginWithOtp,
-  LoginWithPass, LogoutResponse,
+  LoginWithPass, LogoutResponse,NameData,
   RefreshToken, Register, RegisterWithPass, RequestBody, ResetPass, ResponseBody, SenOtpBody, UserRequest
 };
