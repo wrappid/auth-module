@@ -133,7 +133,6 @@ const registerWithPasswordFunc = async (identifier: string, password: string, co
           await databaseActions.update("application", "Persons", { _status:constant.entityStatus.ACTIVE }, { where: { userId: userData.id } }, {transaction});
           const personData = await databaseActions.findOne("application", "Persons", { where: { userId: userData.id } }, {transaction});
           await databaseActions.update("application", "PersonContacts", { _status:constant.entityStatus.ACTIVE, verified:true, primaryFlag:true }, { where: { personId: personData.id, type: identifierType, data:identifier } },{transaction});
-          await databaseActions.create("application", "UserRoles", { userId: userData.id, roleId: 1 }); 
         });
     }
     const data = await createSessionAndLogin(userData, originalUrl, deviceId, devInfo);
