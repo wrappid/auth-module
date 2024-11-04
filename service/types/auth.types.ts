@@ -36,6 +36,12 @@ interface IUserAuthData {
   refreshToken: 
   string; 
   sessionId: string;
+  email:string;
+  emailVerified:boolean;
+  phone:string;
+  phoneVerified:boolean;
+  name: string
+  photoUrl:string;
 }
 
 

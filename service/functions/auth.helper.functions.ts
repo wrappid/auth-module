@@ -1,4 +1,4 @@
-import { ApplicationContext, coreConstant, databaseActions, databaseProvider, WrappidLogger } from "@wrappid/service-core";
+import { ApplicationContext, coreConstant, databaseActions, databaseProvider, GenericObject, WrappidLogger } from "@wrappid/service-core";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import DeviceDetector from "node-device-detector";
@@ -242,6 +242,7 @@ async function createSessionAndLogin(userData:any, originalUrl:string, deviceId:
   try {
     WrappidLogger.logFunctionStart("createSessionAndLogin");
     let returnData = {} as ResponseBody<IUserAuthData>;
+
     const personData = await databaseActions.findOne(
       "application",
       "Persons",
@@ -250,6 +251,26 @@ async function createSessionAndLogin(userData:any, originalUrl:string, deviceId:
         where: { userId: userData.id },
       }
     );
+
+
+
+    // Find the primary contact records for the person
+    const personContacts = await databaseActions.findAll("application", "PersonContacts", {
+      where: { personId: personData.id, _status: coreConstant.entityStatus.ACTIVE, primaryFlag: true },
+    });
+    
+    // Extract the primary email and phone/WhatsApp information
+    const primaryEmail = personContacts.filter((entry: any) => entry.type === coreConstant.commType.EMAIL);
+    const primaryPhone = personContacts.filter((entry: any) => (entry.type === "phone" || entry.type === "whatsapp"));
+    
+    const FunctionsRegistry: GenericObject = ApplicationContext.getContext(coreConstant.registry.FUNCTIONS_REGISTRY);
+      
+    const personMetaData = await FunctionsRegistry["getMetaDataJSON"]("PersonMetas", personData.id);
+    if (!personMetaData || Object.keys(personMetaData).length <= 0) {
+      throw new Error("Person meta data not found");
+    }
+
+
     const roleData = await databaseActions.findOne("application", "UserRoles", { where: { userID: userData.id } });
     const { refreshToken, accessToken } = genarateAccessToken(
       userData.id,
@@ -304,6 +325,12 @@ async function createSessionAndLogin(userData:any, originalUrl:string, deviceId:
                   accessToken: accessToken,
                   refreshToken: refreshToken,
                   sessionId: currSession.id,
+                  email: primaryEmail[0]?.data,
+                  emailVerified: primaryEmail[0]?.verified,
+                  phone: primaryPhone[0]?.data,
+                  phoneVerified: primaryPhone[0]?.verified,
+                  name: personMetaData.firstName,
+                  photoUrl: personMetaData.photoUrl,
                 }
               };
             } else {
@@ -336,11 +363,19 @@ async function createSessionAndLogin(userData:any, originalUrl:string, deviceId:
               accessToken: accessToken,
               refreshToken: refreshToken,
               sessionId: newSession.id,
+              email: primaryEmail[0]?.data,
+              emailVerified: primaryEmail[0]?.verified,
+              phone: primaryPhone[0]?.data,
+              phoneVerified: primaryPhone[0]?.verified,
+              name: personMetaData.firstName,
+              photoUrl: personMetaData.photoUrl,
             }
           };
         }
       }
     );
+
+    //email, emailvarifed:boolean , phone, phonevarifed:boolean, name, photo
     return returnData;
   } catch (error:any) {
     WrappidLogger.error("Error: " + error);
