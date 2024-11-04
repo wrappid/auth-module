@@ -36,7 +36,7 @@ export default function CheckUserExist() {
             <CoreDomNavigate to={`/${authNextPage}`} />
           ) : (
             <>
-              <CoreStack spacing={5} styleClasses={[CoreClasses.PADDING.PT5, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER, CoreClasses.ALIGNMENT.ALIGN_ITEMS_CENTER]}>
+              <CoreStack spacing={5}>
                 <CoreForm
                   formId="checkUserExist"
                   mode="edit"

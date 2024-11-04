@@ -11,6 +11,7 @@ export default class DefaultModuleStyles extends DefaultCoreStyles {
       authContent: {
         ...this.defaultUtilityStyles.justifyContentCenter,
         ...this.defaultUtilityStyles.alignItemsCenter,
+        ...this.defaultUtilityStyles.textCenter,
         height: "90vh",
       },
       authContentBox: {
