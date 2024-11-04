@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.41](https://https//github.com/wrappid/wrappid-module/compare/v0.0.40...v0.0.41) (2024-11-04)
+
+
+### Bug Fixes
+
+* **core:** :zap: layout fix for auth pages ([ecfdaeb](https://https//github.com/wrappid/wrappid-module/commit/ecfdaebb2037b151e23e4ff7d4ab3d5e940d9089)), closes [#129](https://https//github.com/wrappid/wrappid-module/issues/129)
+
 ### [0.0.40](https://https//github.com/wrappid/wrappid-module/compare/v0.0.39...v0.0.40) (2024-11-04)
 
 
