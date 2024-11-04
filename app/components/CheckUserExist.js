@@ -1,16 +1,16 @@
 import React from "react";
 
 import {
+  CoreBox,
+  CoreClasses,
   CoreDomNavigate,
   CoreForm,
   CoreLayoutItem,
+  CoreStack,
   FacebookAuthComponent,
-  LinkedInAuthComponent,
   GithubAuthComponent,
-  CoreBox,
   GoogleAuthComponent,
-  CoreClasses,
-  CoreStack
+  LinkedInAuthComponent
 } from "@wrappid/core";
 import { WrappidDataContext } from "@wrappid/styles";
 import { useSelector } from "react-redux";
@@ -37,13 +37,11 @@ export default function CheckUserExist() {
           ) : (
             <>
               <CoreStack spacing={5} styleClasses={[CoreClasses.PADDING.PT5, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER, CoreClasses.ALIGNMENT.ALIGN_ITEMS_CENTER]}>
-                <CoreBox styleClasses={[CoreClasses.WIDTH.W_75]}>
-                  <CoreForm
-                    formId="checkUserExist"
-                    mode="edit"
-                    authenticated={false}
-                  />
-                </CoreBox>
+                <CoreForm
+                  formId="checkUserExist"
+                  mode="edit"
+                  authenticated={false}
+                />
 
                 {isEnable && (
 

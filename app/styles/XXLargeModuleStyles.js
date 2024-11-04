@@ -8,10 +8,10 @@ export default class XXLargeModuleStyles extends XXLargeCoreStyles {
   constructor() {
     super();
     this.style = {
-      /**************************************************
-       * Using XXLargeUtilityStyles example
-       *************************************************/
-      testWrappidStyleClass: { ...this.xxLargeUtilityStyles.devBorder },
+      
+      authContent   : {},
+      authContentBox: {},
+      authFooter    : {}
     };
   }
 }
