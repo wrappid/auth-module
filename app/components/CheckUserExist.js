@@ -15,8 +15,8 @@ import {
 import { WrappidDataContext } from "@wrappid/styles";
 import { useSelector } from "react-redux";
 
-import { ModuleRoute } from "../constants/app.constants";
 import AuthLayout from "./layout/AuthLayout";
+import { ModuleRoute } from "../constants/app.constants";
 
 export default function CheckUserExist() {
   const auth = useSelector((state) => state.auth);
