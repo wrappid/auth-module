@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-unresolved
 import { DefaultCoreStyles } from "@wrappid/core";
-import { DefaultUtilityStyles } from "@wrappid/styles";
+import { DefaultUtilityStyles, IMPORTANT } from "@wrappid/styles";
 
 export default class DefaultModuleStyles extends DefaultCoreStyles {
   defaultUtilityStyles = new DefaultUtilityStyles().style;
@@ -11,7 +11,11 @@ export default class DefaultModuleStyles extends DefaultCoreStyles {
       authContent: {
         ...this.defaultUtilityStyles.justifyContentCenter,
         ...this.defaultUtilityStyles.alignItemsCenter,
-        height: "90vh"
+        height: "90vh",
+      },
+      authContentBox: {
+        maxWidth: "75vw" + IMPORTANT,
+        minWidth: "75vw" + IMPORTANT
       },
       authFooter: {
         ...this.defaultUtilityStyles.p1,

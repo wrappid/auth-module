@@ -3,7 +3,7 @@
 import React, { useContext } from "react";
 
 import {
-  CoreBox, CoreClasses, CoreGrid, CoreImage, CoreImageBackground, CoreLayoutPlaceholder, CoreResourceContext, CoreTypographyBody1,
+  CoreBox, CoreClasses, CoreImage, CoreImageBackground, CoreLayoutPlaceholder, CoreResourceContext, CoreTypographyBody1,
   coreUseLocation,
   coreUseNavigate
 } from "@wrappid/core";
@@ -87,11 +87,14 @@ export default function AuthLayout() {
         resizeMode="cover"
         styleClasses={[CoreClasses.HEIGHT.VH_100, CoreClasses.OVERFLOW.OVERFLOW_HIDDEN]}>
 
-        <CoreGrid styleClasses={
+        <CoreBox styleClasses={
           [ModuleClasses.AUTH.CONTENT]
         }>
           <CoreLayoutPlaceholder
-            gridProps={{ gridSize: { md: 3, sm: 6 } }}
+            gridProps={{
+              gridSize    : { md: 3, sm: 6 },
+              styleClasses: [ModuleClasses.AUTH.CONTENT_BOX] 
+            }}
             key="authlayoutplaceholder"
             id={AuthLayout.PLACEHOLDER.CONTENT}
           >
@@ -104,7 +107,7 @@ export default function AuthLayout() {
                 : <CoreTypographyBody1>{ }</CoreTypographyBody1>}
             </CoreBox>
           </CoreLayoutPlaceholder>
-        </CoreGrid>
+        </CoreBox>
 
         <AuthCustomFooter key="authlayoutfooter" />
       </CoreImageBackground>

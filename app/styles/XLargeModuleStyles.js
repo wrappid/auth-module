@@ -4,16 +4,9 @@ export default class XLargeModuleStyles extends XLargeCoreStyles {
   constructor() {
     super();
     this.style = {
-      
-      authContainer: { ...this.xLargeUtilityStyles.h100 },
-      
-      authForm: { ...this.xLargeUtilityStyles.h100 },
-      
-      authFormContainer    : { width: "60%" },
-      /**************************************************
-       * Using XLargeUtilityStyles example
-       *************************************************/
-      testWrappidStyleClass: { ...this.xLargeUtilityStyles.devBorder },
+      authContent   : {},
+      authContentBox: {},
+      authFooter    : {}
     };
   }
 }
