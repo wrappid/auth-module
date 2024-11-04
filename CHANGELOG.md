@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.42](https://https//github.com/wrappid/wrappid-module/compare/v0.0.41...v0.0.42) (2024-11-04)
+
+
+### Bug Fixes
+
+* **core:** :bug: auth layout ([bf2364f](https://https//github.com/wrappid/wrappid-module/commit/bf2364f994f74baf8a20de27a5fb2ba1b8da55e1)), closes [#129](https://https//github.com/wrappid/wrappid-module/issues/129)
+* **core:** :recycle: code lint fix ([0ad6e81](https://https//github.com/wrappid/wrappid-module/commit/0ad6e81168829fd2c9fac264412db8e8a9fc6d31)), closes [#129](https://https//github.com/wrappid/wrappid-module/issues/129)
+
 ### [0.0.41](https://https//github.com/wrappid/wrappid-module/compare/v0.0.40...v0.0.41) (2024-11-04)
 
 

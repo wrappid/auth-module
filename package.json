@@ -1,6 +1,6 @@
 {
   "name": "auth-module",
-  "version": "0.0.41",
+  "version": "0.0.42",
   "description": "This is auth-module repository for wrappid-app and wrappid-service projects.",
   "main": "index.js",
   "scripts": {
