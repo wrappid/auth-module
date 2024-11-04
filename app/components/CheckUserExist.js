@@ -15,8 +15,8 @@ import {
 import { WrappidDataContext } from "@wrappid/styles";
 import { useSelector } from "react-redux";
 
-import AuthLayout from "./layout/AuthLayout";
 import { ModuleRoute } from "../constants/app.constants";
+import AuthLayout from "./layout/AuthLayout";
 
 export default function CheckUserExist() {
   const auth = useSelector((state) => state.auth);
@@ -36,7 +36,7 @@ export default function CheckUserExist() {
             <CoreDomNavigate to={`/${authNextPage}`} />
           ) : (
             <>
-              <CoreStack spacing={5} styleClasses={[CoreClasses.PADDING.PT5, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER, CoreClasses.ALIGNMENT.ALIGN_ITEMS_CENTER]}>
+              <CoreStack spacing={5}>
                 <CoreForm
                   formId="checkUserExist"
                   mode="edit"
