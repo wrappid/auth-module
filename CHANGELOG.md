@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.43](https://https//github.com/wrappid/wrappid-module/compare/v0.0.42...v0.0.43) (2024-11-05)
+
+
+### Features
+
+* **global:** :fire: all login function return full formatted name ([ca609aa](https://https//github.com/wrappid/wrappid-module/commit/ca609aab0b446c9e62e822a07a27f7d4d51fe691)), closes [#129](https://https//github.com/wrappid/wrappid-module/issues/129)
+* **global:** :fire: user data photo, email,phone update auth reducer ([570270a](https://https//github.com/wrappid/wrappid-module/commit/570270a82c2c0a4b63c26cdc523f0d57d2cdb184)), closes [#129](https://https//github.com/wrappid/wrappid-module/issues/129)
+
+
+### Bug Fixes
+
+* **core:** :zap: phone validation starts with 91 resolved ([0a13117](https://https//github.com/wrappid/wrappid-module/commit/0a13117d40fa7f1ef69b739d3f5e266d73bc539e)), closes [#129](https://https//github.com/wrappid/wrappid-module/issues/129)
+
 ### [0.0.42](https://https//github.com/wrappid/wrappid-module/compare/v0.0.41...v0.0.42) (2024-11-04)
 
 
