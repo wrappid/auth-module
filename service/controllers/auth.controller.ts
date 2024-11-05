@@ -131,7 +131,14 @@ export const urlLoginController = async(req: Request, res: Response<ResponseBody
       personId:1,
       accessToken: "`", 
       refreshToken: "",
-      sessionId: ""} });
+      sessionId: "",
+      email: "",
+      emailVerified: false,
+      phone: "",
+      phoneVerified: false,
+      name:"" ,
+      photoUrl:"" ,
+    } });
   } catch (error:any) {
     res.status(500).json({ message: error?.message || "Internal Server Error", error: error?.stack });
   }finally{

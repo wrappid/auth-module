@@ -1,10 +1,10 @@
-import { ApplicationContext, coreConstant, databaseActions, databaseProvider, WrappidLogger } from "@wrappid/service-core";
+import { ApplicationContext, coreConstant, databaseActions, databaseProvider, GenericObject, WrappidLogger } from "@wrappid/service-core";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import DeviceDetector from "node-device-detector";
 import { Transaction } from "sequelize";
 import constant from "../constants/constants";
-import { IUserAuthData, ResponseBody } from "../types/auth.types";
+import { IUserAuthData, NameData, ResponseBody } from "../types/auth.types";
 
 // Custom type for contact validation results
 type ContactType = "email" | "phone";
@@ -242,6 +242,7 @@ async function createSessionAndLogin(userData:any, originalUrl:string, deviceId:
   try {
     WrappidLogger.logFunctionStart("createSessionAndLogin");
     let returnData = {} as ResponseBody<IUserAuthData>;
+
     const personData = await databaseActions.findOne(
       "application",
       "Persons",
@@ -250,6 +251,31 @@ async function createSessionAndLogin(userData:any, originalUrl:string, deviceId:
         where: { userId: userData.id },
       }
     );
+
+
+
+    // Find the primary contact records for the person
+    const personContacts = await databaseActions.findAll("application", "PersonContacts", {
+      where: { personId: personData.id, _status: coreConstant.entityStatus.ACTIVE, primaryFlag: true },
+    });
+    
+    // Extract the primary email and phone/WhatsApp information
+    const primaryEmail = personContacts.filter((entry: any) => entry.type === coreConstant.commType.EMAIL);
+    const primaryPhone = personContacts.filter((entry: any) => (entry.type === "phone" || entry.type === "whatsapp"));
+    
+    const FunctionsRegistry: GenericObject = ApplicationContext.getContext(coreConstant.registry.FUNCTIONS_REGISTRY);
+      
+    const personMetaData = await FunctionsRegistry["getMetaDataJSON"]("PersonMetas", personData.id);
+    if (!personMetaData || Object.keys(personMetaData).length <= 0) {
+      throw new Error("Person meta data not found");
+    }
+
+    const fullName = getFullName({
+      firstName : personMetaData?. firstName,
+      lastName  :personMetaData?.lastName,
+      middleName:personMetaData?. middleName,
+    });
+
     const roleData = await databaseActions.findOne("application", "UserRoles", { where: { userID: userData.id } });
     const { refreshToken, accessToken } = genarateAccessToken(
       userData.id,
@@ -304,6 +330,12 @@ async function createSessionAndLogin(userData:any, originalUrl:string, deviceId:
                   accessToken: accessToken,
                   refreshToken: refreshToken,
                   sessionId: currSession.id,
+                  email: primaryEmail[0]?.data,
+                  emailVerified: primaryEmail[0]?.verified,
+                  phone: primaryPhone[0]?.data,
+                  phoneVerified: primaryPhone[0]?.verified,
+                  name: fullName,
+                  photoUrl: personMetaData.photoUrl,
                 }
               };
             } else {
@@ -336,17 +368,70 @@ async function createSessionAndLogin(userData:any, originalUrl:string, deviceId:
               accessToken: accessToken,
               refreshToken: refreshToken,
               sessionId: newSession.id,
+              email: primaryEmail[0]?.data,
+              emailVerified: primaryEmail[0]?.verified,
+              phone: primaryPhone[0]?.data,
+              phoneVerified: primaryPhone[0]?.verified,
+              name: fullName,
+              photoUrl: personMetaData.photoUrl,
             }
           };
         }
       }
     );
+
+    //email, emailvarifed:boolean , phone, phonevarifed:boolean, name, photo
     return returnData;
   } catch (error:any) {
     WrappidLogger.error("Error: " + error);
     throw error;
   }
 }
+
+
+/**
+ * Generates a full name string from the provided name components
+ * 
+ * @param data - Object containing name components
+ * @param data.firstName - First name of the person
+ * @param data.middleName - Middle name of the person
+ * @param data.lastName - Last name of the person
+ * 
+ * @returns A concatenated full name string with proper spacing.
+ *          Returns "Unnamed" if no name components are provided or if they're all empty.
+ * 
+ * @example
+ * ```typescript
+ * getFullName({ firstName: "John", lastName: "Doe" })
+ * // Returns: "John Doe"
+ * 
+ * getFullName({ firstName: "John", middleName: "William", lastName: "Doe" })
+ * // Returns: "John William Doe"
+ * 
+ * getFullName({})
+ * // Returns: "Unnamed"
+ * ```
+ */
+export function getFullName(data: NameData): string {
+  let name = "";
+
+  if (data?.firstName) {
+    name += data.firstName;
+  }
+  if (data?.middleName) {
+    name += " " + data.middleName;
+  }
+  if (data?.lastName) {
+    name += " " + data.lastName;
+  }
+  return name && name.length > 0 ? name : "Unnamed";
+}
+
+
+
+
+
+
 
 
 /**
