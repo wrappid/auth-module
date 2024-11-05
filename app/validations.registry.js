@@ -46,9 +46,9 @@ const identifier = yup
           
       let numberToValidate = cleanPhone;
 
-      if (cleanPhone.startsWith("+91")) {
+      if (cleanPhone.startsWith("+91") && cleanPhone.length === 13) {
         numberToValidate = cleanPhone.slice(3);
-      } else if (cleanPhone.startsWith("91")) {
+      } else if (cleanPhone.startsWith("0") && cleanPhone.length === 11) {
         numberToValidate = cleanPhone.slice(2);
       }
   
