@@ -129,10 +129,10 @@ const registerWithPasswordFunc = async (identifier: string, password: string, co
       const hashedPassword = await bcrypt.hash(password, 9); // Hash the password
       await databaseProvider.application.sequelize.transaction(
         async (transaction: Transaction) => {
-          await databaseActions.update("application", "Users", { password: hashedPassword, _status:constant.entityStatus.ACTIVE }, { where: { id: userData.id } }, {transaction}); // Update the password
-          await databaseActions.update("application", "Persons", { _status:constant.entityStatus.ACTIVE }, { where: { userId: userData.id } }, {transaction});
-          const personData = await databaseActions.findOne("application", "Persons", { where: { userId: userData.id } }, {transaction});
-          await databaseActions.update("application", "PersonContacts", { _status:constant.entityStatus.ACTIVE, verified:true, primaryFlag:true }, { where: { personId: personData.id, type: identifierType, data:identifier } },{transaction});
+          await databaseActions.update("application", "Users", { password: hashedPassword, _status:constant.entityStatus.ACTIVE }, { where: { id: userData.id } }, {transaction: transaction}); // Update the password
+          await databaseActions.update("application", "Persons", { _status:constant.entityStatus.ACTIVE }, { where: { userId: userData.id } }, {transaction: transaction});
+          const personData = await databaseActions.findOne("application", "Persons", { where: { userId: userData.id } }, {transaction: transaction});
+          await databaseActions.update("application", "PersonContacts", { _status:constant.entityStatus.ACTIVE, verified:true, primaryFlag:true }, { where: { personId: personData.id, type: identifierType, data:identifier } },{transaction: transaction});
         });
     }
     const data = await createSessionAndLogin(userData, originalUrl, deviceId, devInfo);
