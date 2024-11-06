@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.44](https://https//github.com/wrappid/wrappid-module/compare/v0.0.43...v0.0.44) (2024-11-06)
+
+
+### Features
+
+* **core:** :zap: sequlize transaction sending change as object ([03e7d1e](https://https//github.com/wrappid/wrappid-module/commit/03e7d1ea516540f7d2927f34b36680306894a116)), closes [#129](https://https//github.com/wrappid/wrappid-module/issues/129)
+
 ### [0.0.43](https://https//github.com/wrappid/wrappid-module/compare/v0.0.42...v0.0.43) (2024-11-05)
 
 
