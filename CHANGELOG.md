@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.45](https://https//github.com/wrappid/wrappid-module/compare/v0.0.44...v0.0.45) (2024-11-08)
+
+
+### Bug Fixes
+
+* **core:** :zap: otp fix ([a0498cc](https://https//github.com/wrappid/wrappid-module/commit/a0498ccbf97809b14b4dac08999da51715437767)), closes [#129](https://https//github.com/wrappid/wrappid-module/issues/129)
+
 ### [0.0.44](https://https//github.com/wrappid/wrappid-module/compare/v0.0.43...v0.0.44) (2024-11-06)
 
 
