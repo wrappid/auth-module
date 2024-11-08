@@ -81,7 +81,7 @@ export default function AuthLayout() {
        * @todo
        * Call getProfileBasic here, not working
        */
-      navigate(`/${authNextPage}`);
+      navigate(`${authNextPage}`);
     }
   }, [authNextPage]);
 

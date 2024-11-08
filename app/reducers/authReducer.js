@@ -281,6 +281,7 @@ const authReducer = (state = initState, action) => {
         identifier                 : action.payload.data.identifier,
         name                       : action.payload.data.name,
         photo                      : action.payload.data.photoUrl,
+        userID                     : action.payload.data.userID,
       };
 
     case CHECK_LOGIN_SUCCESS_UNREGISTERED:
@@ -292,6 +293,7 @@ const authReducer = (state = initState, action) => {
         checkLoginOrRegisterMsg    : action.message,
         checkLoginOrRegisterSuccess: true,
         identifier                 : action.payload.data.identifier,
+        userID                     : action.payload.data.userID,
       };
 
     case NAVIGATE_TO_OTP_LOGIN_LOADING:

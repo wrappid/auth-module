@@ -72,18 +72,25 @@ async function checkOtp(identifier:string, userId: number, otp: string, type: st
   WrappidLogger.logFunctionStart("checkOtp");
   try {
     let identifierType: string = type;
-    if(type==="phone"){
-      identifierType = "sms";
+    if(type===coreConstant.contact.PHONE){
+      identifierType = coreConstant.commType.SMS;
     }
+
+    const whereOTPob: GenericObject = {
+      type: identifierType,
+      _status: coreConstant.entityStatus.ACTIVE,
+      recipient: identifier,
+    };
+
+    if (userId > 0) {
+      whereOTPob.userId = userId;
+    }
+
+    /**
+     * @todo Review Required
+     */
     const dbData = await databaseActions.findAll("application", "Otps", {
-      where: {
-        type: identifierType,
-        _status: coreConstant.entityStatus.ACTIVE,
-        [databaseProvider.application.Sequelize.Op.or]: [
-          { recipient: identifier },
-          { userId: userId }
-        ]
-      },
+      where: whereOTPob,
       limit: 1,
       order: [["id", "DESC"]]
     });
@@ -615,19 +622,9 @@ const formatPhoneNumber = (phone:string) => {
   }finally{
     WrappidLogger.logFunctionEnd("formatPhoneNumber");
   }
-  // Return null if input is null or undefined
-  if (!phone){
-    throw new Error("Phone number cannot be null or undefined");
-  }
 };
 
 
 export {
-  getIdentifierType,
-  getDeviceId,
-  createSessionAndLogin,
-  genarateAccessToken,
-  checkOtp,
-  getTemplateName,
-  formatPhoneNumber
+  checkOtp, createSessionAndLogin, formatPhoneNumber, genarateAccessToken, getDeviceId, getIdentifierType, getTemplateName
 };

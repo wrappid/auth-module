@@ -9,51 +9,51 @@ import * as yup from "yup";
  * commented validation temporarily 
  */
 
+// Helper function to validate email
+const isValidEmail = (email) => {
+  // Basic email structure check
+  if (email.split("@").length !== 2) return false;
+
+  const [localPart, domainPart] = email.split("@");
+      
+  // Local part checks
+  if (!localPart || localPart.startsWith("-") || localPart.endsWith("-") || 
+          localPart.length > 64) return false;
+
+  // Domain part checks
+  if (!domainPart || !domainPart.includes(".") || 
+          domainPart.startsWith("-") || domainPart.endsWith("-") || 
+          domainPart.length > 255) return false;
+
+  // Check for consecutive dots
+  if (/\.{2,}/.test(email)) return false;
+
+  // Final regex check
+  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+
+  return emailRegex.test(email);
+};
+
+// Helper function to validate Indian phone number
+const isValidPhone = (phone) => {
+  const cleanPhone = phone.toString().replace(/[\s-]/g, "");
+      
+  let numberToValidate = cleanPhone;
+
+  if (cleanPhone.startsWith("+91") && cleanPhone.length === 13) {
+    numberToValidate = cleanPhone.slice(3);
+  } else if (cleanPhone.startsWith("0") && cleanPhone.length === 11) {
+    numberToValidate = cleanPhone.slice(2);
+  }
+
+  return /^[6-9]\d{9}$/.test(numberToValidate);
+};
+
 const identifier = yup
   .string()
   .required("Email or phone number is required")
   .test("email-or-phone", "Invalid email or phone number format", function(value) {
     if (!value) return false;
-  
-    // Helper function to validate email
-    const isValidEmail = (email) => {
-      // Basic email structure check
-      if (email.split("@").length !== 2) return false;
-  
-      const [localPart, domainPart] = email.split("@");
-          
-      // Local part checks
-      if (!localPart || localPart.startsWith("-") || localPart.endsWith("-") || 
-              localPart.length > 64) return false;
-  
-      // Domain part checks
-      if (!domainPart || !domainPart.includes(".") || 
-              domainPart.startsWith("-") || domainPart.endsWith("-") || 
-              domainPart.length > 255) return false;
-  
-      // Check for consecutive dots
-      if (/\.{2,}/.test(email)) return false;
-  
-      // Final regex check
-      const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-
-      return emailRegex.test(email);
-    };
-  
-    // Helper function to validate Indian phone number
-    const isValidPhone = (phone) => {
-      const cleanPhone = phone.toString().replace(/[\s-]/g, "");
-          
-      let numberToValidate = cleanPhone;
-
-      if (cleanPhone.startsWith("+91") && cleanPhone.length === 13) {
-        numberToValidate = cleanPhone.slice(3);
-      } else if (cleanPhone.startsWith("0") && cleanPhone.length === 11) {
-        numberToValidate = cleanPhone.slice(2);
-      }
-  
-      return /^[6-9]\d{9}$/.test(numberToValidate);
-    };
   
     // Clean the input value
     const cleanValue = value.trim();

@@ -107,25 +107,32 @@ const checkUserExistance = async (identifierType:string, identifier:string, stat
 const createUser = async (identifierType:string, identifier: string):Promise<IApiResponse> => {
   try {
     WrappidLogger.logFunctionStart("createUser");
-    const user = await databaseActions.findOne("application", "Users", {where:{ [identifierType]: identifier}});
-    if(!user){
+    let user = await databaseActions.findOne("application", "Users", {where:{ [identifierType]: identifier}});
+    
+    if (!user) {
       await databaseProvider.application.sequelize.transaction(
         async (transaction: Transaction) => {
-          const useradta = await databaseActions.create("application", "Users", { [identifierType]: identifier, _status: constant.entityStatus.NEW }, { transaction });
-          const personData = await databaseActions.create("application", "Persons", { userId: useradta.id, _status: constant.entityStatus.NEW }, { transaction });
+          user = await databaseActions.create("application", "Users", { [identifierType]: identifier, _status: constant.entityStatus.NEW }, { transaction });
+          const personData = await databaseActions.create("application", "Persons", { userId: user.id, _status: constant.entityStatus.NEW }, { transaction });
           await databaseActions.create("application", "PersonContacts", {data: identifier, type: identifierType, personId: personData.id, _status: constant.entityStatus.NEW }, { transaction });
           const role = ApplicationContext.getContext("config").wrappid.defaultUserRole || constant.userRoles.ROLE_DEVELOPER;
           // Get the role id from the Roles table
           const roleData = await databaseActions.findOne("application", "Roles", {where: {role: role} }, { transaction });
-          await databaseActions.create("application", "UserRoles", { roleID: roleData.id, userID: useradta.id, _status: constant.entityStatus.ACTIVE}, { transaction });
+          await databaseActions.create("application", "UserRoles", { roleID: roleData.id, userID: user.id, _status: constant.entityStatus.ACTIVE}, { transaction });
         });
     }
+
+    if(!user){
+      throw new Error("User not present. Please try again.");
+    }
+
     return {
       status:201,
       resData:{
         message:"User created successfully",
         data:{
-          "identifier": identifier
+          "identifier": identifier,
+          userID: user?.id
         }
       }
     };
@@ -139,7 +146,7 @@ const createUser = async (identifierType:string, identifier: string):Promise<IAp
 
 
 
-export{
+export {
   checkUserExistance,
-  createUser,
+  createUser
 };

@@ -54,6 +54,7 @@ const checkUserFunc = async (identifier: string): Promise<IApiResponse> => {
         resData: {
           message: "User already exists",
           data: {
+            userID: data?.id,
             name: personMetaData.firstName,
             photoUrl: personMetaData.photoUrl,
             "identifier": identifier

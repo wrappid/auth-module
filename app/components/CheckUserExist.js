@@ -33,7 +33,7 @@ export default function CheckUserExist() {
       <CoreLayoutItem id={AuthLayout.PLACEHOLDER.CONTENT}>
         {checkLoginOrRegisterSuccess &&
           authNextPage.toLowerCase() !== ModuleRoute.LOGIN_ROUTE ? (
-            <CoreDomNavigate to={`/${authNextPage}`} />
+            <CoreDomNavigate to={`${authNextPage}`} />
           ) : (
             <>
               <CoreStack spacing={5}>
