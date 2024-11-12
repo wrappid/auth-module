@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.47](https://https//github.com/wrappid/wrappid-module/compare/v0.0.46...v0.0.47) (2024-11-12)
+
+
+### Bug Fixes
+
+* **core:** :ambulance: must go show stpper issue ([370ed77](https://https//github.com/wrappid/wrappid-module/commit/370ed774072f293b66c563ae4eb270aeeb44852a))
+
 ### [0.0.46](https://https//github.com/wrappid/wrappid-module/compare/v0.0.45...v0.0.46) (2024-11-12)
 
 
