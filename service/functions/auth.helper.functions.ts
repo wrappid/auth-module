@@ -206,7 +206,7 @@ function genarateAccessToken(
 
     const accessToken = jwt.sign(
       {
-        userId: userID,
+        userID: userID,
         email: email,
         phone: phone,
         personID: personID,
