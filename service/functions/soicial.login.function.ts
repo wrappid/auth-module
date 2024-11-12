@@ -227,23 +227,38 @@ const passwordLessLogin = async (email: string, deviceId: any) => {
       where: { email: email },
     });
 
-    const personData = await databaseActions.findOne("application", "Persons", {
-      attributes: ["id"],
-      where: { userId: userDetails.id },
-    });
-
-    const userId = userDetails.id;
+    const userID = userDetails.id;
     const mail = userDetails.email;
     const phone = userDetails?.phone;
 
-    const roleData = await databaseActions.findOne("application", "UserRoles", { where: { userID: userDetails.id } });
+    const person = await databaseActions.findOne(
+      "application",
+      "Persons",
+      { attributes: ["id"], where: {userId: userID} }
+    );
+    if (!person && person?.id <= 0) {
+      WrappidLogger.error("Person not found");
+      throw new Error("Person not found");
+    }
+    const role = await databaseActions.findOne(
+      "application",
+      "UserRoles",
+      { attributes: ["roleID"], where: {userID: userID} }
+    );
+    if (!role && role?.id <= 0) {
+      WrappidLogger.error("Role not found");
+      throw new Error("Role not found");
+    }
+
+    const personID = person.id;
+    const roleID = role.roleID;
 
     const { refreshToken, accessToken } = genarateAccessToken(
-      userId,
+      userID,
       mail,
       phone,
-      personData.id,
-      roleData?.roleID
+      personID,
+      roleID
     );
     WrappidLogger.info("Tokens generate done");
 
@@ -252,7 +267,7 @@ const passwordLessLogin = async (email: string, deviceId: any) => {
       "SessionManagers",
       {
         where: {
-          userId: userId
+          userId: userID
         },
       }
     );
@@ -267,7 +282,7 @@ const passwordLessLogin = async (email: string, deviceId: any) => {
             "application",
             "Users",
             { firstLogin: false },
-            { where: { id: userId } }
+            { where: { id: userID } }
           );
         }
 
@@ -297,8 +312,8 @@ const passwordLessLogin = async (email: string, deviceId: any) => {
               return {
                 status: 200,
                 message: "Successfully login",
-                id: userId,
-                personId: personData.id,
+                id: userID,
+                personId: personID,
                 accessToken: accessToken,
                 refreshToken: refreshToken,
                 sessionId: currSession.id,
@@ -312,7 +327,7 @@ const passwordLessLogin = async (email: string, deviceId: any) => {
             "SessionManagers",
             {
               refreshToken: refreshToken,
-              userId: userId,
+              userId: userID,
               deviceId: bcrypt.hashSync(deviceId, 9),
             },
             {
@@ -325,8 +340,8 @@ const passwordLessLogin = async (email: string, deviceId: any) => {
           return {
             status: 200,
             message: "Successfully login with New Device",
-            id: userId,
-            personId: personData.id,
+            id: userID,
+            personId: personID,
             accessToken: accessToken,
             refreshToken: refreshToken,
             sessionId: newSession.id,

@@ -463,13 +463,13 @@ const refreshTokenFunc = async (refreshToken:string, deviceId:string):Promise<Re
           WrappidLogger.error("Refresh token expired " + err);
           throw new Error("Refresh token expired");
         }
-        const userId = user.userId;
+        const userID = user.userID;
         const sessions = await databaseActions.findAll(
           "application",
           "SessionManagers",
           {
             where: {
-              userId: userId,
+              userId: userID,
               deviceId: deviceId
             },
           }
@@ -496,20 +496,32 @@ const refreshTokenFunc = async (refreshToken:string, deviceId:string):Promise<Re
             const userDetails = await databaseActions.findOne(
               "application",
               "Users",
-              { where: {id: userId} }
+              { where: {id: userID} }
             );
-            const personID = await databaseActions.findOne(
+            const person = await databaseActions.findOne(
               "application",
               "Persons",
-              { attributes: ["id"], where: {userId: userId} }
+              { attributes: ["id"], where: {userId: userID} }
             );
-            const roleID = await databaseActions.findOne(
+            if (!person && person?.id <= 0) {
+              WrappidLogger.error("Person not found");
+              throw new Error("Person not found");
+            }
+            const role = await databaseActions.findOne(
               "application",
               "UserRoles",
-              { attributes: ["roleID"], where: {userID: userId} }
+              { attributes: ["roleID"], where: {userID: userID} }
             );
+            if (!role && role?.id <= 0) {
+              WrappidLogger.error("Role not found");
+              throw new Error("Role not found");
+            }
+
+            const personID = person.id;
+            const roleID = role.roleID;
+
             const { accessToken } = genarateAccessToken(
-              userDetails.id,
+              userID,
               userDetails.email,
               userDetails.phone,
               personID,

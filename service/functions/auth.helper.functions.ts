@@ -294,22 +294,29 @@ async function createSessionAndLogin(userData:any, originalUrl:string, deviceId:
       middleName:personMetaData?. middleName,
     });
 
-    const roleData = await databaseActions.findOne("application", "UserRoles", {
-      attributes: ["id"],
-      where: {
-        userID: userData.id,
-        _status: constant.entityStatus.ACTIVE
-      }
-    });
+    const role = await databaseActions.findOne(
+      "application",
+      "UserRoles",
+      { attributes: ["roleID"], where: {userID: userData.id} }
+    );
+    if (!role && role?.id <= 0) {
+      WrappidLogger.error("Role not found");
+      throw new Error("Role not found");
+    }
+
+    const personID = personData.id;
+    const roleID = role.roleID;
+
     const { refreshToken, accessToken } = genarateAccessToken(
       userData.id,
       userData.email,
       userData.phone,
-      personData.id,
-      roleData?.roleID
+      personID,
+      roleID
     );
 
     if (!refreshToken) {
+      WrappidLogger.error("Refresh token not generated");
       throw new Error("Refresh token not generated");
     }
 
