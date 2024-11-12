@@ -242,8 +242,7 @@ const passwordLessLogin = async (email: string, deviceId: any) => {
       userId,
       mail,
       phone,
-      personData,
-      userDetails,
+      personData.id,
       roleData?.roleID
     );
     WrappidLogger.info("Tokens generate done");

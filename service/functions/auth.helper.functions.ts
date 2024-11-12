@@ -177,21 +177,23 @@ async function getDeviceId(req: any): Promise<string> {
  * 1. Get config data from context
  * 2. Generate access token and refresh token
  * 3. Return access token and refresh token
- * @param userId 
- * @param mail 
- * @param phone 
- * @param personData 
- * @param userDetails 
+ * 
+ * @param userID
+ * @param email
+ * @param phone
+ * @param personID
+ * @param roleID
+ * @param refresh
  * @returns 
  */
 function genarateAccessToken(
-  userId: any,
-  mail: any,
-  phone: any,
-  personData: any,
-  userDetails: any,
-  roleID:number
-) {
+  userID: number,
+  email: string,
+  phone: string,
+  personID: number,
+  roleID: number,
+  refresh = true
+): { accessToken: string; refreshToken: string | null } {
   try {
     WrappidLogger.logFunctionStart("genarateAccessToken");
 
@@ -204,26 +206,30 @@ function genarateAccessToken(
 
     const accessToken = jwt.sign(
       {
-        userId: userId,
-        email: mail,
+        userId: userID,
+        email: email,
         phone: phone,
-        personId: personData?.id,
-        roleId: roleID,
+        personID: personID,
+        roleID: roleID,
       },
       accessTokenSecret,
       { expiresIn: expTime }
     );
-    const refreshToken = jwt.sign(
-      {
-        userId: userId,
-        email: mail,
-        phone: phone,
-        personId: personData?.id,
-        roleId: userDetails.roleId,
-      },
-      refreshAccessTokenSecret,
-      { expiresIn: expTimeRefreshToken }
-    );
+    
+    let refreshToken = null;
+    if (refresh) {
+      refreshToken = jwt.sign(
+        {
+          userID: userID,
+          email: email,
+          phone: phone,
+          personID: personID,
+          roleID: roleID,
+        },
+        refreshAccessTokenSecret,
+        { expiresIn: expTimeRefreshToken }
+      );
+    }
     WrappidLogger.info("Tokens generated");
     return { accessToken, refreshToken };
   } catch (error) {
@@ -255,20 +261,25 @@ async function createSessionAndLogin(userData:any, originalUrl:string, deviceId:
       "Persons",
       {
         attributes: ["id"],
-        where: { userId: userData.id },
+        where: {
+          userId: userData.id,
+          _status: constant.entityStatus.ACTIVE
+        },
       }
     );
 
-
-
+    if (!personData) {
+      throw new Error("Person not found");
+    }
+    
     // Find the primary contact records for the person
     const personContacts = await databaseActions.findAll("application", "PersonContacts", {
       where: { personId: personData.id, _status: coreConstant.entityStatus.ACTIVE, primaryFlag: true },
     });
     
     // Extract the primary email and phone/WhatsApp information
-    const primaryEmail = personContacts.filter((entry: any) => entry.type === coreConstant.commType.EMAIL);
-    const primaryPhone = personContacts.filter((entry: any) => (entry.type === "phone" || entry.type === "whatsapp"));
+    const primaryEmail = personContacts.filter((entry: any) => entry.type === coreConstant.contact.EMAIL);
+    const primaryPhone = personContacts.filter((entry: any) => (entry.type === coreConstant.contact.PHONE));
     
     const FunctionsRegistry: GenericObject = ApplicationContext.getContext(coreConstant.registry.FUNCTIONS_REGISTRY);
       
@@ -283,15 +294,24 @@ async function createSessionAndLogin(userData:any, originalUrl:string, deviceId:
       middleName:personMetaData?. middleName,
     });
 
-    const roleData = await databaseActions.findOne("application", "UserRoles", { where: { userID: userData.id } });
+    const roleData = await databaseActions.findOne("application", "UserRoles", {
+      attributes: ["id"],
+      where: {
+        userID: userData.id,
+        _status: constant.entityStatus.ACTIVE
+      }
+    });
     const { refreshToken, accessToken } = genarateAccessToken(
       userData.id,
       userData.email,
       userData.phone,
-      personData,
-      userData,
+      personData.id,
       roleData?.roleID
     );
+
+    if (!refreshToken) {
+      throw new Error("Refresh token not generated");
+    }
 
     const sessions = await databaseActions.findAll(
       "application",

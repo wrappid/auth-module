@@ -13,7 +13,7 @@ import otpGenerator from "otp-generator";
 import { Transaction } from "sequelize";
 import constant from "../constants/constants";
 import { IApiResponse, LogoutResponse, RefreshToken, Register } from "../types/auth.types";
-import { checkOtp, createSessionAndLogin, formatPhoneNumber, getIdentifierType, getTemplateName } from "./auth.helper.functions";
+import { checkOtp, createSessionAndLogin, formatPhoneNumber, genarateAccessToken, getIdentifierType, getTemplateName } from "./auth.helper.functions";
 import { checkUserExistance, createUser } from "./user.function";
 
 
@@ -453,7 +453,7 @@ const refreshTokenFunc = async (refreshToken:string, deviceId:string):Promise<Re
   try {
     WrappidLogger.logFunctionStart("refreshTokenFunc");
     let returnData = {} as RefreshToken;
-    const { accessTokenSecret, refreshAccessTokenSecret, expTime } = ApplicationContext.getContext("config").jwt;
+    const { jwt: {refreshAccessTokenSecret} } = ApplicationContext.getContext("config");
 
     await jwt.verify(
       refreshToken,
@@ -498,16 +498,25 @@ const refreshTokenFunc = async (refreshToken:string, deviceId:string):Promise<Re
               "Users",
               { where: {id: userId} }
             );
-            const accessToken = jwt.sign(
-              {
-                userId: userDetails.id,
-                email: userDetails.email,
-                phone: userDetails.phone,
-                roleId: userDetails.roleId,
-              },
-              accessTokenSecret,
-              { expiresIn: expTime }
+            const personID = await databaseActions.findOne(
+              "application",
+              "Persons",
+              { attributes: ["id"], where: {userId: userId} }
             );
+            const roleID = await databaseActions.findOne(
+              "application",
+              "UserRoles",
+              { attributes: ["roleID"], where: {userID: userId} }
+            );
+            const { accessToken } = genarateAccessToken(
+              userDetails.id,
+              userDetails.email,
+              userDetails.phone,
+              personID,
+              roleID,
+              false
+            );
+
             WrappidLogger.info("Access token refreshed");
             returnData =  {
               status: 200,
