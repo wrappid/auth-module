@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.46](https://https//github.com/wrappid/wrappid-module/compare/v0.0.45...v0.0.46) (2024-11-12)
+
+
+### Bug Fixes
+
+* **core:** :fire: jwt token related changes ([1f45890](https://https//github.com/wrappid/wrappid-module/commit/1f45890669cc1c4523c746c7088366a906d24f33))
+* **core:** :zap: access and refresh token data restructure ([c8f2722](https://https//github.com/wrappid/wrappid-module/commit/c8f272287a3ebb73c7bc01c6145febcab069744c))
+
 ### [0.0.45](https://https//github.com/wrappid/wrappid-module/compare/v0.0.44...v0.0.45) (2024-11-08)
 
 
