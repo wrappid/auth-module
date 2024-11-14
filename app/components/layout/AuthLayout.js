@@ -13,6 +13,7 @@ import {
   coreUseLocation,
   coreUseNavigate
 } from "@wrappid/core";
+import { WrappidContext } from "@wrappid/styles";
 import { useSelector } from "react-redux";
 
 // eslint-disable-next-line import/order
@@ -20,6 +21,8 @@ import AuthCustomFooter from "./AuthCustomFooter";
 import ModuleClasses from "../../styles/ModuleClasses";
 
 export default function AuthLayout() {
+  let appName = WrappidContext.config.packageInfo.name || "app-name";
+  
   let { pathname: currentPage } = coreUseLocation();
 
   const navigate = coreUseNavigate();
@@ -90,7 +93,7 @@ export default function AuthLayout() {
       <CoreImageBackground
         source={authBackground}
         resizeMode="cover"
-        styleClasses={[CoreClasses.HEIGHT.VH_100, CoreClasses.OVERFLOW.OVERFLOW_HIDDEN]}
+        styleClasses={[CoreClasses.HEIGHT.MIN_VH_100, CoreClasses.OVERFLOW.OVERFLOW_HIDDEN]}
       >
         <CoreBox styleClasses={[ModuleClasses.AUTH.CONTENT]}>
           <CoreLayoutPlaceholder
@@ -99,16 +102,17 @@ export default function AuthLayout() {
             id={AuthLayout.PLACEHOLDER.CONTENT}
           >
             <CoreBox
-              styleClasses={[CoreClasses.MARGIN.MB5]}
+              styleClasses={[CoreClasses.MARGIN.MB5, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER, CoreClasses.FLEX.DIRECTION_ROW]}
             >
               {resourceContext?.appLogo ? (
                 <CoreImage
                   width={130}
+                  height={40}
                   src={resourceContext.appLogo}
                   alt="Logo"
                 />
               ) : (
-                <CoreTypographyBody1>{}</CoreTypographyBody1>
+                <CoreTypographyBody1>{appName}</CoreTypographyBody1>
               )}
             </CoreBox>
           </CoreLayoutPlaceholder>
