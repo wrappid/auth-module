@@ -15,28 +15,24 @@ import {
 } from "@wrappid/core";
 import { useDispatch, useSelector } from "react-redux";
 
-import { saveAuthData } from "../actions/authActions";
-// eslint-disable-next-line import/order
 import AuthLayout from "./layout/AuthLayout";
+import { saveAuthData } from "../actions/authActions";
 import { ApiRegistry } from "../apis.registry";
 import { ModuleRoute } from "../constants/app.constants";
 import { GET_PROFILE_BASIC_ERROR, GET_PROFILE_BASIC_SUCCESS } from "../types/authTypes";
 
 const LoginWithOtp = () => {
   const dispatch = useDispatch();
-  // eslint-disable-next-line no-unused-vars
   const navigate = coreUseNavigate();
   const auth = useSelector(state => state.auth);
   const {
-    // checkLoginOrRegisterSuccess,
-    // authNextPage,
     navData,
-    uid,
     accessToken,
-    identifier
+    identifier,
+    navData: { userID }
   } = auth;
 
-  let authenticated = uid && accessToken ? true : false;
+  let authenticated = accessToken ? true : false;
 
   const GoBack = () => {
     dispatch(saveAuthData({
@@ -48,15 +44,11 @@ const LoginWithOtp = () => {
       navigateToOtpSuccess          : false,
       navigateToResetPasswordSuccess: false,
     }));
-    // eslint-disable-next-line etc/no-commented-out-code
-    // if (!checkLoginOrRegisterSuccess && authNextPage.toLowerCase() !== ModuleRoute.LOGIN_ROUTE) {
-    //   navigate(`/${authNextPage}`);
-    // }
   };
 
   React.useEffect(() => {
     if (authenticated) {
-      GetProfileBasic({ _defaultFilter: encodeURIComponent(JSON.stringify({ userId: auth.uid })) });
+      GetProfileBasic({ _defaultFilter: encodeURIComponent(JSON.stringify({ userId: userID })) });
       navigate("/");
     }
   }, [authenticated]);
@@ -74,15 +66,6 @@ const LoginWithOtp = () => {
     );
   };
 
-  /**
-   * @todo
-   *  review required
-   */
-  // eslint-disable-next-line etc/no-commented-out-code
-  // if (!checkLoginOrRegisterSuccess && authNextPage.toLowerCase() !== ModuleRoute.LOGIN_ROUTE) {
-  //   navigate(`/${authNextPage}`);
-  // }
-  //(!checkLoginOrRegisterSuccess && authNextPage.toLowerCase() !== ModuleRoute.LOGIN_ROUTE) ? <CoreDomNavigate to={`/${authNextPage}`} /> : 
   return (
     <>
       <CoreLayoutItem id={AuthLayout.PLACEHOLDER.CONTENT}>

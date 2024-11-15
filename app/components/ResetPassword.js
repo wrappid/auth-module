@@ -1,6 +1,7 @@
 import React from "react";
 
 import {
+  apiRequestAction,
   CoreBox,
   CoreClasses,
   CoreForm,
@@ -11,17 +12,15 @@ import {
   CoreTextButton,
   CoreTypographyBody1,
   CoreTypographyBody2,
-  stringUtils,
   coreUseNavigate,
-  apiRequestAction,
-  HTTP
+  HTTP,
+  stringUtils
 } from "@wrappid/core";
 import { WrappidDataContext } from "@wrappid/styles";
 import { useDispatch, useSelector } from "react-redux";
 
-import { saveAuthData } from "../actions/authActions";
-// eslint-disable-next-line import/order
 import AuthLayout from "./layout/AuthLayout";
+import { saveAuthData } from "../actions/authActions";
 import { ApiRegistry } from "../apis.registry";
 import { ModuleRoute } from "../constants/app.constants";
 import { GET_PROFILE_BASIC_ERROR, GET_PROFILE_BASIC_SUCCESS } from "../types/authTypes";
@@ -29,16 +28,14 @@ import { GET_PROFILE_BASIC_ERROR, GET_PROFILE_BASIC_SUCCESS } from "../types/aut
 const ResetPassword = () => {
   const navigate = coreUseNavigate();
   const dispatch = useDispatch();
-  // eslint-disable-next-line etc/no-commented-out-code
-  // const navigate = coreUseNavigate();
   const { config: appConfig } = React.useContext(WrappidDataContext);
 
   const auth = useSelector(state => state.auth);
   const routeRegistry = React.useContext(CoreRoutesContext);
 
-  const { authNextPage, uid, accessToken, identifier } = auth;
+  const { navData:{ userID }, authNextPage, accessToken, identifier } = auth;
 
-  let authenticated = uid && accessToken ? true : false;
+  let authenticated = accessToken ? true : false;
 
   const GoBack = () => {
     dispatch(saveAuthData({
@@ -58,7 +55,7 @@ const ResetPassword = () => {
        * @todo
        * Must be driven from AuthLayout
        */
-      GetProfileBasic({ _defaultFilter: encodeURIComponent(JSON.stringify({ userId: auth.uid })) });
+      GetProfileBasic({ _defaultFilter: encodeURIComponent(JSON.stringify({ userId: userID })) });
       navigate("/");
     }
   }, [authenticated]);
