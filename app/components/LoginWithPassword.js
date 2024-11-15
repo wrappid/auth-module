@@ -1,8 +1,4 @@
-/* eslint-disable etc/no-commented-out-code */
-import React from "react";
-
 import {
-  apiRequestAction,
   CoreAvatar,
   CoreBox,
   CoreClasses,
@@ -11,41 +7,24 @@ import {
   CoreLayoutItem,
   CoreTextButton,
   CoreTypographyBody2,
-  // coreUseNavigate,
-  coreUseNavigate,
-  HTTP,
   stringUtils
 } from "@wrappid/core";
 import { useDispatch, useSelector } from "react-redux";
 
-import { clearAuthState, saveAuthData } from "../actions/authActions";
-// eslint-disable-next-line import/order
 import AuthLayout from "./layout/AuthLayout";
-import { ApiRegistry } from "../apis.registry";
+import { clearAuthState, saveAuthData } from "../actions/authActions";
 import { ModuleRoute } from "../constants/app.constants";
-import { GET_PROFILE_BASIC_ERROR, GET_PROFILE_BASIC_SUCCESS } from "../types/authTypes";
 
 const LoginWithPassword = () => {
-  const navigate = coreUseNavigate();
-
   const dispatch = useDispatch();
-  // const navigate = coreUseNavigate();
   const auth = useSelector(state => state.auth);
   const {
-    // navigateToResetPasswordSuccess,
-    // navigateToOtpSuccess,
-    // checkLoginOrRegisterSuccess,
-    // authNextPage,
     identifier,
-    name,
-    photo,
-    uid,
-    accessToken
+    navData:{
+      name,
+      photo,
+    }
   } = auth;
-
-  let authenticated = uid && accessToken ? true : false;
-
-  // let authenticated = uid && accessToken ? true : false;
 
   const GoBack = () => {
     dispatch(
@@ -63,53 +42,9 @@ const LoginWithPassword = () => {
     dispatch(clearAuthState());
   };
 
-  React.useEffect(() => {
-    if (authenticated) {
-      /**
-       * @todo
-       * Must be driven from AuthLayout
-       */
-      GetProfileBasic({ _defaultFilter: encodeURIComponent(JSON.stringify({ userId: auth.uid })) });
-      navigate("/");
-    }
-  }, [authenticated]);
-
-  const GetProfileBasic = (query) => {
-    dispatch(
-      apiRequestAction(
-        HTTP.GET,
-        ApiRegistry.GET_PROFILE_BASIC_API,
-        true,
-        query,
-        GET_PROFILE_BASIC_SUCCESS,
-        GET_PROFILE_BASIC_ERROR
-      )
-    );
-  };
-
   const changeAuthNextPage = (routeName) => {
-    // if((routeName === ModuleRoute.RESET_PASSWORD_ROUTE && (navigateToResetPasswordSuccess ||
-    //     navigateToOtpSuccess) ||
-    //     (!checkLoginOrRegisterSuccess &&
-    //       authNextPage.toLowerCase() !== ModuleRoute.PASSWORD_ROUTE)) || routeName === ModuleRoute.LOGIN_OTP_ROUTE){
-    //       }
     dispatch(saveAuthData({ authNextPage: routeName }));
   };
-
-  // React.useEffect(() => {
-  //   if (authenticated) {
-  //     navigate("/");
-  //   }
-  // }, [authenticated]);
-
-  // {(navigateToResetPasswordSuccess ||
-  //   navigateToOtpSuccess) ||
-  //   (!checkLoginOrRegisterSuccess &&
-  //     authNextPage.toLowerCase() !== ModuleRoute.PASSWORD_ROUTE)
-  //   ? (
-  //     <CoreDomNavigate to={`/${authNextPage}`} />
-  //   ) : (
-  //   )}
 
   return (
     <>
@@ -161,11 +96,6 @@ const LoginWithPassword = () => {
             CoreClasses.MARGIN.MT3,
           ]}
         >
-          {/**
-                  * @TODO:
-                  * we need send otp to the provided email or phone
-                  * fix required: email or phone getting removed from store auth.navData
-                  */}
           <CoreTextButton onClick={() => changeAuthNextPage(ModuleRoute.RESET_PASSWORD_ROUTE)}>
             Reset Password
           </CoreTextButton>

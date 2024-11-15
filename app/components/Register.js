@@ -11,34 +11,20 @@ import {
   CoreTextButton,
   CoreTypographyBody1,
   CoreTypographyBody2,
-  stringUtils,
-  coreUseNavigate,
-  apiRequestAction,
-  HTTP
+  stringUtils
 } from "@wrappid/core";
 import { WrappidDataContext } from "@wrappid/styles";
 import { useDispatch, useSelector } from "react-redux";
 
-import { saveAuthData } from "../actions/authActions";
-// eslint-disable-next-line import/order
 import AuthLayout from "./layout/AuthLayout";
-import { ApiRegistry } from "../apis.registry";
+import { saveAuthData } from "../actions/authActions";
 import { ModuleRoute } from "../constants/app.constants";
-import { GET_PROFILE_BASIC_ERROR, GET_PROFILE_BASIC_SUCCESS } from "../types/authTypes";
 
 const Register = () => {
-  const navigate = coreUseNavigate();
   const dispatch = useDispatch();
-  // eslint-disable-next-line etc/no-commented-out-code
-  // const navigate = coreUseNavigate();
   const { config: appConfig } = React.useContext(WrappidDataContext);
-
-  const auth = useSelector(state => state.auth);
+  const { authNextPage, identifier }  = useSelector(state => state.auth);
   const routeRegistry = React.useContext(CoreRoutesContext);
-
-  const { authNextPage, uid, accessToken, identifier } = auth;
-
-  let authenticated = uid && accessToken ? true : false;
 
   const GoBack = () => {
     dispatch(saveAuthData({
@@ -50,30 +36,6 @@ const Register = () => {
       navigateToOtpSuccess          : false,
       navigateToResetPasswordSuccess: false,
     }));
-  };
-
-  React.useEffect(() => {
-    if (authenticated) {
-      /**
-       * @todo
-       * Must be driven from AuthLayout
-       */
-      GetProfileBasic({ _defaultFilter: encodeURIComponent(JSON.stringify({ userId: auth.uid })) });
-      navigate("/");
-    }
-  }, [authenticated]);
-
-  const GetProfileBasic = (query) => {
-    dispatch(
-      apiRequestAction(
-        HTTP.GET,
-        ApiRegistry.GET_PROFILE_BASIC_API,
-        true,
-        query,
-        GET_PROFILE_BASIC_SUCCESS,
-        GET_PROFILE_BASIC_ERROR
-      )
-    );
   };
 
   const showEmailOrPhone = () => {
@@ -99,20 +61,6 @@ const Register = () => {
       </CoreTypographyBody2>
     );
   };
-
-  // eslint-disable-next-line etc/no-commented-out-code
-  // if (
-  //   !checkLoginOrRegisterSuccess &&
-  //   (authNextPage.toLowerCase() !== ModuleRoute.REGISTER_ROUTE ||
-  //     authNextPage.toLowerCase() !== ModuleRoute.RESET_PASSWORD_ROUTE)
-  // ) {
-  //   navigate(`/${authNextPage}`);
-  // }
-
-  // {(!checkLoginOrRegisterSuccess &&
-  //   (authNextPage.toLowerCase() !== ModuleRoute.REGISTER_ROUTE ||
-  //     authNextPage.toLowerCase() !== ModuleRoute.RESET_PASSWORD_ROUTE)) ? <CoreDomNavigate to={`/${authNextPage}`} /> : ()
-  // }
 
   return (
     <>

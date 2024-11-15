@@ -26,6 +26,7 @@ import {
   NAVIGATE_TO_OTP_LOGIN_LOADING,
   NAVIGATE_TO_OTP_LOGIN_SUCCESS,
   NAVIGATE_TO_RESET_PASSWORD_SUCCESS,
+  RESET_AUTH_REDIRECT,
   RESET_CHANGE_PASSWORD_STATUS,
   RESET_PASSWORD_ERROR,
   RESET_PASSWORD_LOADING,
@@ -41,18 +42,18 @@ import {
 } from "../types/authTypes";
 
 const initState = {
-  accessToken: null,
-  authError  : null,
-  authLoading: false,
+  accessToken : null,
+  authError   : null,
+  authLoading : false,
+  authNextPage: null,
 
-  authNextPage       : ModuleRoute.LOGIN_ROUTE,
-  changePasswordError: false,
-
+  changePasswordError  : false,
   changePasswordLoading: false,
-  changePasswordSuccess: false,
-  checkLoginOrRegister : null,
 
-  checkLoginOrRegisterError  : false,
+  changePasswordSuccess    : false,
+  checkLoginOrRegister     : null,
+  checkLoginOrRegisterError: false,
+
   checkLoginOrRegisterLoading: false,
   checkLoginOrRegisterMsg    : null,
   checkLoginOrRegisterOtp    : false,
@@ -60,40 +61,54 @@ const initState = {
   checkSignup                : false,
   clientLoginFlag            : false,
   clientLoginInformation     : null,
+  identifier                 : null,
 
   loginPage    : null,
   logoutLoading: false,
-  name         : "",
+  navData      : {
+    identifier: null,
+    name      : null,
+    photo     : null,
+    userID    : null
+  },
 
-  navData                       : {},
   navigateToOtpError            : false,
   navigateToOtpLoading          : false,
   navigateToOtpMsg              : false,
   navigateToOtpSuccess          : false,
   navigateToResetPasswordError  : false,
   navigateToResetPasswordLoading: false,
-
-  navigateToResetPasswordMsg: false,
+  navigateToResetPasswordMsg    : false,
 
   navigateToResetPasswordSuccess: false,
-  permissions                   : null,
-  photo                         : null,
-  refreshToken                  : null,
 
-  registerRequestError  : false,
+  permissions         : null,
+  refreshToken        : null,
+  registerRequestError: false,
+
   registerRequestLoading: false,
   registerRequestSuccess: false,
   resetPasswordError    : false,
+  resetPasswordLoading  : false,
 
-  resetPasswordLoading: false,
   resetPasswordSuccess: false,
+  role                : null,
 
-  role                  : null,
   rolePermissionsError  : false,
   rolePermissionsLoading: false,
   rolePermissionsMsg    : false,
   rolePermissionsSuccess: false,
-  user                  : null,
+  user                  : {
+    email        : null,
+    emailVerified: null,
+    id           : null,
+    name         : null,
+    personID     : null,
+    phone        : null,
+    phoneVerified: null,
+    photo        : null,
+    sessionID    : null,
+  },
 };
 
 const authReducer = (state = initState, action) => {
@@ -120,17 +135,20 @@ const authReducer = (state = initState, action) => {
         accessToken                : action.payload.data.accessToken,
         authError                  : null,
         authLoading                : false,
-        authNextPage               : "",
         checkLoginOrRegisterSuccess: true,
-        email                      : action.payload.data?.email,
-        emailVerified              : action.payload.data?.emailVerified,
-        name                       : action.payload.data?.name,
-        phone                      : action.payload.data?.phone,
-        phoneVerified              : action.payload.data?.phoneVerified,
-        photo                      : action.payload.data?.photoUrl,
+        redirect                   : true,
         refreshToken               : action.payload.data.refreshToken,
-        uid                        : action.payload.data.id,
-        user                       : action.payload.data,
+        user                       : {
+          email        : action.payload?.data?.email,
+          emailVerified: action.payload?.data?.emailVerified,
+          id           : action.payload?.data?.id,
+          name         : action.payload?.data?.name,
+          personID     : action.payload?.data?.personId,
+          phone        : action.payload?.data?.phone,
+          phoneVerified: action.payload?.data?.phoneVerified,
+          photo        : action.payload?.data?.photoUrl,
+          sessionID    : action.payload?.data?.sessionId,
+        },
       };
 
     case TOKEN_REFRESH_SUCCESS:
@@ -167,6 +185,12 @@ const authReducer = (state = initState, action) => {
       return {
         ...state,
         authError: null,
+      };
+    
+    case RESET_AUTH_REDIRECT:
+      return {
+        ...state,
+        redirect: false,
       };
 
     case RESET_PASSWORD_LOADING:
@@ -279,9 +303,13 @@ const authReducer = (state = initState, action) => {
         checkLoginOrRegisterMsg    : null,
         checkLoginOrRegisterSuccess: true,
         identifier                 : action.payload.data.identifier,
-        name                       : action.payload.data.name,
-        photo                      : action.payload.data.photoUrl,
-        userID                     : action.payload.data.userID,
+        navData                    : {
+          identifier: action.payload.data.identifier,
+          name      : action.payload.data.name,
+          photo     : action.payload.data.photoUrl,
+          userID    : action.payload.data.userID,
+        },
+        
       };
 
     case CHECK_LOGIN_SUCCESS_UNREGISTERED:
@@ -293,7 +321,10 @@ const authReducer = (state = initState, action) => {
         checkLoginOrRegisterMsg    : action.message,
         checkLoginOrRegisterSuccess: true,
         identifier                 : action.payload.data.identifier,
-        userID                     : action.payload.data.userID,
+        navData                    : {
+          identifier: action.payload.data.identifier,
+          userID    : action.payload.data.userID,
+        },
       };
 
     case NAVIGATE_TO_OTP_LOGIN_LOADING:
@@ -390,7 +421,6 @@ const authReducer = (state = initState, action) => {
       return {
         ...state,
         sessionDetail: action.payload,
-        uid          : null,
       };
     }
 
