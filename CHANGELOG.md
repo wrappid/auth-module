@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.48](https://https//github.com/wrappid/wrappid-module/compare/v0.0.47...v0.0.48) (2024-11-15)
+
+
+### Bug Fixes
+
+* **core:** :ambulance: core auth related impact creation and handled ([c7f347a](https://https//github.com/wrappid/wrappid-module/commit/c7f347a11180db75af7df48a421a00f393363ce2))
+
 ### [0.0.47](https://https//github.com/wrappid/wrappid-module/compare/v0.0.46...v0.0.47) (2024-11-12)
 
 
