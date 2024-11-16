@@ -30,10 +30,10 @@ export default function AuthLayout() {
   const authBackground = resourceContext?.authBackground;
 
   React.useEffect(() => {
-    let currPage = currentPage.toLowerCase();
-    let authPage = authNextPage.toLowerCase();
+    let currPage = currentPage?.toLowerCase();
+    let authPage = authNextPage?.toLowerCase();
 
-    if (!currPage.includes(authPage)) {
+    if (!currPage?.includes(authPage)) {
       navigate(`${authNextPage}`);
     }
   }, [authNextPage]);
