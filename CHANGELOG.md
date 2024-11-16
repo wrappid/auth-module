@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.51](https://https//github.com/wrappid/wrappid-module/compare/v0.0.50...v0.0.51) (2024-11-16)
+
+
+### Bug Fixes
+
+* **core:** :bug: toLowerCase issue resolve ([62e38f1](https://https//github.com/wrappid/wrappid-module/commit/62e38f1153a216bc9484794cd26746b989b85ea2))
+
 ### [0.0.50](https://https//github.com/wrappid/wrappid-module/compare/v0.0.49...v0.0.50) (2024-11-16)
 
 
