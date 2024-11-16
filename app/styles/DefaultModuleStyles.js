@@ -11,21 +11,18 @@ export default class DefaultModuleStyles extends DefaultCoreStyles {
       authContent: {
         ...this.defaultUtilityStyles.justifyContentCenter,
         ...this.defaultUtilityStyles.alignItemsCenter,
-        ...this.defaultUtilityStyles.textCenter,
-        height: "90vh",
+        minHeight: "90vh",
       },
       authContentBox: {
         maxWidth: "75vw" + IMPORTANT,
         minWidth: "75vw" + IMPORTANT
       },
       authFooter: {
-        ...this.defaultUtilityStyles.p1,
-        ...this.defaultUtilityStyles.bgTransparent,
-        ...this.defaultUtilityStyles.displayFlex,
-        ...this.defaultUtilityStyles.alignContentEnd,
+        minHeight: "10vh",
+        ...this.defaultUtilityStyles.px2,
         ...this.defaultUtilityStyles.justifyContentSpaceBetween,
-        ...this.defaultUtilityStyles.px4,
-        height: "10vh"
+        ...this.defaultUtilityStyles.alignItemsEnd,
+        ...this.defaultUtilityStyles.flexDirectionRow,
       }
     };
   }
