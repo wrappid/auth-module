@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.50](https://https//github.com/wrappid/wrappid-module/compare/v0.0.49...v0.0.50) (2024-11-16)
+
+
+### Bug Fixes
+
+* **global:** :bug: changes in auth module so it can work in mobile app ([f906573](https://https//github.com/wrappid/wrappid-module/commit/f90657371ebaaf892cc107bf041cb9c994f8e856)), closes [#139](https://https//github.com/wrappid/wrappid-module/issues/139)
+* **global:** :bug: fix styles in auth layout ([3a61dd3](https://https//github.com/wrappid/wrappid-module/commit/3a61dd34535f20c480c8b0040669e7d574231d04)), closes [#139](https://https//github.com/wrappid/wrappid-module/issues/139)
+
 ### [0.0.49](https://https//github.com/wrappid/wrappid-module/compare/v0.0.48...v0.0.49) (2024-11-15)
 
 ### [0.0.48](https://https//github.com/wrappid/wrappid-module/compare/v0.0.47...v0.0.48) (2024-11-15)
