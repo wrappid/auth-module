@@ -33,7 +33,7 @@ export default function AuthLayout() {
     let currPage = currentPage?.toLowerCase();
     let authPage = authNextPage?.toLowerCase();
 
-    if (!currPage?.includes(authPage)) {
+    if (authPage && !currPage?.includes(authPage)) {
       navigate(`${authNextPage}`);
     }
   }, [authNextPage]);
