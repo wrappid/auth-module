@@ -13,7 +13,12 @@ export default function AuthCustomFooter() {
       coreId="authFooter"
       styleClasses={[ModuleClasses.AUTH.FOOTER]}>
       <CoreBox styleClasses={[CoreClasses.PADDING.PB2]}>
-        <CoreTypographyBody1 gutterBottom={false} paragraph={false} styleClasses={[CoreClasses.COLOR.TEXT_PRIMARY]}>{appConfig.packageInfo.version}</CoreTypographyBody1>
+        <CoreLink
+          styleClasses={[CoreClasses.COLOR.TEXT_WHITE]}
+          href={"/about"}
+        >
+          <CoreTypographyBody1 gutterBottom={false} paragraph={false} styleClasses={[CoreClasses.COLOR.TEXT_PRIMARY]}>{appConfig.packageInfo.version}</CoreTypographyBody1>
+        </CoreLink>
       </CoreBox>
 
       <CoreBox styleClasses={[CoreClasses.FLEX.DIRECTION_ROW, CoreClasses.PADDING.PB2]}>
