@@ -94,7 +94,7 @@ interface ResetPass {
 
 interface UserRequest extends Express.Request {
   user: {
-    userId: string;
+    userID: string;
   }
 }
 

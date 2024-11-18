@@ -157,8 +157,8 @@ export const logoutController = async(req: UserRequest, res: Response<ResponseBo
   try {
     WrappidLogger.logFunctionStart("logoutController");
     const deviceId:string = await getDeviceId(req);
-    const userId = req?.user?.userId;
-    const {status, message} = await logoutFunc(userId, deviceId);
+    const userID = req?.user?.userID;
+    const {status, message} = await logoutFunc(userID, deviceId);
     res.status(status).json({ message: "Succesfull operation", data: { message: message} });
   } catch (error:any) {
     res.status(500).json({ message: error?.message || "Internal Server Error", error: error?.stack });
