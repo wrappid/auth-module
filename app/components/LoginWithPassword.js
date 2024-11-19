@@ -3,9 +3,9 @@ import {
   CoreBox,
   CoreClasses,
   CoreForm,
-  CoreH6,
   CoreLayoutItem,
   CoreTextButton,
+  CoreTypographyBody1,
   CoreTypographyBody2,
   stringUtils
 } from "@wrappid/core";
@@ -58,11 +58,11 @@ const LoginWithPassword = () => {
           />
         </CoreBox>
 
-        <CoreH6
+        <CoreTypographyBody1
           styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.MARGIN.MB1, CoreClasses.COLOR.TEXT_PRIMARY]}
         >
           {name && name?.trim() !== "" ? name : "Unknown User"}
-        </CoreH6>
+        </CoreTypographyBody1>
 
         <CoreTypographyBody2
           limitChars={42}
@@ -91,16 +91,20 @@ const LoginWithPassword = () => {
           styleClasses={[
             CoreClasses.LAYOUT.FULL_WIDTH,
             CoreClasses.FLEX.DIRECTION_ROW,
-            CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_SPACE_AROUND,
+            CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_SPACE_BETWEEN,
             CoreClasses.ALIGNMENT.ALIGN_ITEMS_CENTER,
             CoreClasses.MARGIN.MT3,
           ]}
         >
-          <CoreTextButton onClick={() => changeAuthNextPage(ModuleRoute.RESET_PASSWORD_ROUTE)}>
+          <CoreTextButton
+            styleClasses={[CoreClasses.MARGIN.ML0, CoreClasses.PADDING.P0]}
+            onClick={() => changeAuthNextPage(ModuleRoute.RESET_PASSWORD_ROUTE)}>
             Reset Password
           </CoreTextButton>
 
-          <CoreTextButton onClick={() => changeAuthNextPage(ModuleRoute.LOGIN_OTP_ROUTE)}>
+          <CoreTextButton
+            styleClasses={[CoreClasses.MARGIN.ML0, CoreClasses.PADDING.P0]}
+            onClick={() => changeAuthNextPage(ModuleRoute.LOGIN_OTP_ROUTE)}>
             Login with OTP
           </CoreTextButton>
         </CoreBox>

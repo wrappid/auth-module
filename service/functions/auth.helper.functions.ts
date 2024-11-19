@@ -95,7 +95,7 @@ async function checkOtp(identifier:string, userId: number, otp: string, type: st
       order: [["id", "DESC"]]
     });
     if (dbData.length === 0) {
-      throw new Error("Otp not found");  
+      throw new Error("OTP not found");  
     }
     const dbOtp = dbData[0].dataValues.otp;
     if (Number(dbOtp) === Number(otp)) {

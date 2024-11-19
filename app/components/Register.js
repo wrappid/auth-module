@@ -70,7 +70,7 @@ const Register = () => {
           }`}
         </CoreH1>
 
-        {authNextPage === routeRegistry.register?.url ? (<>
+        {authNextPage.include("register") ? (<>
           <CoreTypographyBody1 styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.COLOR.TEXT_PRIMARY]}>
             {`Verify your${isNaN(identifier) ? " email" : " phone"
             } through OTP`}

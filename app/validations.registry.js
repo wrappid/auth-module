@@ -123,7 +123,7 @@ const identifier = yup
   });
 
 export const ValidationsRegistry = {
-  checkEmailorPhone: { identifier: identifier.required("Either email or phone number, is necessary") },
+  checkEmailorPhone: { identifier: identifier.required("Either email or phone number is necessary") },
 
   confirmPassword: {
     confirmPassword: yup
