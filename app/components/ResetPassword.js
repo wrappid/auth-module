@@ -1,77 +1,18 @@
-import React from "react";
-
 import {
-  apiRequestAction,
-  CoreBox,
   CoreClasses,
   CoreForm,
-  CoreH1,
   CoreLayoutItem,
-  CoreLink,
-  CoreRoutesContext,
-  CoreTextButton,
   CoreTypographyBody1,
   CoreTypographyBody2,
-  coreUseNavigate,
-  HTTP,
   stringUtils
 } from "@wrappid/core";
-import { WrappidDataContext } from "@wrappid/styles";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
+import NotYouButton from "./common/NotYouButton";
 import AuthLayout from "./layout/AuthLayout";
-import { saveAuthData } from "../actions/authActions";
-import { ApiRegistry } from "../apis.registry";
-import { ModuleRoute } from "../constants/app.constants";
-import { GET_PROFILE_BASIC_ERROR, GET_PROFILE_BASIC_SUCCESS } from "../types/authTypes";
 
 const ResetPassword = () => {
-  const navigate = coreUseNavigate();
-  const dispatch = useDispatch();
-  const { config: appConfig } = React.useContext(WrappidDataContext);
-
-  const auth = useSelector(state => state.auth);
-  const routeRegistry = React.useContext(CoreRoutesContext);
-
-  const { navData:{ userID }, authNextPage, accessToken, identifier } = auth;
-
-  let authenticated = accessToken ? true : false;
-
-  const GoBack = () => {
-    dispatch(saveAuthData({
-      authNextPage                  : ModuleRoute.LOGIN_ROUTE,
-      checkLoginOrRegisterError     : false,
-      checkLoginOrRegisterLoading   : false,
-      checkLoginOrRegisterMsg       : false,
-      checkLoginOrRegisterSuccess   : false,
-      navigateToOtpSuccess          : false,
-      navigateToResetPasswordSuccess: false,
-    }));
-  };
-
-  React.useEffect(() => {
-    if (authenticated) {
-      /**
-       * @todo
-       * Must be driven from AuthLayout
-       */
-      GetProfileBasic({ _defaultFilter: encodeURIComponent(JSON.stringify({ userId: userID })) });
-      navigate("/");
-    }
-  }, [authenticated]);
-
-  const GetProfileBasic = (query) => {
-    dispatch(
-      apiRequestAction(
-        HTTP.GET,
-        ApiRegistry.GET_PROFILE_BASIC_API,
-        true,
-        query,
-        GET_PROFILE_BASIC_SUCCESS,
-        GET_PROFILE_BASIC_ERROR
-      )
-    );
-  };
+  const { identifier } = useSelector(state => state.auth);
 
   const showEmailOrPhone = () => {
     return (
@@ -97,53 +38,21 @@ const ResetPassword = () => {
     );
   };
 
-  // eslint-disable-next-line etc/no-commented-out-code
-  // if (
-  //   !checkLoginOrRegisterSuccess &&
-  //   (authNextPage.toLowerCase() !== ModuleRoute.REGISTER_ROUTE ||
-  //     authNextPage.toLowerCase() !== ModuleRoute.RESET_PASSWORD_ROUTE)
-  // ) {
-  //   navigate(`/${authNextPage}`);
-  // }
-
-  // {(!checkLoginOrRegisterSuccess &&
-  //   (authNextPage.toLowerCase() !== ModuleRoute.REGISTER_ROUTE ||
-  //     authNextPage.toLowerCase() !== ModuleRoute.RESET_PASSWORD_ROUTE)) ? <CoreDomNavigate to={`/${authNextPage}`} /> : ()
-  // }
-
   return (
     <>
       <CoreLayoutItem id={AuthLayout.PLACEHOLDER.CONTENT}>
-        <CoreH1 variant="h5" styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.COLOR.TEXT_PRIMARY]}>
+        <CoreTypographyBody1 styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.COLOR.TEXT_PRIMARY]}>
           {`Verify your${isNaN(identifier) ? " email" : " phone"
           }`}
-        </CoreH1>
+        </CoreTypographyBody1>
 
-        {authNextPage === routeRegistry.register?.url ? (<>
-          <CoreTypographyBody1 styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.COLOR.TEXT_PRIMARY]}>
-            {`Verify your${isNaN(identifier) ? " email" : " phone"
-            } through OTP`}
-          </CoreTypographyBody1>
+        <CoreTypographyBody1 styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.COLOR.TEXT_PRIMARY]}>
+          {"Reset password through OTP"}
+        </CoreTypographyBody1>
 
-          {showEmailOrPhone()}
-        </>
-        ) : (
-          <>
-            {
+        {showEmailOrPhone()}
 
-              <CoreTypographyBody1 styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.COLOR.TEXT_PRIMARY]}>
-                {"Reset your account"}
-              </CoreTypographyBody1>
-            }
-
-            {showEmailOrPhone()}
-          </>
-        )}
-
-        <CoreBox
-          styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.MARGIN.MB1]}>
-          <CoreTextButton onClick={GoBack} label="Not You" />
-        </CoreBox>
+        <NotYouButton />
 
         <CoreForm
           styleClasses={CoreClasses.LAYOUT.AUTH_FORM_CONTAINER}
@@ -152,32 +61,6 @@ const ResetPassword = () => {
           authenticated={false}
           initProps={{ otp: { to: identifier } }}
         />
-
-        {authNextPage === routeRegistry?.register?.url && (
-          <CoreTypographyBody2 styleClasses={[CoreClasses.COLOR.TEXT_PRIMARY]}>
-            By signing up you agree to our{" "}
-
-            <CoreLink
-              href={
-                appConfig?.wrappid?.privacyLink ||
-                "#"
-              }>
-              Privacy Policy
-            </CoreLink>{" "}
-
-            <CoreTypographyBody2 component="span">&</CoreTypographyBody2>{" "}
-
-            <CoreLink
-              href={
-                appConfig?.wrappid?.termsLink ||
-                "#"
-              }>
-              Terms
-            </CoreLink>
-
-            {"."}
-          </CoreTypographyBody2>
-        )}
 
       </CoreLayoutItem >
     </>

@@ -117,3 +117,5 @@ export const ADD_USER_SUCCESS = "ADD_USER_SUCCESS";
 export const ADD_USER_ERROR = "ADD_USER_ERROR";
 export const SAVE_DEFAULT = "SAVE_DEFAULT";
 export const AUTH_DATA_SAVED = "AUTH_DATA_SAVED";
+
+export const RESET_AUTH_STATE = "RESET_AUTH_STATE";

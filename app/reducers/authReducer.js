@@ -27,6 +27,7 @@ import {
   NAVIGATE_TO_OTP_LOGIN_SUCCESS,
   NAVIGATE_TO_RESET_PASSWORD_SUCCESS,
   RESET_AUTH_REDIRECT,
+  RESET_AUTH_STATE,
   RESET_CHANGE_PASSWORD_STATUS,
   RESET_PASSWORD_ERROR,
   RESET_PASSWORD_LOADING,
@@ -451,6 +452,9 @@ const authReducer = (state = initState, action) => {
         clientLoginFlag       : false,
         clientLoginInformation: null,
       };
+    
+    case RESET_AUTH_STATE:
+      return initState;
 
     default:
       return state;

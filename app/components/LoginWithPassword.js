@@ -11,8 +11,9 @@ import {
 } from "@wrappid/core";
 import { useDispatch, useSelector } from "react-redux";
 
+import NotYouButton from "./common/NotYouButton";
 import AuthLayout from "./layout/AuthLayout";
-import { clearAuthState, saveAuthData } from "../actions/authActions";
+import { saveAuthData } from "../actions/authActions";
 import { ModuleRoute } from "../constants/app.constants";
 
 const LoginWithPassword = () => {
@@ -25,22 +26,6 @@ const LoginWithPassword = () => {
       photo,
     }
   } = auth;
-
-  const GoBack = () => {
-    dispatch(
-      saveAuthData({
-        authNextPage                  : ModuleRoute.LOGIN_ROUTE,
-        checkLoginOrRegisterError     : false,
-        checkLoginOrRegisterLoading   : false,
-        checkLoginOrRegisterMsg       : false,
-        checkLoginOrRegisterSuccess   : false,
-        navigateToOtpSuccess          : false,
-        navigateToResetPasswordSuccess: false,
-      })
-    );
-
-    dispatch(clearAuthState());
-  };
 
   const changeAuthNextPage = (routeName) => {
     dispatch(saveAuthData({ authNextPage: routeName }));
@@ -74,11 +59,7 @@ const LoginWithPassword = () => {
           )}
         </CoreTypographyBody2>
 
-        <CoreBox
-          styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.MARGIN.MB1]}
-        >
-          <CoreTextButton onClick={GoBack} label="Not you" />
-        </CoreBox>
+        <NotYouButton />
 
         <CoreForm
           styleClasses={CoreClasses.LAYOUT.AUTH_FORM_CONTAINER}

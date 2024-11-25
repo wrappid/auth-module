@@ -1,42 +1,25 @@
 import React from "react";
 
 import {
-  CoreBox,
   CoreClasses,
   CoreForm,
-  CoreH1,
   CoreLayoutItem,
   CoreLink,
   CoreRoutesContext,
-  CoreTextButton,
   CoreTypographyBody1,
   CoreTypographyBody2,
   stringUtils
 } from "@wrappid/core";
 import { WrappidDataContext } from "@wrappid/styles";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
+import NotYouButton from "./common/NotYouButton";
 import AuthLayout from "./layout/AuthLayout";
-import { saveAuthData } from "../actions/authActions";
-import { ModuleRoute } from "../constants/app.constants";
 
 const Register = () => {
-  const dispatch = useDispatch();
   const { config: appConfig } = React.useContext(WrappidDataContext);
   const { authNextPage, identifier }  = useSelector(state => state.auth);
   const routeRegistry = React.useContext(CoreRoutesContext);
-
-  const GoBack = () => {
-    dispatch(saveAuthData({
-      authNextPage                  : ModuleRoute.LOGIN_ROUTE,
-      checkLoginOrRegisterError     : false,
-      checkLoginOrRegisterLoading   : false,
-      checkLoginOrRegisterMsg       : false,
-      checkLoginOrRegisterSuccess   : false,
-      navigateToOtpSuccess          : false,
-      navigateToResetPasswordSuccess: false,
-    }));
-  };
 
   const showEmailOrPhone = () => {
     return (
@@ -65,36 +48,19 @@ const Register = () => {
   return (
     <>
       <CoreLayoutItem id={AuthLayout.PLACEHOLDER.CONTENT}>
-        <CoreH1 variant="h5" styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.COLOR.TEXT_PRIMARY]}>
+        <CoreTypographyBody1 styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.COLOR.TEXT_PRIMARY]}>
+          {`Verify your${isNaN(identifier) ? " email" : " phone"}`}
+        </CoreTypographyBody1>
+        
+        {/* eslint-disable-next-line etc/no-commented-out-code */}
+        {/* <CoreTypographyBody1 styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.COLOR.TEXT_PRIMARY]}>
           {`Verify your${isNaN(identifier) ? " email" : " phone"
-          }`}
-        </CoreH1>
+          } through OTP`}
+        </CoreTypographyBody1> */}
 
-        {authNextPage.include("register") ? (<>
-          <CoreTypographyBody1 styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.COLOR.TEXT_PRIMARY]}>
-            {`Verify your${isNaN(identifier) ? " email" : " phone"
-            } through OTP`}
-          </CoreTypographyBody1>
+        {showEmailOrPhone()}
 
-          {showEmailOrPhone()}
-        </>
-        ) : (
-          <>
-            {
-
-              <CoreTypographyBody1 styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.COLOR.TEXT_PRIMARY]}>
-                {"Reset your account"}
-              </CoreTypographyBody1>
-            }
-
-            {showEmailOrPhone()}
-          </>
-        )}
-
-        <CoreBox
-          styleClasses={[CoreClasses.TEXT.TEXT_CENTER, CoreClasses.MARGIN.MB1]}>
-          <CoreTextButton onClick={GoBack} label="Not You" />
-        </CoreBox>
+        <NotYouButton />
 
         <CoreForm
           styleClasses={CoreClasses.LAYOUT.AUTH_FORM_CONTAINER}
