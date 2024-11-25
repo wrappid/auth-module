@@ -131,6 +131,22 @@ const authReducer = (state = initState, action) => {
       };
 
     case LOGIN_SUCCESS:
+
+    const roles = action.payload?.data?.roles || [];
+    const getRoleWithMaxPriority = (roles) => {
+      if (!Array.isArray(roles) || roles.length === 0) {
+        return null;
+      }
+      let maxPriorityRole = roles[0];
+      for (let i = 1; i < roles.length; i++) {
+        if (roles[i].priority > maxPriorityRole.priority) {
+          maxPriorityRole = roles[i];
+        }
+      }
+      return maxPriorityRole;
+    };
+    const role = getRoleWithMaxPriority(roles);
+
       return {
         ...state,
         accessToken                : action.payload.data.accessToken,
@@ -139,7 +155,8 @@ const authReducer = (state = initState, action) => {
         checkLoginOrRegisterSuccess: true,
         redirect                   : true,
         refreshToken               : action.payload.data.refreshToken,
-        role                       : action.payload?.data?.role,
+        roles                       : roles,
+        role                       : role,
         user                       : {
           email        : action.payload?.data?.email,
           emailVerified: action.payload?.data?.emailVerified,

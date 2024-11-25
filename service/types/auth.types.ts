@@ -43,7 +43,8 @@ interface IUserAuthData {
   phoneVerified:boolean;
   name: string
   photoUrl: string;
-  role: GenericObject;
+  roles: Array<{ [key: string]: any }>;
+  role:GenericObject;
 }
 
 interface NameData {
