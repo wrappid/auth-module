@@ -137,7 +137,8 @@ export const urlLoginController = async(req: Request, res: Response<ResponseBody
       phone: "",
       phoneVerified: false,
       name:"" ,
-      photoUrl:"" ,
+      photoUrl: "",
+      role: {}
     } });
   } catch (error:any) {
     res.status(500).json({ message: error?.message || "Internal Server Error", error: error?.stack });

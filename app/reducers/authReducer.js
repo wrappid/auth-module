@@ -139,6 +139,7 @@ const authReducer = (state = initState, action) => {
         checkLoginOrRegisterSuccess: true,
         redirect                   : true,
         refreshToken               : action.payload.data.refreshToken,
+        role                       : action.payload?.data?.role,
         user                       : {
           email        : action.payload?.data?.email,
           emailVerified: action.payload?.data?.emailVerified,
@@ -149,7 +150,7 @@ const authReducer = (state = initState, action) => {
           phoneVerified: action.payload?.data?.phoneVerified,
           photo        : action.payload?.data?.photoUrl,
           sessionID    : action.payload?.data?.sessionId,
-        },
+        }
       };
 
     case TOKEN_REFRESH_SUCCESS:

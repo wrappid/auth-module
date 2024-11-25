@@ -1,9 +1,12 @@
+import { GenericObject } from "@wrappid/service-core";
+
 // Base response data interface for user-person relationship
 interface IUserPersonData {
   name?: string;
   photoUrl?: string;
   identifier: string;
   userID?: string;
+  role?: GenericObject
 }
 
 // Base response data interface for user-person relationship
@@ -30,19 +33,17 @@ interface ResponseBody<T> {
 
 interface IUserAuthData {
   id: number;
-  personId: 
-  number; 
-  accessToken: 
-  string; 
-  refreshToken: 
-  string; 
+  personId: number; 
+  accessToken: string; 
+  refreshToken: string; 
   sessionId: string;
   email:string;
   emailVerified:boolean;
   phone:string;
   phoneVerified:boolean;
   name: string
-  photoUrl:string;
+  photoUrl: string;
+  role: GenericObject;
 }
 
 interface NameData {
@@ -106,6 +107,7 @@ interface SenOtpBody {
 
 export type {
   IApiResponse, IUserAuthData, IUserPersonData, LoginWithOtp,
-  LoginWithPass, LogoutResponse,NameData,
+  LoginWithPass, LogoutResponse, NameData,
   RefreshToken, Register, RegisterWithPass, RequestBody, ResetPass, ResponseBody, SenOtpBody, UserRequest
 };
+

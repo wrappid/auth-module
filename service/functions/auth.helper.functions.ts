@@ -297,12 +297,20 @@ async function createSessionAndLogin(userData:any, originalUrl:string, deviceId:
     const role = await databaseActions.findOne(
       "application",
       "UserRoles",
-      { attributes: ["roleID"], where: {userID: userData.id} }
+      {
+        attributes: ["roleID"],
+        where: { userID: userData.id }
+      }
     );
     if (!role && role?.id <= 0) {
       WrappidLogger.error("Role not found");
       throw new Error("Role not found");
     }
+    const roleOB = await databaseActions.findByPk(
+      "application",
+      "Roles",
+      role?.id
+    );
 
     const personID = personData.id;
     const roleID = role.roleID;
@@ -370,6 +378,7 @@ async function createSessionAndLogin(userData:any, originalUrl:string, deviceId:
                   phoneVerified: primaryPhone[0]?.verified,
                   name: fullName,
                   photoUrl: personMetaData.photoUrl,
+                  role: {role: roleOB?.role}
                 }
               };
             } else {
@@ -408,6 +417,7 @@ async function createSessionAndLogin(userData:any, originalUrl:string, deviceId:
               phoneVerified: primaryPhone[0]?.verified,
               name: fullName,
               photoUrl: personMetaData.photoUrl,
+              role: {role: roleOB?.role}
             }
           };
         }
