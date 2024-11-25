@@ -138,6 +138,7 @@ export const urlLoginController = async(req: Request, res: Response<ResponseBody
       phoneVerified: false,
       name:"" ,
       photoUrl: "",
+      roles: [],
       role: {}
     } });
   } catch (error:any) {

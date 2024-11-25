@@ -191,7 +191,7 @@ function genarateAccessToken(
   email: string,
   phone: string,
   personID: number,
-  roleID: number,
+  roleID: number[],
   refresh = true
 ): { accessToken: string; refreshToken: string | null } {
   try {
@@ -294,33 +294,62 @@ async function createSessionAndLogin(userData:any, originalUrl:string, deviceId:
       middleName:personMetaData?. middleName,
     });
 
-    const role = await databaseActions.findOne(
+    // const role = await databaseActions.findOne(
+    //   "application",
+    //   "UserRoles",
+    //   {
+    //     attributes: ["roleID"],
+    //     where: { userID: userData.id }
+    //   }
+    // );
+    // if (!role && role?.roleID <= 0) {
+    //   WrappidLogger.error("Role not found");
+    //   throw new Error("Role not found");
+    // }
+    // const roleOB = await databaseActions.findByPk(
+    //   "application",
+    //   "Roles",
+    //   role?.id
+    // );
+    const roles = await databaseActions.findAll(
       "application",
       "UserRoles",
       {
         attributes: ["roleID"],
-        where: { userID: userData.id }
+        where: { userID: userData.id , _status: "active"}
       }
     );
-    if (!role && role?.id <= 0) {
-      WrappidLogger.error("Role not found");
-      throw new Error("Role not found");
+    
+    if (!roles || roles.length === 0) {
+      WrappidLogger.error("Roles not found");
+      throw new Error("Roles not found");
     }
-    const roleOB = await databaseActions.findByPk(
-      "application",
-      "Roles",
-      role?.id
+    
+    // Fetch role details for each roleID
+    const roleDetails = await Promise.all(
+      roles.map(async (role:any) => {
+        return await databaseActions.findByPk(
+          "application",
+          "Roles",
+          role.roleID
+        );
+      })
     );
-
+    
+    if (!roleDetails || roleDetails.length === 0) {
+      WrappidLogger.error("Role details not found");
+      throw new Error("Role details not found");
+    }
+    
     const personID = personData.id;
-    const roleID = role.roleID;
+    const rolesID = roleDetails.map((role:any) => role?.id).filter(Boolean);
 
     const { refreshToken, accessToken } = genarateAccessToken(
       userData.id,
       userData.email,
       userData.phone,
       personID,
-      roleID
+      rolesID
     );
 
     if (!refreshToken) {
@@ -378,7 +407,8 @@ async function createSessionAndLogin(userData:any, originalUrl:string, deviceId:
                   phoneVerified: primaryPhone[0]?.verified,
                   name: fullName,
                   photoUrl: personMetaData.photoUrl,
-                  role: {role: roleOB?.role}
+                  roles: roleDetails,
+                  role: roleDetails[0],
                 }
               };
             } else {
@@ -417,7 +447,8 @@ async function createSessionAndLogin(userData:any, originalUrl:string, deviceId:
               phoneVerified: primaryPhone[0]?.verified,
               name: fullName,
               photoUrl: personMetaData.photoUrl,
-              role: {role: roleOB?.role}
+              roles: roleDetails,
+              role: roleDetails[0],
             }
           };
         }
