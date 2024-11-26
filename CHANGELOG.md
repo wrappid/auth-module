@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.55](https://https//github.com/wrappid/wrappid-module/compare/v0.0.54...v0.0.55) (2024-11-26)
+
+
+### Bug Fixes
+
+* **core:** :ambulance: auth related UI fixes resolved ([8320341](https://https//github.com/wrappid/wrappid-module/commit/83203417d56756c481881e2b850fe3ef2dc7d095))
+* **core:** :bug: fix single role ([669ade4](https://https//github.com/wrappid/wrappid-module/commit/669ade49f7f7170391f69ba1060157a839eb3e70))
+* **global:** :bug: handle impact of style package ([1ec9497](https://https//github.com/wrappid/wrappid-module/commit/1ec94979dd3614ecf3c2647b5157144dd1c63222)), closes [#143](https://https//github.com/wrappid/wrappid-module/issues/143)
+
 ### [0.0.54](https://https//github.com/wrappid/wrappid-module/compare/v0.0.53...v0.0.54) (2024-11-19)
 
 
