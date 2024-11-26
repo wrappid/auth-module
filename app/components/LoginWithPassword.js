@@ -35,7 +35,7 @@ const LoginWithPassword = () => {
     <>
       <CoreLayoutItem id={AuthLayout.PLACEHOLDER.CONTENT}>
         <CoreBox
-          styleClasses={[CoreClasses.ALIGNMENT.ALIGN_ITEMS_CENTER, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER, CoreClasses.MARGIN.MB3]}
+          styleClasses={[CoreClasses.DISPLAY.FLEX, CoreClasses.ALIGNMENT.ALIGN_ITEMS_CENTER, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER, CoreClasses.MARGIN.MB3]}
         >
           <CoreAvatar
             styleClasses={[CoreClasses.DATA_DISPLAY.AVATAR_LARGE]}
@@ -71,6 +71,7 @@ const LoginWithPassword = () => {
         <CoreBox
           styleClasses={[
             CoreClasses.LAYOUT.FULL_WIDTH,
+            CoreClasses.DISPLAY.FLEX,
             CoreClasses.FLEX.DIRECTION_ROW,
             CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_SPACE_BETWEEN,
             CoreClasses.ALIGNMENT.ALIGN_ITEMS_CENTER,

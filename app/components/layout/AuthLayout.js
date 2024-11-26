@@ -52,7 +52,7 @@ export default function AuthLayout() {
             id={AuthLayout.PLACEHOLDER.CONTENT}
           >
             <CoreBox
-              styleClasses={[CoreClasses.MARGIN.MB5, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER, CoreClasses.FLEX.DIRECTION_ROW]}
+              styleClasses={[CoreClasses.MARGIN.MB5, CoreClasses.DISPLAY.FLEX, CoreClasses.FLEX.DIRECTION_ROW, CoreClasses.ALIGNMENT.JUSTIFY_CONTENT_CENTER]}
             >
               {resourceContext?.appLogo ? (
                 <CoreImage
