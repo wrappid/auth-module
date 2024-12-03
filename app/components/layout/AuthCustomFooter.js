@@ -16,6 +16,8 @@ export default function AuthCustomFooter() {
         <CoreLink
           styleClasses={[CoreClasses.COLOR.TEXT_WHITE]}
           href={"/about"}
+          target="_blank"
+          rel="noopener noreferrer"
         >
           <CoreTypographyBody1 gutterBottom={false} paragraph={false} styleClasses={[CoreClasses.COLOR.TEXT_PRIMARY]}>{appConfig.packageInfo.version}</CoreTypographyBody1>
         </CoreLink>
