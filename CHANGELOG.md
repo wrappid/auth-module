@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.56](https://https//github.com/wrappid/wrappid-module/compare/v0.0.55...v0.0.56) (2024-12-09)
+
+
+### Bug Fixes
+
+* **core:** :bug: fix auth layout footer component ([59393a5](https://https//github.com/wrappid/wrappid-module/commit/59393a543487872f5f8fe3a4ad8d8d606eae4870))
+
 ### [0.0.55](https://https//github.com/wrappid/wrappid-module/compare/v0.0.54...v0.0.55) (2024-11-26)
 
 
