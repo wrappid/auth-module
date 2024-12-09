@@ -25,24 +25,21 @@ export default function AuthCustomFooter() {
 
       <CoreBox styleClasses={[CoreClasses.FLEX.DIRECTION_ROW, CoreClasses.PADDING.PB2]}>
         <CoreLink
-          href={
-            appConfig?.wrappid?.helpLink ||
-          "#"
-          }
+          href={ appConfig?.wrappid?.helpLink || "#" }
+          target="_blank"
+          rel="noopener noreferrer"
           styleClasses={[CoreClasses.COLOR.TEXT_PRIMARY]}>Help</CoreLink>
 
         <CoreLink
-          href={
-            appConfig?.wrappid?.privacyLink ||
-          "#"
-          }
+          href={ appConfig?.wrappid?.privacyLink || "#" }
+          target="_blank"
+          rel="noopener noreferrer"
           styleClasses={[CoreClasses.COLOR.TEXT_PRIMARY, CoreClasses.PADDING.PL2]}>Privacy</CoreLink>
 
         <CoreLink
-          href={
-            appConfig?.wrappid?.termsLink ||
-          "#"
-          }
+          href={ appConfig?.wrappid?.termsLink || "#" }
+          target="_blank"
+          rel="noopener noreferrer"
           styleClasses={[CoreClasses.COLOR.TEXT_PRIMARY, CoreClasses.PADDING.PL2]}>Terms</CoreLink>
       </CoreBox>
     </CoreBox>
