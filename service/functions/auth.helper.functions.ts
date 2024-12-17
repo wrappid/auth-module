@@ -17,7 +17,6 @@ class ContactValidationError extends Error {
   }
 }
 
-
 /**
  * Validates and determines if a string is an email or phone number
  * @param identifier - The string to validate
@@ -55,7 +54,6 @@ async function getIdentifierType(identifier: string): Promise<ContactType> {
     WrappidLogger.logFunctionEnd("getIdentifierType");
   }
 }
-
 
 /** 
  * This function is used to check if the otp is valid
@@ -112,8 +110,6 @@ async function checkOtp(identifier:string, userId: number, otp: string, type: st
   }
 }
 
-
-
 /**
  * Gets the IP address from the request object
  * @param req 
@@ -140,7 +136,6 @@ async function getIP(req: any) {
     WrappidLogger.logFunctionEnd("getIP");
   }
 }
-
 
 /**
  * Gets the deviceid address from the request object
@@ -240,7 +235,6 @@ function genarateAccessToken(
   }
 }
 
-
 /**
  * This function is used to create session and login
  * 1. Get config data from context
@@ -298,7 +292,6 @@ async function createSessionAndLogin(userData:any, originalUrl:string, deviceId:
       "application",
       "UserRoles",
       {
-        attributes: ["roleID"],
         where: { userID: userData.id }
       }
     );
@@ -432,7 +425,6 @@ async function createSessionAndLogin(userData:any, originalUrl:string, deviceId:
   }
 }
 
-
 /**
  * Generates a full name string from the provided name components
  * 
@@ -471,13 +463,6 @@ export function getFullName(data: NameData): string {
   return name && name.length > 0 ? name : "Unnamed";
 }
 
-
-
-
-
-
-
-
 /**
  * This function is used to create login logs
  * @param path
@@ -502,8 +487,6 @@ async function createLoginLogs(path: string, userId: number, extraInfo: any = "{
     WrappidLogger.logFunctionEnd("createLoginLogs");
   }
 }
-
-
 
 /**
 * Determines the appropriate communication template based on identifier type and service.
@@ -660,7 +643,6 @@ const formatPhoneNumber = (phone:string) => {
     WrappidLogger.logFunctionEnd("formatPhoneNumber");
   }
 };
-
 
 export {
   checkOtp, createSessionAndLogin, formatPhoneNumber, genarateAccessToken, getDeviceId, getIdentifierType, getTemplateName
