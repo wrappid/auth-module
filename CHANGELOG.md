@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.57](https://https//github.com/wrappid/wrappid-module/compare/v0.0.56...v0.0.57) (2024-12-19)
+
+
+### Bug Fixes
+
+* **core:** :bug: auth footer fix ([5de4161](https://https//github.com/wrappid/wrappid-module/commit/5de4161e28fc4251d14075c729eb0987332d6ea4))
+* **core:** :zap: auth related issue resolved ([228b2f2](https://https//github.com/wrappid/wrappid-module/commit/228b2f274efad2b9649639543e9f6d578878bbe5))
+* **core:** :zap: role include issue resolved ([a854a1d](https://https//github.com/wrappid/wrappid-module/commit/a854a1dd33ff89d720aeb393f5be889423cd68e0))
+
 ### [0.0.56](https://https//github.com/wrappid/wrappid-module/compare/v0.0.55...v0.0.56) (2024-12-09)
 
 
