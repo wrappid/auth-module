@@ -43,7 +43,7 @@ interface IUserAuthData {
   phoneVerified:boolean;
   name: string
   photoUrl: string;
-  roles: Array<{ [key: string]: any }>;
+  roles?: Array<{ [key: string]: any }>;
   role:GenericObject;
 }
 
