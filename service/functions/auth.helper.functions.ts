@@ -295,14 +295,14 @@ async function createSessionAndLogin(userData:any, originalUrl:string, deviceId:
         where: { userID: userData.id }
       }
     );
-    if (!role && role?.id <= 0) {
+    if (!role && role?.roleID <= 0) {
       WrappidLogger.error("Role not found");
       throw new Error("Role not found");
     }
     const roleOB = await databaseActions.findByPk(
       "application",
       "Roles",
-      role?.id
+      role?.roleID
     );
 
     const personID = personData.id;

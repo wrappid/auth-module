@@ -361,7 +361,8 @@ const authReducer = (state = initState, action) => {
       return {
         ...state,
         permissions           : null,
-        role                  : null,
+        // eslint-disable-next-line etc/no-commented-out-code
+        // role                  : null,
         rolePermissionsError  : false,
         rolePermissionsLoading: true,
         rolePermissionsMsg    : action.message,
@@ -372,7 +373,8 @@ const authReducer = (state = initState, action) => {
       return {
         ...state,
         permissions           : action.payload?.data?.permissions,
-        role                  : action.payload?.data?.role,
+        // eslint-disable-next-line etc/no-commented-out-code
+        // role                  : action.payload?.data?.role,
         rolePermissionsError  : false,
         rolePermissionsLoading: false,
         rolePermissionsMsg    : action.payload.message,
@@ -383,7 +385,8 @@ const authReducer = (state = initState, action) => {
       return {
         ...state,
         permissions           : null,
-        role                  : null,
+        // eslint-disable-next-line etc/no-commented-out-code
+        // role                  : null,
         rolePermissionsError  : true,
         rolePermissionsLoading: false,
         rolePermissionsMsg    : action.message,
