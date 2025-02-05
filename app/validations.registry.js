@@ -36,22 +36,39 @@ const isValidEmail = (email) => {
 
 // Helper function to validate Indian phone number
 const isValidPhone = (phone) => {
+  if (!phone) return false;
+
+  // Convert to string and clean the input by removing spaces and hyphens
   const cleanPhone = phone.toString().replace(/[\s-]/g, "");
       
   let numberToValidate = cleanPhone;
 
+  // Handle different phone number formats:
+  // 1. +91 prefix (international format)
+  // 2. 91 prefix (without +)
+  // 3. Plain 10-digit number
+  // 4. Number with just + prefix
   if (cleanPhone.startsWith("+91") && cleanPhone.length === 13) {
     numberToValidate = cleanPhone.slice(3);
-  } else if (cleanPhone.startsWith("0") && cleanPhone.length === 11) {
+  } else if (cleanPhone.startsWith("91") && cleanPhone.length === 12) {
     numberToValidate = cleanPhone.slice(2);
+  } else if (cleanPhone.startsWith("+")) {
+    numberToValidate = cleanPhone.slice(1);
+  } else if (cleanPhone.startsWith("0") && cleanPhone.length == 11 ) {
+    numberToValidate = cleanPhone.slice(1);
   }
 
+  // Validate the final number:
+  // - Must start with 6, 7, 8, or 9
+  // - Must be exactly 10 digits
   return /^[6-9]\d{9}$/.test(numberToValidate);
 };
 
+// Main validation schema for identifier (email or phone)
 const identifier = yup
   .string()
   .required("Email or phone number is required")
+  // First test: Basic format validation
   .test("email-or-phone", "Invalid email or phone number format", function(value) {
     if (!value) return false;
   
@@ -65,6 +82,7 @@ const identifier = yup
       return isValidPhone(cleanValue);
     }
   })
+  // Second test: Detailed validation with specific error messages
   .test("detailed-validation", "Invalid format", function(value) {
     if (!value) return false;
   
@@ -74,6 +92,7 @@ const identifier = yup
     if (cleanValue.includes("@")) {
       const [localPart, domainPart] = cleanValue.split("@");
   
+      // Check email local part
       if (!localPart || !domainPart) {
         return this.createError({ message: "Invalid email format" });
       }
@@ -86,6 +105,7 @@ const identifier = yup
         return this.createError({ message: "Email local part cannot exceed 64 characters" });
       }
   
+      // Check email domain part
       if (!domainPart.includes(".")) {
         return this.createError({ message: "Email domain must contain at least one dot" });
       }
@@ -100,12 +120,18 @@ const identifier = yup
           
       let numberToValidate = cleanPhone;
 
-      if (cleanPhone.startsWith("+91")) {
+      // Process different phone number formats
+      if (cleanPhone.startsWith("+91") && cleanPhone.length === 13) {
         numberToValidate = cleanPhone.slice(3);
-      } else if (cleanPhone.startsWith("91")) {
+      } else if (cleanPhone.startsWith("91") && cleanPhone.length === 12) {
         numberToValidate = cleanPhone.slice(2);
+      } else if (cleanPhone.startsWith("+")) {
+        numberToValidate = cleanPhone.slice(1);
+      } else if (cleanPhone.startsWith("0") && cleanPhone.length == 11 ) {
+        numberToValidate = cleanPhone.slice(1);
       }
   
+      // Validate phone number format
       if (!/^\d+$/.test(numberToValidate)) {
         return this.createError({ message: "Phone number can only contain digits" });
       }
@@ -122,9 +148,12 @@ const identifier = yup
     return true;
   });
 
+// Export validation schemas
 export const ValidationsRegistry = {
+  // Schema for email/phone validation
   checkEmailorPhone: { identifier: identifier.required("Either email or phone number is necessary") },
 
+  // Schema for password confirmation
   confirmPassword: {
     confirmPassword: yup
       .string()
@@ -143,5 +172,6 @@ export const ValidationsRegistry = {
       .required("Enter old password"),
   },
 
+  // Schema for password entry
   enterPassword: { password: yup.string().required("Enter password") }
 };
