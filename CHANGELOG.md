@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.60](https://https//github.com/wrappid/wrappid-module/compare/v0.0.59...v0.0.60) (2025-02-06)
+
+
+### Bug Fixes
+
+* **global:** :bug: fix bug related to mobile number input in auth module ([d4f4930](https://https//github.com/wrappid/wrappid-module/commit/d4f4930b13dfa313891ad2c5553c319a2ff77116)), closes [#145](https://https//github.com/wrappid/wrappid-module/issues/145)
+
 ### [0.0.59](https://https//github.com/wrappid/wrappid-module/compare/v0.0.58...v0.0.59) (2025-01-29)
 
 ### [0.0.58](https://https//github.com/wrappid/wrappid-module/compare/v0.0.57...v0.0.58) (2025-01-28)
