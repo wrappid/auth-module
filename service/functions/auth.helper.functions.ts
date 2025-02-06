@@ -627,6 +627,8 @@ const formatPhoneNumber = (phone:string) => {
     // Check if the clean number starts with country code (91)
     if (cleanPhone.startsWith("91") && cleanPhone.length === 12) {
       return cleanPhone.slice(2);
+    } else if (cleanPhone.startsWith("0") && cleanPhone.length === 11) {
+      return cleanPhone.slice(1);
     }
 
     // Check if it's a valid 10-digit number

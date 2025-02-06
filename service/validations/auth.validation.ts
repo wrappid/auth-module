@@ -42,8 +42,12 @@ const identifier = yup
       let numberToValidate = cleanPhone;
       if (cleanPhone.startsWith("+91") && cleanPhone.length === 13) {
         numberToValidate = cleanPhone.slice(3);
-      } else if (cleanPhone.startsWith("0") && cleanPhone.length === 11) {
+      } else if (cleanPhone.startsWith("91") && cleanPhone.length === 12) {
         numberToValidate = cleanPhone.slice(2);
+      } else if (cleanPhone.startsWith("+")) {
+        numberToValidate = cleanPhone.slice(1);
+      } else if (cleanPhone.startsWith("0") && cleanPhone.length == 11 ) {
+        numberToValidate = cleanPhone.slice(1);
       }
   
       return /^[6-9]\d{9}$/.test(numberToValidate);
@@ -103,10 +107,14 @@ const identifier = yup
       const cleanPhone = cleanValue.replace(/[\s-]/g, "");
           
       let numberToValidate = cleanPhone;
-      if (cleanPhone.startsWith("+91")) {
+      if (cleanPhone.startsWith("+91") && cleanPhone.length === 13) {
         numberToValidate = cleanPhone.slice(3);
-      } else if (cleanPhone.startsWith("91")) {
+      } else if (cleanPhone.startsWith("91") && cleanPhone.length === 12) {
         numberToValidate = cleanPhone.slice(2);
+      } else if (cleanPhone.startsWith("+")) {
+        numberToValidate = cleanPhone.slice(1);
+      } else if (cleanPhone.startsWith("0") && cleanPhone.length == 11 ) {
+        numberToValidate = cleanPhone.slice(1);
       }
   
       if (!/^\d+$/.test(numberToValidate)) {
