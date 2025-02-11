@@ -12,8 +12,21 @@ import jwt from "jsonwebtoken";
 import otpGenerator from "otp-generator";
 import { Transaction } from "sequelize";
 import constant from "../constants/constants";
-import { IApiResponse, LogoutResponse, RefreshToken, Register } from "../types/auth.types";
-import { checkOtp, createSessionAndLogin, formatPhoneNumber, genarateAccessToken, getIdentifierType, getTemplateName } from "./auth.helper.functions";
+import {
+  IApiResponse,
+  LogoutResponse,
+  RefreshToken,
+  Register
+} from "../types/auth.types";
+import {
+  checkOtp,
+  createSessionAndLogin,
+  formatPhoneNumber,
+  formatTimestamp,
+  genarateAccessToken,
+  getIdentifierType,
+  getTemplateName
+} from "./auth.helper.functions";
 import { checkUserExistance, createUser } from "./user.function";
 
 
@@ -41,9 +54,9 @@ const checkUserFunc = async (identifier: string): Promise<IApiResponse> => {
       if (personData && personData?.id <= 0) {
         throw new Error("Person data not found");
       }
-      
+
       const FunctionsRegistry: GenericObject = ApplicationContext.getContext(coreConstant.registry.FUNCTIONS_REGISTRY);
-      
+
       const personMetaData = await FunctionsRegistry["getMetaDataJSON"]("PersonMetas", personData.id);
       if (!personMetaData || Object.keys(personMetaData).length <= 0) {
         throw new Error("Person meta data not found");
@@ -130,21 +143,21 @@ const registerWithPasswordFunc = async (identifier: string, password: string, co
       const hashedPassword = await bcrypt.hash(password, 9); // Hash the password
       await databaseProvider.application.sequelize.transaction(
         async (transaction: Transaction) => {
-          await databaseActions.update("application", "Users", { password: hashedPassword, _status:constant.entityStatus.ACTIVE }, { where: { id: userData.id } }, {transaction: transaction}); // Update the password
-          await databaseActions.update("application", "Persons", { _status:constant.entityStatus.ACTIVE }, { where: { userId: userData.id } }, {transaction: transaction});
-          const personData = await databaseActions.findOne("application", "Persons", { where: { userId: userData.id } }, {transaction: transaction});
-          await databaseActions.update("application", "PersonContacts", { _status:constant.entityStatus.ACTIVE, verified:true, primaryFlag:true }, { where: { personId: personData.id, type: identifierType, data:identifier } },{transaction: transaction});
+          await databaseActions.update("application", "Users", { password: hashedPassword, _status: constant.entityStatus.ACTIVE }, { where: { id: userData.id } }, { transaction: transaction }); // Update the password
+          await databaseActions.update("application", "Persons", { _status: constant.entityStatus.ACTIVE }, { where: { userId: userData.id } }, { transaction: transaction });
+          const personData = await databaseActions.findOne("application", "Persons", { where: { userId: userData.id } }, { transaction: transaction });
+          await databaseActions.update("application", "PersonContacts", { _status: constant.entityStatus.ACTIVE, verified: true, primaryFlag: true }, { where: { personId: personData.id, type: identifierType, data: identifier } }, { transaction: transaction });
         });
     }
     const data = await createSessionAndLogin(userData, originalUrl, deviceId, devInfo);
-    return{
+    return {
       status: 200,
       resData: data
     };
   } catch (error: any) {
     WrappidLogger.error(error);
     throw error;
-  }finally{
+  } finally {
     WrappidLogger.logFunctionEnd("registerWithPasswordFunc");
   }
 };
@@ -202,7 +215,7 @@ const loginWithPasswordFunc = async (identifier: string, password: string, devic
   } catch (error: any) {
     WrappidLogger.error(error);
     throw error;
-  }finally{
+  } finally {
     WrappidLogger.logFunctionEnd("loginWithPasswordFunc");
   }
 };
@@ -375,18 +388,18 @@ const resetPasswordFunc = async (identifier: string, password: string, confirmPa
 * Note: The function only logs out from the specified device,
 * not all devices associated with the user.
 */
-const logoutFunc = async (userId: string, deviceId: string):Promise<LogoutResponse> => {
+const logoutFunc = async (userId: string, deviceId: string): Promise<LogoutResponse> => {
   try {
     WrappidLogger.logFunctionStart("logoutFunc");
     const sessions = await databaseActions.findAll("application", "SessionManagers",
-      { where: { userId: userId }}
+      { where: { userId: userId } }
     );
     for (let session = 0; session < sessions.length; session++) {
       const currSession = sessions[session];
       if (bcrypt.compareSync(deviceId, currSession.deviceId)) {
         const [nrows] = await databaseActions.update("application", "SessionManagers",
           { refreshToken: "" },
-          {where: {id: currSession.id}}
+          { where: { id: currSession.id } }
         );
         if (nrows > 0) {
           WrappidLogger.info("Successfully logged out");
@@ -449,11 +462,11 @@ const logoutFunc = async (userId: string, deviceId: string):Promise<LogoutRespon
 * - Role ID
 * - Configured expiration time
 */
-const refreshTokenFunc = async (refreshToken:string, deviceId:string):Promise<RefreshToken> => {
+const refreshTokenFunc = async (refreshToken: string, deviceId: string): Promise<RefreshToken> => {
   try {
     WrappidLogger.logFunctionStart("refreshTokenFunc");
     let returnData = {} as RefreshToken;
-    const { jwt: {refreshAccessTokenSecret} } = ApplicationContext.getContext("config");
+    const { jwt: { refreshAccessTokenSecret } } = ApplicationContext.getContext("config");
 
     await jwt.verify(
       refreshToken,
@@ -491,17 +504,17 @@ const refreshTokenFunc = async (refreshToken:string, deviceId:string):Promise<Re
             }
             if (dbRefreshToken != token) {
               WrappidLogger.error("Refresh token mismatch");
-              throw new Error("Refresh token mismatch");  
+              throw new Error("Refresh token mismatch");
             }
             const userDetails = await databaseActions.findOne(
               "application",
               "Users",
-              { where: {id: userID} }
+              { where: { id: userID } }
             );
             const person = await databaseActions.findOne(
               "application",
               "Persons",
-              { attributes: ["id"], where: {userId: userID} }
+              { attributes: ["id"], where: { userId: userID } }
             );
             if (!person && person?.id <= 0) {
               WrappidLogger.error("Person not found");
@@ -510,7 +523,7 @@ const refreshTokenFunc = async (refreshToken:string, deviceId:string):Promise<Re
             const role = await databaseActions.findOne(
               "application",
               "UserRoles",
-              { attributes: ["roleID"], where: {userID: userID} }
+              { attributes: ["roleID"], where: { userID: userID } }
             );
             if (!role && role?.id <= 0) {
               WrappidLogger.error("Role not found");
@@ -530,20 +543,20 @@ const refreshTokenFunc = async (refreshToken:string, deviceId:string):Promise<Re
             );
 
             WrappidLogger.info("Access token refreshed");
-            returnData =  {
+            returnData = {
               status: 200,
               accessToken: accessToken,
             };
           }
         }
-       
+
       }
     );
     return returnData;
-  } catch (error:any) {
+  } catch (error: any) {
     WrappidLogger.error(error);
     throw error;
-  }finally {
+  } finally {
     WrappidLogger.logFunctionEnd("refreshTokenFunc");
   }
 };
@@ -591,21 +604,29 @@ const refreshTokenFunc = async (refreshToken:string, deviceId:string):Promise<Re
 * - Updates existing OTPs to inactive status
 * - Creates new OTP record with active status
 * - Stores recipient, OTP value, type, and user association
+* 
+* @todo
+* - OTP resend limit and cooldown period
+* - Add OTP expiry time placeholder in the template.
+* 
 */
-const sentOtpFunc = async (identifier:string, serviceName:string, userID?:any ) => {
+const sentOtpFunc = async (identifier: string, serviceName: string, userID?: any) => {
   try {
     WrappidLogger.logFunctionStart("sentOtpFunc");
+    const otpExpirySeconds = ApplicationContext.getContext("config").wrappid.otpExpiryIn;
+    const expiryTime = new Date(new Date().getTime() + (otpExpirySeconds * 1000));
+    const formattedExpiryTime = await formatTimestamp(expiryTime);
     let identifierType: string = await getIdentifierType(identifier);
     if (identifierType === "phone") {
       identifier = formatPhoneNumber(identifier);
     }
     // If userID not proveide
-    if(userID === undefined){
+    if (userID === undefined) {
       userID = null;
     }
-  
+
     const templateName = await getTemplateName(identifierType, serviceName);
-   
+
     // Generate otp
     const genetatedOTP = otpGenerator.generate(
       ApplicationContext.getContext("config").wrappid.otpLength,
@@ -615,12 +636,14 @@ const sentOtpFunc = async (identifier:string, serviceName:string, userID?:any ) 
         upperCaseAlphabets: false,
       }
     );
-    const commData:{otp:string} = {otp:""};
+
+    // also need to inform expiry minutes
+    const commData: { otp: string } = { otp: "" };
     if (genetatedOTP) {
       commData.otp = genetatedOTP;
     }
-    
-    if(identifierType==="phone"){
+
+    if (identifierType === "phone") {
       identifierType = "sms";
     }
     // Calling service-core communicate function for sending otp
@@ -641,12 +664,15 @@ const sentOtpFunc = async (identifier:string, serviceName:string, userID?:any ) 
         "application",
         "Otps",
         { _status: coreConstant.entityStatus.INACTIVE },
-        {where: { type: identifierType,
-          [databaseProvider.application.Sequelize.Op.or]: [
-            { recipient: identifier },
-            { userId: userID }
-          ]
-        }}
+        {
+          where: {
+            type: identifierType,
+            [databaseProvider.application.Sequelize.Op.or]: [
+              { recipient: identifier },
+              { userId: userID }
+            ]
+          }
+        }
 
       );
 
@@ -655,6 +681,7 @@ const sentOtpFunc = async (identifier:string, serviceName:string, userID?:any ) 
         recipient: identifier,
         otp: genetatedOTP,
         type: identifierType,
+        expiresAt: formattedExpiryTime,
         _status: coreConstant.entityStatus.ACTIVE,
         userId: userID,
       });

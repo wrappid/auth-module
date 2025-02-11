@@ -1,4 +1,11 @@
-import { ApplicationContext, coreConstant, databaseActions, databaseProvider, GenericObject, WrappidLogger } from "@wrappid/service-core";
+import {
+  ApplicationContext,
+  coreConstant,
+  databaseActions,
+  databaseProvider,
+  GenericObject,
+  WrappidLogger
+} from "@wrappid/service-core";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import DeviceDetector from "node-device-detector";
@@ -27,10 +34,10 @@ async function getIdentifierType(identifier: string): Promise<ContactType> {
   try {
     // Remove all whitespace and special characters for phone validation
     const cleanPhone = identifier.replace(/[\s-.()+]/g, "");
-  
+
     // Email regex pattern
     const emailPattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  
+
     // Phone regex pattern (international format)
     const phonePattern = /((\+*)((0[ -]*)*|((91 )*))((\d{12})+|(\d{10})+))|\d{5}([- ]*)\d{6}/;
 
@@ -38,39 +45,61 @@ async function getIdentifierType(identifier: string): Promise<ContactType> {
     if (emailPattern.test(identifier)) {
       return "email";
     }
-  
+
     // Check if the identifier matches the phone pattern
     if (phonePattern.test(cleanPhone)) {
       return "phone";
     }
-  
+
     throw new ContactValidationError(
       `Invalid contact format: ${identifier}. Must be a valid email or phone number.`
     );
   } catch (error) {
     WrappidLogger.error("Error: " + error);
     throw error;
-  }finally{
+  } finally {
     WrappidLogger.logFunctionEnd("getIdentifierType");
+  }
+}
+
+/**
+ * Formats a Date object to a timestamp string in the format 'YYYY-MM-DD HH:mm:ss.SSSSSS+00'
+ * @param date - The Date object to format
+ * @returns - formated string
+ */
+async function formatTimestamp(date: Date): Promise<string> {
+  try {
+    WrappidLogger.logFunctionStart("formatTimestamp");
+    const formattedTimestamp = date.toISOString().replace("T", " ").replace("Z", "+00");
+    WrappidLogger.info("formattedTimestamp: " + formattedTimestamp);
+    return formattedTimestamp;
+  } catch (error) {
+    WrappidLogger.error("Error: " + error);
+    throw error;
+  }
+  finally {
+    WrappidLogger.logFunctionEnd("formatTimestamp");
   }
 }
 
 /** 
  * This function is used to check if the otp is valid
  * 1. Get the latest otp from the database
- * 2. Compare the otp with the provided otp
- * 3. If equal then return true and marks as inactive
- * 4. If not equal then return false
+ * 2. Check if OTP has expired
+ * 3. Compare the otp with the provided otp
+ * 4. If equal then return true and marks as inactive
+ * 5. If not equal then return false
  * @param identifier
  * @param userId
  * @param otp
+ * @param type
  * @returns
  */
-async function checkOtp(identifier:string, userId: number, otp: string, type: string): Promise<boolean> {
+async function checkOtp(identifier: string, userId: number, otp: string, type: string): Promise<boolean> {
   WrappidLogger.logFunctionStart("checkOtp");
   try {
     let identifierType: string = type;
-    if(type===coreConstant.contact.PHONE){
+    if (type === coreConstant.contact.PHONE) {
       identifierType = coreConstant.commType.SMS;
     }
 
@@ -93,9 +122,17 @@ async function checkOtp(identifier:string, userId: number, otp: string, type: st
       order: [["id", "DESC"]]
     });
     if (dbData.length === 0) {
-      throw new Error("OTP not found");  
+      throw new Error("OTP not found");
     }
     const dbOtp = dbData[0].dataValues.otp;
+    const expiresAt = dbData[0].dataValues.expiresAt;
+    const currentTimeStamp = await formatTimestamp(new Date());
+
+    if (new Date(currentTimeStamp) > new Date(expiresAt)) {
+      await databaseActions.update("application", "Otps", { _status: coreConstant.entityStatus.INACTIVE }, { where: { id: dbData[0].dataValues.id } });
+      WrappidLogger.info(`OTP expired. Created at ${dbData[0].dataValues.createdAt}, expired at ${expiresAt}`);
+      return false;
+    }
     if (Number(dbOtp) === Number(otp)) {
       await databaseActions.update("application", "Otps", { _status: coreConstant.entityStatus.INACTIVE }, { where: { id: dbData[0].dataValues.id } });
       return true;
@@ -132,7 +169,7 @@ async function getIP(req: any) {
   } catch (error) {
     WrappidLogger.error("Error: " + error);
     throw error;
-  }finally{
+  } finally {
     WrappidLogger.logFunctionEnd("getIP");
   }
 }
@@ -155,14 +192,14 @@ async function getDeviceId(req: any): Promise<string> {
     WrappidLogger.info("Result:: " + result);
     const ip = await getIP(req);
     // WrappidLogger.info('ip:: ', ip)
-    let con:string = result.device.id + ip;
+    let con: string = result.device.id + ip;
     con = con.trim();
     // hashedId =  await bcrypt.hashSync(con, 10)
     return con;
   } catch (error) {
     WrappidLogger.error("Error: " + error);
     throw error;
-  }finally{
+  } finally {
     WrappidLogger.logFunctionEnd("getDeviceId");
   }
 }
@@ -210,7 +247,7 @@ function genarateAccessToken(
       accessTokenSecret,
       { expiresIn: expTime }
     );
-    
+
     let refreshToken = null;
     if (refresh) {
       refreshToken = jwt.sign(
@@ -245,7 +282,7 @@ function genarateAccessToken(
  * @param deviceId 
  * @param devInfo 
  */
-async function createSessionAndLogin(userData:any, originalUrl:string, deviceId:string, devInfo:string):Promise<ResponseBody<IUserAuthData>> {
+async function createSessionAndLogin(userData: any, originalUrl: string, deviceId: string, devInfo: string): Promise<ResponseBody<IUserAuthData>> {
   try {
     WrappidLogger.logFunctionStart("createSessionAndLogin");
     let returnData = {} as ResponseBody<IUserAuthData>;
@@ -265,27 +302,27 @@ async function createSessionAndLogin(userData:any, originalUrl:string, deviceId:
     if (!personData) {
       throw new Error("Person not found");
     }
-    
+
     // Find the primary contact records for the person
     const personContacts = await databaseActions.findAll("application", "PersonContacts", {
       where: { personId: personData.id, _status: coreConstant.entityStatus.ACTIVE, primaryFlag: true },
     });
-    
+
     // Extract the primary email and phone/WhatsApp information
     const primaryEmail = personContacts.filter((entry: any) => entry.type === coreConstant.contact.EMAIL);
     const primaryPhone = personContacts.filter((entry: any) => (entry.type === coreConstant.contact.PHONE));
-    
+
     const FunctionsRegistry: GenericObject = ApplicationContext.getContext(coreConstant.registry.FUNCTIONS_REGISTRY);
-      
+
     const personMetaData = await FunctionsRegistry["getMetaDataJSON"]("PersonMetas", personData.id);
     if (!personMetaData || Object.keys(personMetaData).length <= 0) {
       throw new Error("Person meta data not found");
     }
 
     const fullName = getFullName({
-      firstName : personMetaData?. firstName,
-      lastName  :personMetaData?.lastName,
-      middleName:personMetaData?. middleName,
+      firstName: personMetaData?.firstName,
+      lastName: personMetaData?.lastName,
+      middleName: personMetaData?.middleName,
     });
 
     const role = await databaseActions.findOne(
@@ -330,7 +367,7 @@ async function createSessionAndLogin(userData:any, originalUrl:string, deviceId:
         }
       }
     );
-    let found=false;
+    let found = false;
 
     await databaseProvider.application.sequelize.transaction(
       async (transaction: Transaction) => {
@@ -357,9 +394,9 @@ async function createSessionAndLogin(userData:any, originalUrl:string, deviceId:
             if (nrows > 0) {
               WrappidLogger.info("Login Success");
               createLoginLogs(originalUrl, userData.id, devInfo);
-              returnData =  {
+              returnData = {
                 message: "Successfully login",
-                data:{
+                data: {
                   id: userData.id,
                   personId: personData.id,
                   accessToken: accessToken,
@@ -371,7 +408,7 @@ async function createSessionAndLogin(userData:any, originalUrl:string, deviceId:
                   phoneVerified: primaryPhone[0]?.verified,
                   name: fullName,
                   photoUrl: personMetaData.photoUrl,
-                  role: {role: roleOB?.role}
+                  role: { role: roleOB?.role }
                 }
               };
             } else {
@@ -396,9 +433,9 @@ async function createSessionAndLogin(userData:any, originalUrl:string, deviceId:
           );
           WrappidLogger.info("Login Success with New Device, session id: " + newSession.id);
           createLoginLogs(originalUrl, userData.id, devInfo);
-          returnData =  {
+          returnData = {
             message: "Successfully login with New Device",
-            data:{
+            data: {
               id: userData.id,
               personId: personData.id,
               accessToken: accessToken,
@@ -410,7 +447,7 @@ async function createSessionAndLogin(userData:any, originalUrl:string, deviceId:
               phoneVerified: primaryPhone[0]?.verified,
               name: fullName,
               photoUrl: personMetaData.photoUrl,
-              role: {role: roleOB?.role}
+              role: { role: roleOB?.role }
             }
           };
         }
@@ -419,7 +456,7 @@ async function createSessionAndLogin(userData:any, originalUrl:string, deviceId:
 
     //email, emailvarifed:boolean , phone, phonevarifed:boolean, name, photo
     return returnData;
-  } catch (error:any) {
+  } catch (error: any) {
     WrappidLogger.error("Error: " + error);
     throw error;
   }
@@ -472,7 +509,7 @@ export function getFullName(data: NameData): string {
 async function createLoginLogs(path: string, userId: number, extraInfo: any = "{}") {
   try {
     WrappidLogger.logFunctionStart("createLoginLogs");
-    WrappidLogger.info("Login logs created for userID:" + userId + " path:"+ path);
+    WrappidLogger.info("Login logs created for userID:" + userId + " path:" + path);
     await databaseActions.create("application", "LoginLogs", {
       userId: userId,
       route: path,
@@ -526,11 +563,13 @@ async function createLoginLogs(path: string, userId: number, extraInfo: any = "{
 * Note: The function uses constants from the application's
 * constant configuration for both contact types and
 * communication template identifiers.
+* 
+* @todo
+* - Add OTP expiry time placeholder in the template.
 */
-async function getTemplateName(identifierType:string, serviceName:string) {
+async function getTemplateName(identifierType: string, serviceName: string) {
   try {
     WrappidLogger.logFunctionStart("getTemplateID");
- 
     let templateName = "";
     if (identifierType === constant.contact.EMAIL) {
       switch (serviceName) {
@@ -549,7 +588,7 @@ async function getTemplateName(identifierType:string, serviceName:string) {
       }
     }
 
-    if(identifierType === constant.contact.PHONE){
+    if (identifierType === constant.contact.PHONE) {
       switch (serviceName) {
         case "loginWithOtp":
           templateName = constant.communication.SENT_OTP_LOGIN_WITH_OTP_SMS_EN;
@@ -566,10 +605,10 @@ async function getTemplateName(identifierType:string, serviceName:string) {
       }
     }
     return templateName;
-  } catch (error:any) {
+  } catch (error: any) {
     WrappidLogger.error("Error: " + error);
     throw error;
-  }finally{
+  } finally {
     WrappidLogger.logFunctionEnd("getTemplateID");
   }
 }
@@ -615,7 +654,7 @@ async function getTemplateName(identifierType:string, serviceName:string) {
  * formatPhoneNumber("abc9876543210") // Invalid: Contains letters
  * 
  */
-const formatPhoneNumber = (phone:string) => {
+const formatPhoneNumber = (phone: string) => {
   try {
     WrappidLogger.logFunctionStart("formatPhoneNumber");
     // Convert to string if number is passed
@@ -638,14 +677,14 @@ const formatPhoneNumber = (phone:string) => {
 
     // Return null for invalid numbers
     throw new Error("Invalid phone number");
-  } catch (error:any) {
+  } catch (error: any) {
     WrappidLogger.error("Error: " + error);
     throw error;
-  }finally{
+  } finally {
     WrappidLogger.logFunctionEnd("formatPhoneNumber");
   }
 };
 
 export {
-  checkOtp, createSessionAndLogin, formatPhoneNumber, genarateAccessToken, getDeviceId, getIdentifierType, getTemplateName
+  checkOtp, createSessionAndLogin, formatPhoneNumber, formatTimestamp, genarateAccessToken, getDeviceId, getIdentifierType, getTemplateName
 };
