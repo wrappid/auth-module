@@ -1,20 +1,20 @@
 const RoutesRegistry = {
-  socialLogin:{
-    title:"Diiferent social login",
-    url:"login/social/:platform",
+  socialLogin: {
+    title: "Diiferent social login",
+    url: "login/social/:platform",
     authRequired: false,
-    reqMethod:"post",
+    reqMethod: "post",
     entityRef: "socialLogin",
     controllerRef: "socialLogin",
     swaggerJson: {
       "tags": [
-        "Auth"
+        "Auth Module"
       ],
       "parameters": [
         {
           "name": "platform",
           "in": "path",
-          "description": "Name of the platformplatform",
+          "description": "Name of the platform platform",
           "required": true,
           "schema": {
             "type": "string"
@@ -121,17 +121,17 @@ const RoutesRegistry = {
     }
   },
   checkLogin: {
-    title: "jnkf",
+    title: "Check if user exists",
     url: "login/check",
     authRequired: false,
     reqMethod: "post",
     entityRef: "checkLogin",
     controllerRef: "checkLogin",
     swaggerJson: {
-      "tags":[
-        "Auth-Module"
+      "tags": [
+        "Auth Module"
       ],
-      "responses":{}
+      "responses": {}
     }
   },
   registerWithPassword: {
@@ -142,10 +142,10 @@ const RoutesRegistry = {
     entityRef: "registerWithPassword",
     controllerRef: "registerWithPassword",
     swaggerJson: {
-      "tags":[
-        "Auth-Module"
+      "tags": [
+        "Auth Module"
       ],
-      "responses":{}
+      "responses": {}
     }
   },
   loginWithPassword: {
@@ -156,10 +156,10 @@ const RoutesRegistry = {
     entityRef: "loginWithPassword",
     controllerRef: "loginWithPassword",
     swaggerJson: {
-      "tags":[
-        "Auth-Module"
+      "tags": [
+        "Auth Module"
       ],
-      "responses":{}
+      "responses": {}
     }
   },
   loginWithOtpp: {
@@ -170,10 +170,10 @@ const RoutesRegistry = {
     entityRef: "loginWithOtpp",
     controllerRef: "loginWithOtpp",
     swaggerJson: {
-      "tags":[
-        "Auth-Module"
+      "tags": [
+        "Auth Module"
       ],
-      "responses":{}
+      "responses": {}
     }
   },
   resetPassword: {
@@ -184,10 +184,10 @@ const RoutesRegistry = {
     entityRef: "resetPassword",
     controllerRef: "resetPassword",
     swaggerJson: {
-      "tags":[
-        "Auth-Module"
+      "tags": [
+        "Auth Module"
       ],
-      "responses":{}
+      "responses": {}
     }
   },
   urlLogin: {
@@ -198,10 +198,10 @@ const RoutesRegistry = {
     entityRef: "urlLogin",
     controllerRef: "urlLogin",
     swaggerJson: {
-      "tags":[
-        "Auth-Module"
+      "tags": [
+        "Auth Module"
       ],
-      "responses":{}
+      "responses": {}
     }
   },
   refreshTokenn: {
@@ -212,10 +212,10 @@ const RoutesRegistry = {
     entityRef: "refreshTokenn",
     controllerRef: "refreshTokenn",
     swaggerJson: {
-      "tags":[
-        "Auth-Module"
+      "tags": [
+        "Auth Module"
       ],
-      "responses":{}
+      "responses": {}
     }
   },
 

@@ -57,7 +57,7 @@ async function socialLoginFunc(
       case constant.platformType.GOOGLE:
         userData = await googleLogin(platformToken);
         break;
-        
+
       default:
         break;
     }
@@ -234,7 +234,7 @@ const passwordLessLogin = async (email: string, deviceId: any) => {
     const person = await databaseActions.findOne(
       "application",
       "Persons",
-      { attributes: ["id"], where: {userId: userID} }
+      { attributes: ["id"], where: { userId: userID } }
     );
     if (!person && person?.id <= 0) {
       WrappidLogger.error("Person not found");
@@ -243,7 +243,7 @@ const passwordLessLogin = async (email: string, deviceId: any) => {
     const role = await databaseActions.findOne(
       "application",
       "UserRoles",
-      { attributes: ["roleID"], where: {userID: userID} }
+      { attributes: ["roleID"], where: { userID: userID } }
     );
     if (!role && role?.id <= 0) {
       WrappidLogger.error("Role not found");
@@ -365,7 +365,7 @@ const passwordLessLogin = async (email: string, deviceId: any) => {
  * @param platform
  * @returns
  */
-const facebookLogin = async (accessToken: string):Promise<CheckUser> => {
+const facebookLogin = async (accessToken: string): Promise<CheckUser> => {
   WrappidLogger.logFunctionStart("facebookLogin");
   try {
     // Get user details from facebook graph API
@@ -378,7 +378,7 @@ const facebookLogin = async (accessToken: string):Promise<CheckUser> => {
     }
 
     const rawData: any = await userResponse.json();
-    const userData:CheckUser = {
+    const userData: CheckUser = {
       firstName: rawData.first_name || "",
       middleName: rawData.middle_name || "",
       lastName: rawData.last_name || "",
@@ -403,8 +403,8 @@ async function linkedinLogin(platformToken: string): Promise<CheckUser> {
     const clientId = ApplicationContext.getContext("config")?.socialLogin?.linkedin?.apiKey;
     const clientSecret = ApplicationContext.getContext("config")?.socialLogin?.linkedin?.apiKeySecret;
     const redirectUri = ApplicationContext.getContext("config")?.socialLogin?.linkedin?.callbackURL;
-    const token:string = await linkedIn.getAccessToken(platformToken, clientId, clientSecret, redirectUri);
-    const userDetails:CheckUser = await linkedIn.getUserDetails(token);
+    const token: string = await linkedIn.getAccessToken(platformToken, clientId, clientSecret, redirectUri);
+    const userDetails: CheckUser = await linkedIn.getUserDetails(token);
     return userDetails;
   } catch (error: any) {
     WrappidLogger.error("Error in LinkedInLogin: " + error);
@@ -430,9 +430,9 @@ async function githubLogin(platformToken: string): Promise<CheckUser> {
     const client_id = ApplicationContext.getContext("config").socialLogin.github.clientId; // Replace with your GitHub client_id
     const client_secret = ApplicationContext.getContext("config").socialLogin.github.clientSecret; // Replace with your GitHub client_secret
 
-    if (client_id == undefined || client_secret == undefined) { 
+    if (client_id == undefined || client_secret == undefined) {
       WrappidLogger.error("unable to get the client_id client_secret");
-      throw new Error("unable to get the client_id client_secret"); 
+      throw new Error("unable to get the client_id client_secret");
     }
     const bodyData = { client_id, client_secret, code };
 
@@ -450,7 +450,7 @@ async function githubLogin(platformToken: string): Promise<CheckUser> {
     }
 
     const data: any = await response.json();
-    WrappidLogger.info( "data from github" + data);
+    WrappidLogger.info("data from github" + data);
     const accessToken = data?.access_token;
     if (!accessToken) {
       WrappidLogger.error("Failed to get the accessToken from github");
@@ -461,8 +461,8 @@ async function githubLogin(platformToken: string): Promise<CheckUser> {
      * @todo
      * store this in the database for future use
      */
-    ApplicationContext.setContext("githubAccessToken", accessToken);    
-    
+    ApplicationContext.setContext("githubAccessToken", accessToken);
+
     const userResponse = await fetch("https://api.github.com/user", {
       method: constant.httpMethod.HTTP_GET,
       headers: {
@@ -531,7 +531,7 @@ async function githubLogin(platformToken: string): Promise<CheckUser> {
  * @param idToken 
  * @returns 
  */
-async function googleLogin (idToken: string): Promise<CheckUser>  {
+async function googleLogin(idToken: string): Promise<CheckUser> {
   WrappidLogger.logFunctionStart("googleLogin");
   try {
     // Get user details from Google's tokeninfo endpoint
