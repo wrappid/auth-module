@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.62](https://https//github.com/wrappid/wrappid-module/compare/v0.0.61...v0.0.62) (2025-02-11)
+
+
+### Bug Fixes
+
+* **core:** :sparkles: otp expiry time added ([b2d1cd2](https://https//github.com/wrappid/wrappid-module/commit/b2d1cd227301ec19fadaaecd0b232f4fbd30b0e2)), closes [#147](https://https//github.com/wrappid/wrappid-module/issues/147)
+
 ### [0.0.61](https://https//github.com/wrappid/wrappid-module/compare/v0.0.60...v0.0.61) (2025-02-10)
 
 ### [0.0.60](https://https//github.com/wrappid/wrappid-module/compare/v0.0.59...v0.0.60) (2025-02-06)
