@@ -70,7 +70,7 @@
     "bcrypt": "5.1.0"
   },
   "dependencies": {
-    "@wrappid/core": "0.0.598",
+    "@wrappid/core": "0.0.599",
     "@wrappid/styles": "0.0.179",
     "@wrappid/service-core": "0.0.134"
   }
