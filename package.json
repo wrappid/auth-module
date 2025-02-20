@@ -71,7 +71,7 @@
   },
   "dependencies": {
     "@wrappid/core": "0.0.602",
-    "@wrappid/styles": "0.0.180",
+    "@wrappid/styles": "0.0.181",
     "@wrappid/service-core": "0.0.134"
   }
 }
