@@ -1,5 +1,5 @@
 import { ApplicationContext, databaseActions, databaseProvider, WrappidLogger } from "@wrappid/service-core";
-import { Transaction } from "sequelize";
+import sequelize, { Transaction } from "sequelize";
 import constant from "../constants/constants";
 import { IApiResponse } from "../types/auth.types";
 
@@ -107,7 +107,11 @@ const checkUserExistance = async (identifierType:string, identifier:string, stat
 const createUser = async (identifierType:string, identifier: string):Promise<IApiResponse> => {
   try {
     WrappidLogger.logFunctionStart("createUser");
-    let user = await databaseActions.findOne("application", "Users", {where:{ [identifierType]: identifier}});
+    let user = await databaseActions.findOne("application", "Users", {where:{ [identifierType]: identifier, 
+      _status: {
+        [sequelize.Op.or]: ['active', 'new']
+      }
+     }});
     
     if (!user) {
       await databaseProvider.application.sequelize.transaction(
