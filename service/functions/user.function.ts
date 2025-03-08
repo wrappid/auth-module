@@ -109,9 +109,9 @@ const createUser = async (identifierType:string, identifier: string):Promise<IAp
     WrappidLogger.logFunctionStart("createUser");
     let user = await databaseActions.findOne("application", "Users", {where:{ [identifierType]: identifier, 
       _status: {
-        [sequelize.Op.or]: ['active', 'new']
+        [sequelize.Op.or]: ["active", "new"]
       }
-     }});
+    }});
     
     if (!user) {
       await databaseProvider.application.sequelize.transaction(
