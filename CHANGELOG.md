@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.67](https://https//github.com/wrappid/wrappid-module/compare/v0.0.66...v0.0.67) (2025-03-19)
+
+
+### Bug Fixes
+
+* **core:** :bug: update where clause with status check before user creation ([f4e3165](https://https//github.com/wrappid/wrappid-module/commit/f4e31659d9394724ea8968e29288079c7c8ecb5e)), closes [#149](https://https//github.com/wrappid/wrappid-module/issues/149)
+
 ### [0.0.66](https://https//github.com/wrappid/wrappid-module/compare/v0.0.65...v0.0.66) (2025-02-20)
 
 ### [0.0.65](https://https//github.com/wrappid/wrappid-module/compare/v0.0.64...v0.0.65) (2025-02-18)
