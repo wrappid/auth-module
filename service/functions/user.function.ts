@@ -1,5 +1,5 @@
-import { ApplicationContext, databaseActions, databaseProvider, WrappidLogger } from "@wrappid/service-core";
-import sequelize, { Transaction } from "sequelize";
+import { ApplicationContext, coreConstant, databaseActions, databaseProvider, WrappidLogger } from "@wrappid/service-core";
+import { Transaction } from "sequelize";
 import constant from "../constants/constants";
 import { IApiResponse } from "../types/auth.types";
 
@@ -37,7 +37,7 @@ import { IApiResponse } from "../types/auth.types";
 * - Entry and exit points are logged
 * - Any errors are logged before being propagated
 */
-const checkUserExistance = async (identifierType:string, identifier:string, status:string)=>{
+const checkUserExistance = async (identifierType: string, identifier: string, status: string) => {
   try {
     WrappidLogger.logFunctionStart("checkUser");
     const data = await databaseActions.findOne("application", "Users", {
@@ -47,10 +47,10 @@ const checkUserExistance = async (identifierType:string, identifier:string, stat
       }
     });
     return data;
-  } catch (error:any) {
+  } catch (error: any) {
     WrappidLogger.error("Error: " + error);
     throw error;
-  }finally{
+  } finally {
     WrappidLogger.logFunctionEnd("checkUser");
   }
 };
@@ -104,38 +104,41 @@ const checkUserExistance = async (identifierType:string, identifier:string, stat
 * information like password, profile details etc. should be
 * updated through separate functions.
 */
-const createUser = async (identifierType:string, identifier: string):Promise<IApiResponse> => {
+const createUser = async (identifierType: string, identifier: string): Promise<IApiResponse> => {
   try {
     WrappidLogger.logFunctionStart("createUser");
-    let user = await databaseActions.findOne("application", "Users", {where:{ [identifierType]: identifier, 
-      _status: {
-        [sequelize.Op.or]: ["active", "new"]
+    let user = await databaseActions.findOne("application", "Users", {
+      where: {
+        [identifierType]: identifier,
+        _status: {
+          [databaseProvider.application.Sequelize.Op.or]: [coreConstant.entityStatus.ACTIVE, coreConstant.entityStatus.NEW]
+        }
       }
-    }});
-    
+    });
+
     if (!user) {
       await databaseProvider.application.sequelize.transaction(
         async (transaction: Transaction) => {
           user = await databaseActions.create("application", "Users", { [identifierType]: identifier, _status: constant.entityStatus.NEW }, { transaction });
           const personData = await databaseActions.create("application", "Persons", { userId: user.id, _status: constant.entityStatus.NEW }, { transaction });
-          await databaseActions.create("application", "PersonContacts", {data: identifier, type: identifierType, personId: personData.id, _status: constant.entityStatus.NEW }, { transaction });
+          await databaseActions.create("application", "PersonContacts", { data: identifier, type: identifierType, personId: personData.id, _status: constant.entityStatus.NEW }, { transaction });
           const role = ApplicationContext.getContext("config").wrappid.defaultUserRole || constant.userRoles.ROLE_DEVELOPER;
           // Get the role id from the Roles table
-          const roleData = await databaseActions.findOne("application", "Roles", {where: {role: role} }, { transaction });
-          await databaseActions.create("application", "UserRoles", { roleID: roleData.id, userID: user.id, _status: constant.entityStatus.ACTIVE}, { transaction });
+          const roleData = await databaseActions.findOne("application", "Roles", { where: { role: role } }, { transaction });
+          await databaseActions.create("application", "UserRoles", { roleID: roleData.id, userID: user.id, _status: constant.entityStatus.ACTIVE }, { transaction });
         });
     }
 
-    if(!user){
+    if (!user) {
       throw new Error("User not present. Please try again.");
     }
 
     return {
-      status:201,
-      resData:{
-        message:"User created successfully",
-        data:{
-          "identifier": identifier,
+      status: 201,
+      resData: {
+        message: "User created successfully",
+        data: {
+          identifier: identifier,
           userID: user?.id
         }
       }
@@ -143,7 +146,7 @@ const createUser = async (identifierType:string, identifier: string):Promise<IAp
   } catch (error: any) {
     WrappidLogger.error("Error: " + error);
     throw error;
-  }finally{
+  } finally {
     WrappidLogger.logFunctionEnd("createUser");
   }
 };
